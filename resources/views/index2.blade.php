@@ -57,7 +57,7 @@
     </nav>
     <main>
         <section data-aos="zoom-in-down" class="hero">
-            <div data-aos="fade-down" data-aos-delay="800" class="container">
+            <div data-aos="fade-down" data-aos-delay="100" class="container">
                 <div class="hero-text">
                     <h2>La Finca al Día:</h2>
                     <h1>Bienvenido, [Nombre de Usuario]</h1>
@@ -70,7 +70,7 @@
         </section>
         <section class="mas_para_ti">
             <div data-aos="fade-right"
-            data-aos-offset="300"
+            data-aos-offset="100"
             data-aos-easing="ease-in-sine"
             class="container">
                 <h4>Lo Mejor para Ti</h4>
@@ -78,7 +78,7 @@
                 <p>Conoce los productos que hemos seleccionado especialmente para ti, combinando 
                 estilo y frescura.</p>
                 <div data-aos="fade-down-left"
-                data-aos-delay="700"
+                data-aos-delay="200"
                 class="box">
                     <div class="item">
                         <h4><i class="fa-solid fa-star"></i> Calidad Garantizada</h4>
@@ -101,7 +101,7 @@
         </section>
         <section class="products">
             <div data-aos="zoom-out" 
-            data-aos-delay="200"
+            data-aos-delay="100"
             class="container">
                 <h2>Nuestras Galería de Productos</h2>
                 <p>Descubre nuestra selección de frutas y verduras frescas.</p>
@@ -142,7 +142,7 @@
                 <h2>Ofertas Especiales</h2>
                 <div class="offer-grid">
                     <div class="offer-image">
-                        <img src="img/es_de_frutas_y_verduras_1.png" alt="Ofertas Especiales">
+                        <img src="img/es_de_frutas_y_verduras_1.webp" alt="Ofertas Especiales">
                     </div>
                     <div class="offer-info">
                         <div class="offer-item">
@@ -158,7 +158,7 @@
             </div>
         </section>
         <section data-aos="zoom-out-up"
-        data-aos-delay="200"
+        data-aos-delay="100"
         class="testimonials">
             <div class="container">
                 <h2>Testimonios</h2>
@@ -242,15 +242,15 @@
                 <h2>Últimos Artículos del Blog</h2>
                 <hr>
                 <div data-aos="fade-up"
-                data-aos-delay="500"
+                data-aos-delay="100"
                 class="blog-grid">
                     <div class="blog-item">
-                        <img src="img/verduras_frutas_y_hortalizas_5.png" alt="">
+                        <img src="img/verduras_frutas_y_hortalizas_5.webp" alt="">
                         <h3><a href="https://www.google.com/search?q=beneficios+de+comer+frutas&rlz=1C1GCEA_enCO1117CO1126&oq=beneficios+de+comer+frutas&gs_lcrp=EgZjaHJvbWUyCQgAEEUYORiABDIHCAEQABiABDIHCAIQABiABDIHCAMQABiABDIHCAQQABiABDIHCAUQABiABDIHCAYQABiABDIHCAcQABiABDIHCAgQABiABDIHCAkQABiABNIBCTExMzYyajBqN6gCALACAA&sourceid=chrome&ie=UTF-8">Beneficios de Comer Frutas Frescas</a></h3>
                         <p>Descubre por qué las frutas son esenciales para una dieta saludable.</p>
                     </div>
                     <div class="blog-item">
-                        <img src="img/verduras_frutas_y_hortalizas_6.png" alt="">
+                        <img src="img/verduras_frutas_y_hortalizas_6.webp" alt="">
                         <h3><a href="https://www.google.com/search?q=10+beneficios+de+comer+verduras&sca_esv=c7459735fc04b658&rlz=1C1GCEA_enCO1117CO1126&sxsrf=AHTn8zrwI3Q-HQ8hEHg0TjzndM5w2BrFWg%3A1738192710510&ei=RreaZ53tHoaawbkPq9nduAY&oq=10+benfios+de+comer+verdu&gs_lp=Egxnd3Mtd2l6LXNlcnAiGTEwIGJlbmZpb3MgZGUgY29tZXIgdmVyZHUqAggAMgcQABiABBgNMgYQABgWGB4yBhAAGBYYHkiwLlAAWP0ncAF4AZABAJgBuAGgAd4ZqgEEMC4yNbgBA8gBAPgBAZgCGqACkhuoAhTCAgcQIxgnGOoCwgITEAAYgAQYQxi0AhiKBRjqAtgBAcICChAjGIAEGCcYigXCAgoQABiABBhDGIoFwgIFEAAYgATCAgsQABiABBixAxiDAcICCBAAGIAEGLEDwgILEC4YgAQYsQMY1ALCAgoQABiABBgUGIcCwgIIEAAYFhgKGB7CAgUQIRigAZgDF_EFlltSxCNuiXe6BgYIARABGAGSBwQxLjI1oAetrwE&sclient=gws-wiz-serp">Recetas Deliciosas con Verduras</a></h3>
                         <p>Explora recetas fáciles y deliciosas para incorporar más verduras en tu dieta.</p>
                     </div>
@@ -259,7 +259,7 @@
         </section>
     </main>
 <footer data-aos="fade-up"
-data-aos-duration="300"
+data-aos-duration="100"
 class="footer">
     <div class="footer-top">
         <div class="container">

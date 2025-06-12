@@ -40,18 +40,17 @@
         <section data-aos="zoom-in-down" class="hero" aria-labelledby="hero-title">
             <div data-aos="fade-down" data-aos-delay="800" class="container">
                 <div class="hero-text">
-                    <h1 data-aos="fade-down" data-aos-delay="900" id="hero-title">La Finca al Día</h1>
+                    <h1 data-aos="fade-down" id="hero-title">La Finca al Día</h1>
                     <p class="welcome-text" style="font-weight: bold; font-size: 30px; font-family:'Courier New', Courier, monospace">Bienvenido, Descubre la forma más fácil y conveniente de comprar vegetales frescos directamente de la finca. Nuestro software de venta en línea te ofrece una experiencia única y de calidad.</p>
                 </div>
-                <div data-aos="fade-left" data-aos-delay="1000" class="hero-info">
+                <div data-aos="fade-left" class="hero-info">
                     <p>Descubre más productos</p>
                     <a href="user/LOGIN.html" class="button">Explorar Productos</a>
                 </div>
             </div>
         </section>
 
-        <section data-aos="fade-up"
-        data-aos-duration="2800" 
+        <section data-aos="fade-up" 
         class="mas_para_ti" aria-labelledby="features-title">
             <div class="container">
                 <h4 id="features-title">Lo Mejor para Ti</h4>
@@ -79,7 +78,7 @@
         </section>
 
         <section data-aos="fade-up"
-        data-aos-duration="2000" 
+        data-aos-duration="900" 
         class="products" aria-labelledby="products-title">
             <div class="container">
                 <h2 id="products-title">Nuestra Galería de Productos</h2>
@@ -130,8 +129,7 @@
         </section>
         <section class="blog">
             <div data-aos="fade-down"
-            data-aos-easing="linear"
-            data-aos-duration="1000" class="container">
+            data-aos-easing="linear" class="container">
                 <h2 style="margin-top: 12%; display: flex; justify-content: center;">Descubre las características claves de</h2><h2 style="display: flex; justify-content: center;">nuestro software de compra de</h2><h2 style="display: flex; justify-content: center;">vegetales</h2>
                 <hr>
                 <div class="blog-grid">
@@ -141,12 +139,12 @@
                         <p>Ofrecemos una apmlia gama de características y beneficios para facilitar la compra de vegetales frescos y de calidad.</p>
                     </div>
                     <div class="blog-item">
-                        <img src="img/es_de_frutas_y_verduras_1.png" alt="">
+                        <img src="img/es_de_frutas_y_verduras_1.webp" alt="">
                         <h3>En cuentra una variedad de vegetales frescos en un solo lugar</h3>
                         <p>Navega por nuestra amplia sección de vegetales fescos y encuentra todo lo que necesitas para tus comidas dalidables. <button><a href="user/LOGIN.html">¡Me interesa!</a></button></p>
                     </div>
                     <div class="blog-item">
-                        <img src="img/111.png" alt="">
+                        <img src="img/111.webp" alt="">
                         <h3>Recibe tus vegetales directamente en tu puerta</h3>
                         <p>Te ofrecemos entregas rápidas y confiables para que disfrutes de vegetales frescos sin salir de tu hogar.</p><br><button><a href="user/LOGIN.html">¡Comprar ahora!</a></button>
                     </div>
@@ -156,7 +154,7 @@
         <footer class="footer">
             <div data-aos="fade-zoom-in"
             data-aos-easing="ease-in-back"
-            data-aos-delay="300"
+            data-aos-delay="100"
             data-aos-offset="0" class="footer-top">
                 <div class="container">
                     <div class="footer-grid">
