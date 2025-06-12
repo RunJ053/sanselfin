@@ -1,0 +1,209 @@
+:root {
+    --primary-color: #3b82f6;
+    --secondary-color: #64748b;
+    --success-color: #22c55e;
+    --warning-color: #eab308;
+    --danger-color: #ef4444;
+    --background-color: #f8fafc;
+    --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family:Georgia, 'Times New Roman', Times, serif;
+}
+
+body {
+    background-color: var(--background-color);
+    color: #334155;
+    line-height: 1.5;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+/* Barra de búsqueda */
+.search-container {
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.search-input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 2.5rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.search-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--secondary-color);
+}
+
+/* Tabs de navegación */
+.tabs {
+    display: flex;
+    border-bottom: 1px solid #e2e8f0;
+    margin-bottom: 2rem;
+}
+
+.tab {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: var(--secondary-color);
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.tab.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+}
+
+/* Tarjetas de productos */
+.purchase-card {
+    background: white;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s ease;
+}
+
+.purchase-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+}
+
+.purchase-header {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.product-image {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 0.5rem;
+}
+
+.product-details {
+    flex: 1;
+}
+
+.product-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.product-meta {
+    color: var(--secondary-color);
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.status-badge.preparing {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.status-badge.delivered {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.rating {
+    color: #eab308;
+    margin-bottom: 0.5rem;
+}
+
+.purchase-details {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.purchase-details p {
+    color: var(--secondary-color);
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
+}
+.purchase-details a{
+    color: rgb(209, 61, 61);
+    padding: 0.5rem 1rem;
+    border: none;
+    cursor: pointer;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+    text-decoration: none;
+}
+.purchases-section {
+    display: none;
+}
+
+.purchases-section.active {
+    display: block;
+}
+
+.refund-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--danger-color);
+    background: none;
+    border: none;
+    padding: 0.5rem 0;
+    cursor: pointer;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+}
+
+.refund-button:hover {
+    text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .purchase-header {
+        flex-direction: column;
+    }
+
+    .product-image {
+        width: 100%;
+        height: 200px;
+    }
+
+    .tab {
+        padding: 0.75rem 1rem;
+    }
+}

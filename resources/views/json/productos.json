@@ -1,0 +1,52 @@
+[
+    {
+        "nombre": "Manzana",
+        "descripcion": "Calificación ⭐⭐⭐⭐",
+        "valor": "Precio sugerido: $4.000",
+        "imagen": "img/product/mann.jfif"
+    },
+    {
+        "nombre": "Zanahoria",
+        "descripcion": "Calificación ⭐⭐⭐⭐",
+        "valor": "Precio sugerido: $3.500",
+        "imagen": "img/product/zha.jfif"
+    },
+    {
+        "nombre": "Naranja",
+        "descripcion": "Calificación ⭐⭐⭐",
+        "valor": "Precio sugerido: $5.300",
+        "imagen": "img/product/naj.jfif"
+    },
+    {
+        "nombre": "Lechuga",
+        "descripcion": "Calificación ⭐⭐⭐⭐⭐",
+        "valor": "Precio sugerido: $8.300",
+        "imagen": "img/product/lechuga.webp"
+    },
+    {
+        "nombre": "Arracacha",
+        "descripcion": "Calificación ⭐⭐⭐⭐⭐",
+        "valor": "Precio sugerido: $2.800",
+        "imagen": "img/product/arra.jpg"
+    },
+    {
+        "nombre": "Gisantes",
+        "descripcion": "Calificación ⭐⭐",
+        "valor": "Precio sugerido: $1.500",
+        "imagen": "img/product/gi.jpg"
+    },
+    {
+        "nombre": "Puerro",
+        "descripcion": "Calificación ⭐⭐⭐⭐",
+        "valor": "Precio sugerido: $4.300",
+        "imagen": "img/product/pue.jpg"
+    },
+    {
+        "nombre": "Tomate",
+        "descripcion": "Calificación ⭐⭐⭐⭐",
+        "valor": "Precio sugerido: $3.700",
+        "imagen": "img/product/tomate.jpg"
+    }
+]
+
+

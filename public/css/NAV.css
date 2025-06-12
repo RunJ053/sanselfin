@@ -1,0 +1,157 @@
+/* Estilos generales para el nav */
+.main-nav {
+    margin: 0 auto;
+    margin-top: 0.5%;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    width: 98%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #4CAF50;
+    border-radius: 17px;
+    padding: 0.5rem;
+}
+
+/* Contenedor izquierdo */
+.nav-left {
+    display: flex;
+    align-items: center;
+}
+
+.logo-link img {
+    width: 150px;
+    height: 50px;
+    object-fit: contain;
+}
+
+/* Contenedor central */
+.nav-center {
+    flex-grow: 1;
+    margin: 0 2rem;
+}
+
+.nav-links {
+    display: flex;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    justify-content: center;
+    gap: 2rem;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.nav-links a:hover {
+    background-color: #55555563;
+    color: darkgreen;
+}
+
+/* Contenedor derecho */
+.nav-right {
+    display: flex;
+    align-items: center;
+}
+
+.nav-actions {
+    display: flex;
+    list-style: none;
+    gap: 1.5rem;
+    padding: 0;
+    margin: 0;
+    align-items: center;
+}
+
+.nav-actions a {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.nav-actions a:hover {
+    color: crimson;
+    background-color: #55555563;
+}
+
+.logout-button {
+    background-color: transparent;
+    border: 2px solid white;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+}
+
+/* Ocultar texto para lectores de pantalla */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+/* Menú hamburguesa */
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+}
+i {
+    font-size: 20px;
+    color: rgb(241, 159, 52);
+}
+.nav-right i {
+    font-size: 20px;
+    color: white;
+}
+
+/* Media queries */
+@media (max-width: 768px) {
+    .main-nav {
+        flex-wrap: wrap;
+    }
+
+    .menu-toggle {
+        display: block;
+    }
+
+    .nav-center, .nav-actions {
+        display: none;
+        width: 100%;
+    }
+
+    .nav-center.active, .nav-actions.active {
+        display: block;
+    }
+
+    .nav-links, .nav-actions {
+        flex-direction: column;
+        align-items: center;
+        padding: 1rem 0;
+    }
+
+    .nav-right {
+        margin-left: auto;
+    }
+
+    .nav-links li, .nav-actions li {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+}

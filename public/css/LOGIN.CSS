@@ -1,0 +1,115 @@
+body {
+    background: linear-gradient(#cfe8a9, #f8f4e3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+}
+
+.login {
+    border: 1px solid #8b8b8b;
+    width: 430px;
+    height: 600px;
+    background-color: rgba(255, 255, 255, 0.8);
+    color: #333;
+    border-radius: 20px;
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    padding: 40px;
+    gap: 10px;
+    height: 100%;
+}
+
+h2 {
+    text-align: center;
+    font-weight: bold;
+    font-size: 28px;
+    color: #4d774e; /* Verde oscuro */
+    margin-bottom: 40px;
+    text-shadow: 0px 2px 3px rgba(0, 0, 0, 0.1);
+}
+
+label {
+    color: #4d4d4d;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 1px;
+    padding-left: 10px;
+}
+
+input {
+    background-color: #f1f8e9; /* Verde muy claro */
+    height: 40px;
+    border-radius: 20px;
+    padding: 0px 20px;
+    border: 1px solid #b7d4a7;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.button {
+    background: #6ab04c; /* Verde brillante */
+    height: 40px;
+    border-radius: 20px;
+    border: none;
+    margin: 10px 0px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.button:hover {
+    background-color: #4d774e; /* Verde más oscuro */
+}
+
+a {
+    color: #4d774e;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.imagen-grande {
+    width: 250px;
+    height: auto;
+    display: block;
+    margin: 20px auto;
+}
+
+p {
+    margin-bottom: 0;
+    text-align: center;
+    color: #4d4d4d;
+}
+
+.social-icons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.social-icons i {
+    display: inline-block;
+    font-size: 24px;
+    color: #6ab04c;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.social-icons i:hover {
+    color: #4d774e;
+}

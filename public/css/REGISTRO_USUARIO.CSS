@@ -1,0 +1,127 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.contenedor_registro {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 1200px;
+    padding: 30px;
+    display: flex;
+    gap: 30px;
+}
+
+#firs_part, #second_part {
+    flex: 1;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 15px;
+}
+
+h3 {
+    color: #2c3e50;
+    margin-bottom: 25px;
+    font-size: 1.5rem;
+    text-align: center;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 10px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #34495e;
+    font-weight: 500;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="date"],
+select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    margin-bottom: 5px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="date"]:focus,
+select:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+}
+
+select {
+    cursor: pointer;
+    background-color: white;
+}
+
+input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+}
+
+p {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 10px 0;
+    line-height: 1.4;
+    background: #fff3cd;
+    padding: 10px;
+    border-radius: 5px;
+    border-left: 4px solid #ffc107;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center; /* Centra horizontalmente */
+    margin-top: 20px; /* Espacio superior para separar del contenido anterior */
+    width: 100%; /* Asegura que el contenedor ocupe todo el ancho disponible */
+}
+
+input[type="submit"] {
+    background: #3498bd;
+    color: white;
+    padding: 15px 30px; /* Ajusta el padding para que el botón no sea demasiado ancho */
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold; /* Cambia a bold para que el texto sea más visible */
+    transition: background-color 0.3s ease;
+    /* Elimina cualquier margen que pueda estar afectando la alineación */
+    margin: 0; 
+}
+
+input[type="submit"]:hover {
+    background: #2ce24a;
+}
+
+/* Estilos para campos requeridos */
+input:required {
+    border-left: 3px solid #e74c3c;
+}
+
+input:required:valid {
+    border-left: 3px solid #2ecc71;
+}

@@ -1,0 +1,47 @@
+body {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    /*line-height: 1.6;*/
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(to bottom, #cfe8a9, #f8f4e3);
+    color: #333;
+}
+
+h5 {
+    margin: 0;
+}
+
+main {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.accordion {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+.accordion-item{
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 1rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.accordion-item h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #333;
+}
+
+.accordion-item h2:hover {
+    color: #4CAF50;
+}
+
+h2 i{
+    color: red;
+}

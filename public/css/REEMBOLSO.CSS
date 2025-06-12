@@ -1,0 +1,95 @@
+body{
+  background: linear-gradient(#FFFAF0, #eedcc5);
+}
+    .step-content {
+      display: none;
+    }
+    #step1:checked ~ .step1-content,
+    #step2:checked ~ .step2-content,
+    #step3:checked ~ .step3-content {
+      display: block;
+    }
+    .step-progress {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+    .step-progress .step {
+      display: flex;
+      align-items: center;
+      font-weight: 500;
+      font-size: 0.875rem;
+    }
+
+    .step-progress .step.active {
+      color: #2d6a4f;
+    }
+    .step-progress .step.complete {
+      color: #0f4c75;
+    }
+    .step-progress .step.disabled {
+      color: #c1c1c1;
+    }
+    .progress-bar {
+      height: 0.5rem;
+      background-color: #f1f1f1;
+      border-radius: 1rem;
+    }
+    .progress-bar .bar {
+      height: 100%;
+      background-color: #2d6a4f;
+      border-radius: 1rem;
+    }
+
+    .bbb1{
+      margin: 85px;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 5px;
+      background-color: #27a06a;
+      height: 30px;
+      width: 70%;
+      cursor: pointer;
+      transition: backgraund-color 0.5s;
+    }
+
+    .bbb1:hover{
+      margin-block-end: 0 100px;
+      padding: 5px 10px;
+      background-color: #2d6a4f;
+      color: aliceblue;
+    }
+  
+    .btn-modificar,
+    .btn-confirmar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+    }
+    
+    .btn-modificar {
+      border: 1px solid #16a34a;
+      color: #16a34a;
+      background-color: transparent;
+      width: 50%;
+    }
+    
+    .btn-modificar:hover {
+      background-color: #f0fdf4;
+    }
+    
+    .btn-confirmar {
+      background-color: #16a34a;
+      color: white;
+      width: 50%;
+    }
+    
+    .btn-confirmar:hover {
+      background-color: #15803d;
+    }
+    
