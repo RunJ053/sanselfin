@@ -11,12 +11,13 @@
 <body>
     <img src="{{ asset('img/logo/icon.png') }}" alt="Icono" class="imagen-grande">
     <div class="login">
-        <form action="{{ url('Finca_Al_Dia2') }}" method="get">
+        <form action="{{ route('iniciarSesion') }}" method="POST">
+            @csrf
             <h2>Inicio de sesión</h2>
             <label>Usuario</label>
-            <input type="text" placeholder="User">
+            <input type="text" name="nombre_usuario" placeholder="User">
             <label>Contraseña</label>
-            <input type="password" placeholder="Password">
+            <input type="password" name="password" placeholder="Password">
             <input class="button" type="submit" value="Inicio de sesión">
             <a href="{{ route('registro') }}">¡Registrate aquí!</a>
             <a href="">¿Eres Administrador? Ingresa aqui</a>

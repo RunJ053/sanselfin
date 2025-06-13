@@ -35,7 +35,7 @@ class DatoUsuarioController extends Controller
         $datos->email = $request->correo;
         $datos->localidad = $request->Localidad;
         $datos->tipo_client = 1;
-        $datos->ducument = $request->document;
+        //$datos->ducument = $request->doc;
         $datos->save();
         return redirect()->route('crearUsuario')->with('success', 'Usuario registrado exitosamente.');
 

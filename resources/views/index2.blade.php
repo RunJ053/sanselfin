@@ -47,7 +47,7 @@
                     </a>
                 </li>
                 <li role="none">
-                    <a href="index.html" class="logout-button" role="menuitem">Cerrar Sesión</a>
+                    <a href="{{ route('logout') }}" class="logout-button" role="menuitem">Cerrar Sesión</a>
                 </li>
             </ul>
             <button class="menu-toggle" onclick="toggleMenu()" aria-expanded="false" aria-label="Menú">
@@ -60,7 +60,7 @@
             <div data-aos="fade-down" data-aos-delay="100" class="container">
                 <div class="hero-text">
                     <h2>La Finca al Día:</h2>
-                    <h1>Bienvenido, [Nombre de Usuario]</h1>
+                    <h1>Bienvenido, <?php $usuario_id = session('usuario_id', 'default_value'); ?></h1>
                 </div>
                 <div data-aos="fade-left" data-aos-delay="1000" class="hero-info">
                     <p>Descubre más productos</p>

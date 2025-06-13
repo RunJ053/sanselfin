@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Usuario;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+
 
 class UsuarioController extends Controller
 {
@@ -31,9 +33,23 @@ class UsuarioController extends Controller
         return redirect()->route('login')->with('success');
     }
 
-    public function show(Usuario $usuario)
+    public function show(Request $request)
     {
-        
+        $request->validate([
+            'nombre_usuario' => 'required|string',
+            'password' => 'required|string',
+        ]);
+
+        $usuario = Usuario::where('nombre_usuario', $request->nombre_usuario)->first();
+
+        if ($usuario && Hash::check($request->password, $usuario->password)) {
+            // Autenticación exitosa
+            session(['usuario_id' => $usuario->id]); // guardar ID del usuario en la sesión
+
+            return view('index2');
+        }
+
+        return back()->withErrors(['login_error' => 'Usuario o contraseña incorrectos']);
     }
 
     public function edit(Usuario $usuario)
@@ -50,4 +66,11 @@ class UsuarioController extends Controller
     {
         //
     }
+
+    public function logout()
+    {
+        session()->forget('usuario_id');
+        return view('index');
+    }
+
 }
