@@ -60,7 +60,7 @@
             <div data-aos="fade-down" data-aos-delay="100" class="container">
                 <div class="hero-text">
                     <h2>La Finca al Día:</h2>
-                    <h1>Bienvenido, <?php $usuario_id = session('usuario_id', 'default_value'); ?></h1>
+                    <h1>Bienvenido, <?php echo session('nombre_usuario') ? session('nombre_usuario') : 'Invitado'; ?></h1>
                 </div>
                 <div data-aos="fade-left" data-aos-delay="1000" class="hero-info">
                     <p>Descubre más productos</p>

@@ -44,8 +44,8 @@ class UsuarioController extends Controller
 
         if ($usuario && Hash::check($request->password, $usuario->password)) {
             // Autenticación exitosa
-            session(['usuario_id' => $usuario->id]); // guardar ID del usuario en la sesión
-
+            session(['usuario_id' => $usuario->id, 'nombre_usuario' => $usuario->nombre_usuario]);
+            
             return view('index2');
         }
 
