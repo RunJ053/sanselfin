@@ -17,15 +17,14 @@ return new class extends Migration
             $table->id();
             $table->string('nombre');
             $table->string('apellidos');
-            $table->string('segundo_nombre');
             $table->string('direccion');
             $table->foreignId('pregunta_seguridad')->constrained('seguridad')->onDelete('cascade');
             $table->string('respuesta_seguridad');
             $table->foreignId('tipo_docu')->constrained('tipos_documentos')->onDelete('cascade');
-            $table->foreignId('tipo_client')->constrained('tipos_clientes')->onDelete('cascade');
+            $table->foreignId('tipo_client')->constrained('tipos_clientes')->onDelete('cascade')-> default(1);
             $table->foreignId('tipo_de_genero')->constrained('generos')->onDelete('cascade');
             $table->bigInteger('documento')->unique();
-            $table->bigInteger('edad');
+            $table->date('edad');
             $table->mediumInteger('telefono')->unique();
             $table->string('email')->unique();
             $table->string('localidad');
