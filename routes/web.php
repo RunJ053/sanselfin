@@ -23,12 +23,13 @@ Route::get("/", function(){
 
 Route::get('/Finca_Al_Dia2', function () {
     return view('index2');
-    
 });
+
 //inicio de sesion
 Route::get("/incio_sesion", [UsuarioController::class,"index"])->name("login");
 //Creacion de usuarios
 Route::get('crear/usuario', [UsuarioController::class,"create"])->name("crearUsuario");
+Route::post('usuario/registrar', [UsuarioController::class,"store"])->name("storeUsuario");
 
 //Registro de usuario
 Route::get("/usuario/registro", [DatoUsuarioController::class,"index"])->name("registro");

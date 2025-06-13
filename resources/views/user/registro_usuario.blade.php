@@ -6,7 +6,7 @@
     <title>Registro de usuario</title>
     <link rel="shortcut icon" href="../img/logo/icon.png" type="image/x-icon">
     <link rel="stylesheet" href="{{asset('css/REGISTRO_USUARIO.CSS')}}">
-    <link rel="import" href="{{ asset("js/ppp.js") }}">
+    
 </head>
 <body>
     <div class="form-container">
@@ -16,7 +16,6 @@
         </div>
         
         <div class="form-content">
-        
             <form action="{{ route('store') }}" method="post">
                 @csrf
                 <div class="form-grid">
