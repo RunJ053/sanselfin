@@ -25,6 +25,7 @@ class DatoUsuario extends Model
         'telefono',
         'email',
         'localidad',
+        'nom_imgs',
     ];
     protected $hidden = [
         'created_at',

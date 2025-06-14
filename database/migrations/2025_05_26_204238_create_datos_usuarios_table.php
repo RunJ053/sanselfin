@@ -25,9 +25,10 @@ return new class extends Migration
             $table->foreignId('tipo_de_genero')->constrained('generos')->onDelete('cascade');
             $table->bigInteger('documento')->unique();
             $table->date('edad');
-            $table->mediumInteger('telefono')->unique();
+            $table->bigInteger('telefono')->unique();
             $table->string('email')->unique();
             $table->string('localidad');
+            $table->string('nom_imgs')->nullable();
             
             $table->timestamps();
         });

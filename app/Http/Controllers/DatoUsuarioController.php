@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Validator;
+use RealRashid\SweetAlert\Facades\Alert;
 use App\Models\DatoUsuario;
 use App\Models\Genero;
 use App\Models\TipoDocumento;
 use App\Models\Seguridad;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+
 class DatoUsuarioController extends Controller
 {
-
     public function index()
     {
         $genero = Genero::all();
@@ -19,9 +22,31 @@ class DatoUsuarioController extends Controller
     }
 
     public function store(Request $request)
-    {
+{
+    // Validar la solicitud
+    $validator = Validator::make($request->all(), [
+        'doc' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
+        'nom' => 'required|string|max:255|regex:/^[A-Za-záéíóúÁÉÍÓÚüÜñÑ\s]+$/',
+        'ape' => 'required|string|max:255|regex:/^[A-Za-záéíóúÁÉÍÓÚüÜñÑ\s]+$/',
+        'Direccion' => 'required|string|max:255',
+        'Pregunta_seguridad' => 'required|string|max:255',
+        'Respuesta_pregunta' => 'required|string|max:255|regex:/^[A-Za-z0-9áéíóúÁÉÍÓÚüÜñÑ\s]+$/',
+        'tipodocu' => 'required|string|max:255',
+        'num_doc' => 'required|string|max:255',
+        'sexo' => 'required|string|max:255',
+        'fecha_nac' => 'required|date',
+        'telefono' => 'required|string|max:15',
+        'correo' => 'required|email|max:255',
+        'Localidad' => 'required|string|max:255',
+    ]);
+    if ($validator->fails()) {
+        // Redirigir con errores de validación
+        return redirect()->back()
+        ->withErrors($validator)
+        ->withInput();
+    }
+    try {
         $datos = new DatoUsuario;
-
         $datos->nombre = $request->nom;
         $datos->apellidos = $request->ape;
         $datos->direccion = $request->Direccion;
@@ -35,12 +60,22 @@ class DatoUsuarioController extends Controller
         $datos->email = $request->correo;
         $datos->localidad = $request->Localidad;
         $datos->tipo_client = 1;
-        //$datos->ducument = $request->doc;
+
+        // Manejo de la carga del documento
+        if ($request->hasFile('doc')) {
+            $archivo = $request->file('doc');
+            $nombreArchivo = Str::slug($request->nom) . "-" . time() . "." . $archivo->guessExtension(); // Generar un nombre único
+            $ruta = public_path('img/documents'); 
+            $archivo->move($ruta, $nombreArchivo); 
+            $datos->nom_imgs = $nombreArchivo; // Asignar el nombre del archivo a la propiedad del modelo
+        }
         $datos->save();
-        return redirect()->route('crearUsuario')->with('success', 'Usuario registrado exitosamente.');
-
+        return redirect()->route('crearUsuario')->with('success', 'Usuario creado exitosamente!');
+    } catch (\Exception $e) {
+        // Manejo de excepciones
+        return redirect()->back()->with('error', 'Error al crear el usuario: ' . $e->getMessage());
     }
-
+}
     
     public function show(DatoUsuario $datoUsuario)
     {

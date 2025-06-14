@@ -1,14 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de usuario</title>
-    <link rel="shortcut icon" href="../img/logo/icon.png" type="image/x-icon">
-    <link rel="stylesheet" href="{{asset('css/REGISTRO_USUARIO.CSS')}}">
-    
-</head>
-<body>
+@extends('layouts.registro_usuario')
+
+@section('title', 'Registro de usuario')
+
+@section('content')
     <div class="form-container">
         <div class="form-header">
             <h1>🥬 Finca Al Día</h1>
@@ -16,7 +10,7 @@
         </div>
         
         <div class="form-content">
-            <form action="{{ route('store') }}" method="post">
+            <form action="{{ route('store') }}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="form-grid">
                     <div class="form-section">
@@ -44,7 +38,7 @@
 
                         <div class="form-group">
                             <label for="num_doc" class="form-label">Número del documento *</label>
-                            <input type="text" name="num_doc" id="num_doc" class="form-input" required>
+                            <input type="number" name="num_doc" id="num_doc" class="form-input" required>
                         </div>
 
                         <div class="form-group">
@@ -64,7 +58,7 @@
 
                         <div class="form-group">
                             <label for="telefono" class="form-label">Número telefónico *</label>
-                            <input type="text" name="telefono" id="telefono" class="form-input" required>
+                            <input type="number" name="telefono" id="telefono" class="form-input" required>
                         </div>
                     </div>
 
@@ -120,6 +114,4 @@
             </form>
         </div>
     </div>
-    <script src="js/ppp.js"></script>
-</body>
-</html>
+@endsection

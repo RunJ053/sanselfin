@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignId('cliente')->constrained('datos_usuario')->onDelete('cascade');
             $table->string('nombre_usuario');
             $table->string('password');
+            $table->string('user_img')->nullable();
             $table->timestamps();
         });
     }

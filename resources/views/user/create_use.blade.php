@@ -6,6 +6,7 @@
     <title>Registro de usuarios</title>
     <link rel="shortcut icon" href="../img/logo/icon.png" type="image/x-icon">
     <link rel="stylesheet" href="{{ asset('css/CREAR_USUARIO.CSS')}}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <div class="crear_user">
@@ -21,5 +22,17 @@
             <button type="submit" name="crear">Crear usuario</button>
         </form>
     </div>
+    {{-- Mostrar mensajes de sesión --}}
+    @if(session('success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: '¡Creado éxito!',
+                text: "{{ session('success') }}",
+                showConfirmButton: false,
+                timer: 2500
+            });
+        </script>
+    @endif
 </body>
 </html>
