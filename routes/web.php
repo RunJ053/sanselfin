@@ -21,7 +21,7 @@ Route::post("/login", [UsuarioController::class, "show"])->name("iniciarSesion")
 Route::get("/logout", [UsuarioController::class, "logout"])->name("logout");
 
 //Creacion de usuarios
-Route::get('crear/usuario', [UsuarioController::class,"create"])->name("crearUsuario");
+Route::get('crear/usuario/{cliente_id}', [UsuarioController::class,"create"])->name("crearUsuario");
 Route::post('usuario/registrar', [UsuarioController::class,"store"])->name("storeUsuario");
 
 //Registro de usuario

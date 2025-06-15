@@ -14,13 +14,13 @@
 <body>
     <nav class="main-nav" aria-label="Navegación principal">
         <div class="nav-left">
-            <a href="index2.html" class="logo-link">
+            <a href="{{ url('/Finca_Al_Dia2') }}" class="logo-link">
                 <img src="img/logo/icon.png" alt="Logo de La Finca al Día" width="150" height="50">
             </a>
         </div>
         <div class="nav-center">
             <ul class="nav-links" role="menubar">
-                <li role="none"><a href="index2.html" role="menuitem">Inicio</a></li>
+                <li role="none"><a href="{{ url('/Finca_Al_Dia2') }}" role="menuitem">Inicio</a></li>
                 <li role="none"><a href="PRODUCTO.html" role="menuitem">Productos</a></li>
                 <li role="none"><a href="SERVICIOS.html" role="menuitem">Servicios</a></li>
                 <li role="none"><a href="ACERCA_DE.html" role="menuitem">Acerca de</a></li>

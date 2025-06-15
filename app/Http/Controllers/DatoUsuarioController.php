@@ -70,11 +70,12 @@ class DatoUsuarioController extends Controller
             $datos->nom_imgs = $nombreArchivo; // Asignar el nombre del archivo a la propiedad del modelo
         }
         $datos->save();
-        return redirect()->route('crearUsuario')->with('success', 'Usuario creado exitosamente!');
+        return redirect()->route('crearUsuario', ['cliente_id'=>$datos->id])->with('success', 'Usuario creado exitosamente!');
     } catch (\Exception $e) {
-        // Manejo de excepciones
-        return redirect()->back()->with('error', 'Error al crear el usuario: ' . $e->getMessage());
+    // Manejo de excepciones
+        return redirect()->back()->with('error', 'Error al crear el usuario. Por favor, verifica que no exista un usuario con esos datos.');
     }
+
 }
     
     public function show(DatoUsuario $datoUsuario)

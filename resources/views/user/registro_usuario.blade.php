@@ -1,4 +1,4 @@
-@extends('layouts.registro_usuario')
+@extends('layouts.users.registro_usuario')
 
 @section('title', 'Registro de usuario')
 

@@ -15,23 +15,35 @@ class UsuarioController extends Controller
         return view("user.login");
     }
 
-    public function create()
+    public function create($cliente_id)
     {
-        return view('user.create_use');
+        return view('user.create_use', compact('cliente_id'));
     }
 
     public function store(Request $request)
     {
-        $usuario = new Usuario();
+        // Validar la solicitud
+        $request->validate([
+            'nom_usuario' => 'required|string|min:6|max:15',
+            'contra' => 'required|string|min:8|max:20',
+            'confi_contra' => 'required|string|min:8|max:20|same:contra', // Verifica que coincidan
+        ]);
 
+        // Verificar si el nombre de usuario ya existe
+        if (Usuario::where('nombre_usuario', $request->nom_usuario)->exists()) {
+            return redirect()->back()->with('error', 'El nombre de usuario ya existe.')->withInput();
+        }
+
+        $usuario = new Usuario();
         $usuario->nombre_usuario = $request->nom_usuario;
-        $usuario->cliente=1; // Asignar cliente por defecto
-        $usuario->password = bcrypt($request->confi_contra);
+        $usuario->cliente = $request->cliente_id;
+        $usuario->password = bcrypt($request->contra);
 
         $usuario->save();
             
-        return redirect()->route('login')->with('success');
+        return redirect()->route('login')->with('success', 'Usuario creado exitosamente!');
     }
+
 
     public function show(Request $request)
     {
