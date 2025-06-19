@@ -35,7 +35,9 @@ class InventarioController extends Controller
 
         $inventario->nombre_producto = $request->nombre;
         $inventario->descripcion = $request->descripcion;
-        $inventario->cantidad = $request->cantidad;
+        $inventario->stock = $request->Stock;
+        $inventario->precio_unitario->Valor_Unitario;
+
         $inventario->save();
         return redirect()->route('inventario.index');
 
@@ -80,9 +82,6 @@ class InventarioController extends Controller
      */
     public function destroy(Inventario $inventario)
     {
-        $inventario->delete();
 
-        return redirect()->route('inventario.index')
-                        ->with('success', 'Producto eliminado correctamente.');
     }
 }

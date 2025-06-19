@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('producto_id')->constrained('productos')->onDelete('cascade');
             $table->string('nombre_producto');
             $table->text('descripcion')->nullable();
-            $table->integer('cantidad')->default(0);
+            $table->integer('stock')->default(0);
             $table->timestamps();
         });
     }

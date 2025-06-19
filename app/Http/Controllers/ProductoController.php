@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Producto;
+use App\Models\Categoria;
+use App\Models\Impuesto;
+use App\Models\Promocion;
 use Illuminate\Http\Request;
 
 class ProductoController extends Controller
@@ -10,11 +13,16 @@ class ProductoController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        //
+        $categorias= Categoria::all();
+        $impuestos= Impuesto::all();
+        $promociones= Promocion::all();
+        return view('inventario.index', compact('promociones', 'categorias', 'impuestos'));
+
+
+
     }
 
     /**
@@ -35,9 +43,17 @@ class ProductoController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
+        $inventario= new Producto;
 
+        $inventario->nombre_producto = $request->nombre;
+        $inventario->descripcion = $request->descripcion;
+        $inventario->stock = $request->Stock;
+        $inventario->precio_unitario->Valor_Unitario;
+
+        $inventario->save();
+        return redirect()->route('inventario.index');
+
+    }
     /**
      * Display the specified resource.
      *
@@ -80,6 +96,9 @@ class ProductoController extends Controller
      */
     public function destroy(Producto $producto)
     {
-        //
+        $producto->delete();
+
+        return redirect()->route('inventario.index')
+                        ->with('success', 'Producto eliminado correctamente.');
     }
 }

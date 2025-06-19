@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\DatoUsuarioController;
+use App\Http\Controllers\InventarioController;
+use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\UsuarioController;
 use App\Models\DatoUsuario;
 use App\Models\Usuario;
@@ -27,3 +29,8 @@ Route::post('usuario/registrar', [UsuarioController::class,"store"])->name("stor
 //Registro de usuario
 Route::get("/usuario/registro", [DatoUsuarioController::class,"index"])->name("registro");
 Route::post("/registrado", [DatoUsuarioController::class,"store"])->name("store");
+
+//inventario
+Route::get('/inventario', [ProductoController::class, 'index'])->name('inventario.index');
+Route::get('/inventario/create', [InventarioController::class, 'create'])->name('inventario.create');
+Route::post('/inventario/guardar', [InventarioController::class, 'store'])->name('inventario.guardar');

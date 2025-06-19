@@ -12,11 +12,6 @@
         <form action="{{ route('store') }}" method="POST" enctype="multipart/form-data">
             @csrf
         <div class="form-group">
-            <label for="codigo">Código del Producto</label>
-            <input type="text" name="codigo" required>
-        </div>
-
-        <div class="form-group">
             <label for="nombre">Nombre del Producto</label>
             <input type="text" name="nombre" required>
         </div>
@@ -44,6 +39,28 @@
         <div class="form-group">
             <label for="stock">Stock</label>
             <input type="number" name="stock" required>
+        </div>
+
+        <div class="form-group">
+            <label for="stock">Impuesto</label>
+            <select name="Impuesto" id="">
+                <option value="">Selecione la promocion</option>
+                @foreach ($impuestos as $impuesto)
+                <option value="{{ $impuesto }}"></option>
+
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="stock">Promocion</label>
+            <select name="Promocion" id="">
+                <option value="">Selecciona una promocion</option>
+                @foreach ($promociones as $promocion)
+                <option value="{{ $promocion->id }}">
+                    {{ $promocion-> descuento}}
+                </option>
+                @endforeach
+            </select>
         </div>
 
         <div class="form-group">
