@@ -5,6 +5,7 @@ use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\UsuarioController;
 use App\Models\DatoUsuario;
+use App\Models\Inventario;
 use App\Models\Usuario;
 use Illuminate\Support\Facades\Route;
 
@@ -31,6 +32,10 @@ Route::get("/usuario/registro", [DatoUsuarioController::class,"index"])->name("r
 Route::post("/registrado", [DatoUsuarioController::class,"store"])->name("store");
 
 //inventario
-Route::get('/inventario', [ProductoController::class, 'index'])->name('inventario.index');
-Route::get('/inventario/create', [InventarioController::class, 'create'])->name('inventario.create');
-Route::post('/inventario/guardar', [InventarioController::class, 'store'])->name('inventario.guardar');
+Route::get('/inventario', [InventarioController::class, 'index'])->name('inventario.index');
+
+
+//Productos
+Route::get('/producto', [ProductoController::class, 'index'])->name('producto.index');
+Route::get('/producto/create', [ProductoController::class, 'create'])->name('producto.create');
+Route::post('/producto/guardar', [ProductoController::class, 'store'])->name('Producto.guardar'); 

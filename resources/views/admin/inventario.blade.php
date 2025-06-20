@@ -45,8 +45,8 @@
   </div>
   <div class="offcanvas-body">
     <ul class="nav flex-column">
-      <li class="nav-item mb-2"><a class="nav-link text-white" href="../INDEX_ADMI.html"><i class="fas fa-home me-2"></i>Inicio</a></li>
-      <li class="nav-item mb-2"><a class="nav-link text-white" href="admin/INVENTARIO.php"><i class="fas fa-boxes me-2"></i>Inventario</a></li>
+      <li class="nav-item mb-2"><a class="nav-link text-white" href="{{ route('inventario.index') }}"><i class="fas fa-home me-2"></i>Inicio</a></li>
+      <li class="nav-item mb-2"><a class="nav-link text-white" href="{{ route('producto.index') }}"><i class="fas fa-boxes me-2"></i>Inventario</a></li>
       <li class="nav-item mb-2"><a class="nav-link text-white" href="admin/PRODUCTOS_RECI.php"><i class="fas fa-boxes me-2"></i>Reportes</a></li>
       <li class="nav-item mt-5"><a class="nav-link text-danger" href="../INDEX_ADMI.html"><i class="fas fa-sign-out-alt me-2"></i>Salir</a></li>
     </ul>
@@ -60,8 +60,8 @@
     <h5 class="mt-2">Inventario</h5>
   </div>
   <ul class="nav flex-column">
-    <li class="nav-item mb-2"><a class="nav-link text-white" href="../INDEX_ADMI.html"><i class="fas fa-home me-2"></i>Inicio</a></li>
-    <li class="nav-item mb-2"><a class="nav-link text-white" href="admin/INVENTARIO.php"><i class="fas fa-boxes me-2"></i>Inventario</a></li>
+      <li class="nav-item mb-2"><a class="nav-link text-white" href="{{ route('inventario.index') }}"><i class="fas fa-home me-2"></i>Inicio</a></li>
+      <li class="nav-item mb-2"><a class="nav-link text-white" href="{{ route('producto.index') }}"><i class="fas fa-boxes me-2"></i>Inventario</a></li>
     <li class="nav-item mb-2"><a class="nav-link text-white" href="PRODUCTOS_RECI.php"><i class="fas fa-boxes me-2"></i>Reportes</a></li>
     <li class="nav-item mt-5"><a class="nav-link text-danger" href="../INDEX_ADMI.html"><i class="fas fa-sign-out-alt me-2"></i>Salir</a></li>
   </ul>
@@ -71,7 +71,7 @@
 <div class="main-content">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>Gestión de Inventario</h2>
-    <a href="{{ route('inventario.create') }}" class="btn btn-primary">
+    <a href="{{ route('producto.create') }}" class="btn btn-primary">
       <i class="fas fa-plus me-1"></i>Nuevo Producto
     </a>
   </div>
@@ -82,7 +82,6 @@
         <div class="card-body">
           <h5><i class="fas fa-dollar-sign me-2"></i>Valor Total Inventario</h5>
           <p class="fs-4">
-            $
             @php
               $total = 0;
               foreach ($inventarios as $item) {
@@ -128,19 +127,20 @@
           <th>Categoría</th>
           <th>Descripción</th>
           <th>Valor Unitario</th>
-          <th>Precio</th>
+          <th>Impuesto</th>
           <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
         @foreach ($inventarios as $item)
           <tr>
-            <td>{{ $item->Codigo_Producto }}</td>
-            <td>{{ $item->Nombre_Producto }}</td>
-            <td>{{ $item->Categoria }}</td>
-            <td>{{ $item->Descripcion }}</td>
-            <td>${{ number_format($item->Valor_Unitario, 0, ',', '.') }}</td>
-            <td>${{ number_format($item->Precio, 0, ',', '.') }}</td>
+            <td>{{ $item->id }}</td>
+            <td>{{ $item->nombre_producto }}</td>
+            <td>{{ $item->categorias->nombre}}</td>  {{-- o el campo correcto --}}
+            <td>{{ $item->promociones->nombre_promocion }}</td>
+            <td>${{ number_format($item->precio_unitario, 0, ',', '.') }}</td>
+            <td>{{$item->impuestos->nombre_impuesto }}</td>
+
             <td>
               <a href="{{ url('editar_producto/' . $item->id) }}" class="btn btn-sm btn-warning mb-1">
                 <i class="fas fa-edit"></i>

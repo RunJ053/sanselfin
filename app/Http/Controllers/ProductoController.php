@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Producto;
 use App\Models\Categoria;
 use App\Models\Impuesto;
+
 use App\Models\Promocion;
 use Illuminate\Http\Request;
 
@@ -16,23 +17,29 @@ class ProductoController extends Controller
      */
     public function index()
     {
-        $categorias= Categoria::all();
-        $impuestos= Impuesto::all();
-        $promociones= Promocion::all();
-        return view('inventario.index', compact('promociones', 'categorias', 'impuestos'));
+        $inventarios = Producto::with(['categorias', 'impuestos', 'promociones'])->get();
+        $categorias = Categoria::all();
+        $impuestos = Impuesto::all();
+        $promociones = Promocion::all();
 
-
-
+        return view('admin.inventario', compact('inventarios', 'categorias', 'impuestos', 'promociones'));
     }
+
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+
      */
     public function create()
     {
-        //
+    $inventarios = Producto::all(); // O el modelo que corresponda
+    $categorias = Categoria::all();
+    $impuestos = Impuesto::all();
+    $promociones = Promocion::all();
+
+
+    return view('admin.new_producto', compact('inventarios', 'categorias', 'impuestos', 'promociones'));
     }
 
     /**
@@ -43,15 +50,17 @@ class ProductoController extends Controller
      */
     public function store(Request $request)
     {
-        $inventario= new Producto;
+        $prod= new Producto;
 
-        $inventario->nombre_producto = $request->nombre;
-        $inventario->descripcion = $request->descripcion;
-        $inventario->stock = $request->Stock;
-        $inventario->precio_unitario->Valor_Unitario;
-
-        $inventario->save();
-        return redirect()->route('inventario.index');
+        $prod->nombre_producto = $request->nombre;
+        $prod->categoria_id = $request-> Categoria;
+        $prod->descripccion = $request->descripcion;
+        //$prod->stock = $request->Stock;
+        $prod->precio_unitario= $request->valor_unitario;
+        $prod->impuesto_id= $request->Impuesto;
+        $prod->descuento_id= $request->Promocion;
+        $prod->save();
+        return redirect()->route('producto.index');
 
     }
     /**
