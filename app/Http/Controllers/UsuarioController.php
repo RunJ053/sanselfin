@@ -40,7 +40,7 @@ class UsuarioController extends Controller
         $usuario->password = bcrypt($request->contra);
 
         $usuario->save();
-            
+
         return redirect()->route('login')->with('success', 'Usuario creado exitosamente!');
     }
 
@@ -57,7 +57,7 @@ class UsuarioController extends Controller
         if ($usuario && Hash::check($request->password, $usuario->password)) {
             // Autenticación exitosa
             session(['usuario_id' => $usuario->id, 'nombre_usuario' => $usuario->nombre_usuario]);
-            
+
             return view('index2');
         }
 
@@ -66,17 +66,19 @@ class UsuarioController extends Controller
 
     public function myProfile()
     {
-        //$usuarioId = session('usuario_id');
-        //if (!$usuarioId) {
-        //    return redirect()->route('login')->withErrors(['login_error' => 'Debe iniciar sesión primero']);
-        //}
+        $usuarioId = session('usuario_id');
 
-        //$usuario = Usuario::find($usuarioId);
-        //if (!$usuario) {
-        //    return redirect()->route('login')->withErrors(['login_error' => 'Usuario no encontrado']);
-        //} compact('usuario')
+        if (!$usuarioId) {
+            return redirect()->route('login')->withErrors(['login_error' => 'Debe iniciar sesión primero']);
+        }
 
-        return view('user.perfil');
+        $usuario = Usuario::find($usuarioId);
+
+        if (!$usuario) {
+            return redirect()->route('login')->withErrors(['login_error' => 'Usuario no encontrado']);
+        }
+
+        return view('user.perfil', compact('usuario'));
     }
 
     public function edit(Usuario $usuario)
@@ -99,5 +101,4 @@ class UsuarioController extends Controller
         session()->forget('usuario_id');
         return view('index');
     }
-
 }

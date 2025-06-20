@@ -509,9 +509,8 @@ i {
     position: relative;
     cursor: pointer;
 }
-
 .dropdown-menu {
-    display: none; /* Ocultar el menú por defecto */
+    display: none; /* Ocultar por defecto */
     position: absolute;
     top: 100%; /* Colocar debajo del avatar */
     right: 0; /* Alinear a la derecha */
@@ -531,6 +530,10 @@ i {
 
 .dropdown-item:hover {
     background-color: #f0f0f0; /* Cambiar color al pasar el mouse */
+}
+
+.hidden {
+    display: none; /* Clase para ocultar elementos */
 }
 
 /* Responsive Design */
