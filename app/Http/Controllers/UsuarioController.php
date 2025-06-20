@@ -64,6 +64,21 @@ class UsuarioController extends Controller
         return back()->withErrors(['login_error' => 'Usuario o contraseña incorrectos']);
     }
 
+    public function myProfile()
+    {
+        //$usuarioId = session('usuario_id');
+        //if (!$usuarioId) {
+        //    return redirect()->route('login')->withErrors(['login_error' => 'Debe iniciar sesión primero']);
+        //}
+
+        //$usuario = Usuario::find($usuarioId);
+        //if (!$usuario) {
+        //    return redirect()->route('login')->withErrors(['login_error' => 'Usuario no encontrado']);
+        //} compact('usuario')
+
+        return view('user.perfil');
+    }
+
     public function edit(Usuario $usuario)
     {
         //

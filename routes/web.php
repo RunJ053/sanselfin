@@ -20,6 +20,8 @@ Route::get("/incio_sesion", [UsuarioController::class,"index"])->name("login");
 Route::post("/login", [UsuarioController::class, "show"])->name("iniciarSesion");
 Route::get("/logout", [UsuarioController::class, "logout"])->name("logout");
 
+Route::get('/my-profile', [UsuarioController::class, 'myProfile'])->name('myProfile');
+
 //Creacion de usuarios
 Route::get('crear/usuario/{cliente_id}', [UsuarioController::class,"create"])->name("crearUsuario");
 Route::post('usuario/registrar', [UsuarioController::class,"store"])->name("storeUsuario");

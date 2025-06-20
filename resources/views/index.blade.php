@@ -41,6 +41,7 @@
             </div>
             <div data-aos="fade-left" class="hero-info">
                 <p>Descubre más productos</p>
+                <br>
                 <a href="user/LOGIN.html" class="button">Explorar Productos</a>
             </div>
         </div>
@@ -150,8 +151,7 @@
 
     <section class="blog">
         <div data-aos="fade-down" data-aos-easing="linear" class="container">
-            <h2 style="margin-top: 12%; display: flex; justify-content: center;">Descubre las características claves
-                de</h2>
+            <h2 style="margin-top: 12%; display: flex; justify-content: center;">Descubre las características claves de</h2>
             <h2 style="display: flex; justify-content: center;">nuestro software de compra de</h2>
             <h2 style="display: flex; justify-content: center;">vegetales</h2>
             <hr>

@@ -16,7 +16,7 @@ body {
 .hero {
     margin-top: 2%;
     width: 90%;
-    height: 550px;
+    height: 40rem;
     border-radius: 6px;
     margin-left: 5%;
     margin-right: 5%;
@@ -24,22 +24,23 @@ body {
     background-size: cover; 
     background-position: center center; 
     color: white;
-    padding: 50px 0;
+    padding: 0;
     text-align: center;
 }
 .welcome-text {
-    width: 750px;
+    width: 60%;
     font-size: 1.8em;
     margin-top: 20px;
     text-align: justify;
 }
 .hero-text h1 {
+    margin-top: 3rem;
     font-size: 2.5em;
 }
 
 .hero-info {
-    margin-top: 20px;
-    text-align: right;
+    margin-top: 30px;
+    text-align: left;
     font-size: 1.1em;
 }
 
@@ -65,13 +66,12 @@ body {
 }
 
 .button a{
-    text-decoration: none;
     color: #eee;
 }
 
 /*Estilos para Mas para Ti*/
 .mas_para_ti {
-    background-color: beige;
+    background: linear-gradient(to bottom, #bfd3a2, #e4e1d4);
     text-align: justify;
     padding: 50px 0;
 }
@@ -504,6 +504,38 @@ i {
     height: 30px;
 }
 
+/* Para menú desplegable */
+.user-avatar {
+    position: relative;
+    cursor: pointer;
+}
+
+.dropdown-menu {
+    display: none; /* Ocultar el menú por defecto */
+    position: absolute;
+    top: 100%; /* Colocar debajo del avatar */
+    right: 0; /* Alinear a la derecha */
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000; /* Asegurarse de que esté por encima de otros elementos */
+}
+
+.dropdown-item {
+    display: block;
+    padding: 10px 15px;
+    color: #333;
+    text-decoration: none;
+}
+
+.dropdown-item:hover {
+    background-color: #f0f0f0; /* Cambiar color al pasar el mouse */
+}
+
+/* Responsive Design */
+/* Ajustes para pantallas pequeñas */
+
 @media (max-width: 768px) {
     .footer-grid {
         grid-template-columns: 1fr;
@@ -512,5 +544,16 @@ i {
     .footer-bottom .container {
         flex-direction: column;
         gap: 1rem;
+    }
+}
+/* Ajustes para pantallas medianas */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .footer-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .footer-bottom .container {
+        flex-direction: row;
+        justify-content: space-between;
     }
 }
