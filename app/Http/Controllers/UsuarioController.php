@@ -10,9 +10,10 @@ use Illuminate\Support\Facades\Hash;
 class UsuarioController extends Controller
 {
 
-    public function index()
-    {
-        return view("user.login");
+
+
+    public function inicioAdmin(){
+        return view('user.administrador');
     }
 
     public function create($cliente_id)

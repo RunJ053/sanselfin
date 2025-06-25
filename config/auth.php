@@ -1,4 +1,8 @@
 <?php
+// config/auth.php
+// This file is part of the Laravel framework and is used to configure authentication settings.
+// It defines the default authentication guard, user providers, and password reset settings.
+use App\Models\Usuario;
 
 return [
 
@@ -62,7 +66,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\Models\User::class,
+            'model' => App\Models\Usuario::class,
         ],
 
         // 'users' => [

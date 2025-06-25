@@ -1,108 +1,211 @@
+/* Estilos personalizados para el login del administrador */
+
+:root {
+    --primary-color: #bcea76;
+    --secondary-color: #dbd09c;
+    --text-muted: #6c757d;
+    --border-color: #dee2e6;
+    --shadow-light: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    --shadow-hover: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background: linear-gradient(to bottom, #cfe8a9, #f8f4e3);
+    background: linear-gradient(
+        135deg,
+        var(--primary-color) 0%,
+        var(--secondary-color) 100%
+    );
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.login-container {
-    border: 1px solid #8b8b8b;
-    background-color:rgba(255, 255, 255, 0.8);
-    padding: 25px 40px;
-    border-radius: 15px;
-    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    width: 100%;
-    max-width: 400px;
+/* Mejoras sutiles al contenedor principal */
+.container {
+    animation: fadeInUp 0.8s ease-out;
 }
 
-h2 {
-    margin-bottom: 20px;
-    color: #4d774e;
-    font-family: 'Georgia', serif;
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-label {
-    display: block;
-    text-align: left;
-    font-size: 14px;
-    color: #4d774e;
-    margin-bottom: 5px;
-    font-weight: bold;
+/* Card con efecto glassmorphism sutil */
+.login-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    box-shadow: var(--shadow-hover);
+    transition: all 0.3s ease;
 }
 
-input {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #333;
-    border-radius: 25px;
-    font-size: 14px;
-    box-sizing: border-box;
-    background-color: #f1f8e9;
-    text-indent: 10px;
+.login-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.2);
 }
 
-input:focus {
-    border-color: #5cb85c;
-    outline: none;
+/* Mejoras a la imagen */
+.img-fluid {
+    filter: drop-shadow(0 10px 30px rgba(102, 126, 234, 0.2));
+    transition: transform 0.3s ease;
 }
 
-.login-btn {
-    background-color: #8bd774;
-    color: white;
-    padding: 10px 15px;
+.img-fluid:hover {
+    transform: scale(1.02);
+}
+
+/* Logo con efecto hover */
+.logo-img {
+    transition: transform 0.3s ease;
+    border-radius: 10px;
+    box-shadow: var(--shadow-light);
+}
+
+.logo-img:hover {
+    transform: scale(1.1);
+}
+
+/* Título con gradiente sutil */
+.brand-title {
+    background: linear-gradient(
+        135deg,
+        var(--primary-color),
+        var(--secondary-color)
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+}
+
+/* Mejoras a los form-control */
+.form-control {
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+    background: rgba(248, 249, 250, 0.8);
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    background: white;
+    transform: translateY(-2px);
+}
+
+/* Botón con gradiente y efectos */
+.btn-primary-custom {
+    background: linear-gradient(
+        135deg,
+        var(--primary-color),
+        var(--secondary-color)
+    );
     border: none;
-    border-radius: 25px;
-    font-size: 16px;
-    cursor: pointer;
+    border-radius: 12px;
+    padding: 0.75rem 1rem; /* Cambiado de 2rem a 1rem */
+    font-weight: 600;
+    font-size: 1rem;
+    transition: box-shadow 0.3s, background 0.3s, transform 0.3s; /* Solo transiciones necesarias */
+    position: relative;
+    overflow: hidden;
+    width: 100%; /* Asegura que el botón siempre ocupe el 100% del contenedor */
+    min-width: 120px; /* Opcional: ancho mínimo para evitar que se haga muy pequeño */
+    box-sizing: border-box; /* Asegura que el padding no aumente el ancho */
+}
+
+.btn-primary-custom::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
     width: 100%;
-    transition: background-color 0.3s ease;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+    );
+    transition: left 0.5s;
 }
 
-.login-btn:hover {
-    background-color: #74c260;
+
+.btn-primary-custom:hover::before {
+    left: 100%;
 }
 
-a {
-    color: #2d85c4;
-    text-decoration: none;
-    font-size: 14px;
+.btn-primary-custom:hover {
+    transform: translateY(0);
+    box-shadow: var(--shadow-hover);
 }
 
-a:hover {
-    text-decoration: underline;
+/* Enlaces con hover suave */
+.text-decoration-none {
+    transition: all 0.3s ease;
 }
 
-p {
-    font-size: 14px;
-    color: #333;
-    margin-top: 10px;
+.text-decoration-none:hover {
+    color: var(--primary-color) !important;
+    text-decoration: underline !important;
 }
 
-.imagen-grande {
-    width: 250px;
-    height: auto;
-    display: block;
-    margin: 20px auto;
+/* Animación sutil para los labels */
+.form-label {
+    transition: all 0.3s ease;
+    font-weight: 500;
 }
 
-.social-icons {
-    margin-top: 10px;
+.form-control:focus + .form-label,
+.form-control:not(:placeholder-shown) + .form-label {
+    color: var(--primary-color);
+    transform: scale(0.9);
 }
 
-.social-icons a {
-    color: #74c260;
-    font-size: 20px;
-    margin: 0 10px;
-    text-decoration: none;
+/* Efectos de hover para el texto */
+.text-muted:hover {
+    color: var(--primary-color) !important;
     transition: color 0.3s ease;
 }
 
-.social-icons a:hover {
-    color: #5cb85c;
+/* Responsive mejoras */
+@media (max-width: 768px) {
+    .login-card {
+        margin: 1rem;
+        border-radius: 15px;
+    }
+
+    .container {
+        padding: 1rem;
+    }
+}
+
+/* Animaciones de entrada para elementos */
+.fade-in-1 {
+    animation: fadeIn 0.8s ease-out 0.2s both;
+}
+.fade-in-2 {
+    animation: fadeIn 0.8s ease-out 0.4s both;
+}
+.fade-in-3 {
+    animation: fadeIn 0.8s ease-out 0.6s both;
+}
+.fade-in-4 {
+    animation: fadeIn 0.8s ease-out 0.8s both;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
