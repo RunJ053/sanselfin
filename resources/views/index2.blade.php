@@ -4,133 +4,261 @@
 
 @section('content')
 <nav class="main-nav" aria-label="Navegación principal">
+    <!-- Logo -->
     <div class="nav-left">
-        <a href="{{ url('/Finca_Al_Dia2') }}" class="logo-link">
-            <img src="{{ asset('img/logo/icon.png') }}" alt="Logo de La Finca al Día" width="150" height="50">
+        <a href="{{ route('user.dashboard') }}" class="logo-link">
+            <img src="{{asset ('img/logo/icon.png')}}" alt="Logo de La Finca al Día" width="120" height="40">
         </a>
     </div>
+
+    <!-- Enlaces de navegación centrales -->
     <div class="nav-center">
         <ul class="nav-links" role="menubar">
-            <li role="none"><a href="{{ url('/Finca_Al_Dia2') }}" role="menuitem">Inicio</a></li>
-            <li role="none"><a href="PRODUCTO.html" role="menuitem">Productos</a></li>
-            <li role="none"><a href="SERVICIOS.html" role="menuitem">Servicios</a></li>
-            <li role="none"><a href="ACERCA_DE.html" role="menuitem">Acerca de</a></li>
+            <li role="none"><a href="{{ route('user.dashboard') }}" role="menuitem">Inicio</a></li>
+            <li role="none"><a href="/productos" role="menuitem">Productos</a></li>
+            <li role="none"><a href="/servicios" role="menuitem">Servicios</a></li>
+            <li role="none"><a href="/acerca-de" role="menuitem">Acerca de</a></li>
         </ul>
     </div>
+
+    <!-- Acciones de la derecha -->
     <div class="nav-right">
         <ul class="nav-actions" role="menubar">
             <li role="none">
-                <a href="pages/NOTIFICACION.html" role="menuitem" aria-label="Notificaciones">
+                <a href="/notificaciones" role="menuitem" aria-label="Notificaciones">
                     <i class="fas fa-bell"></i>
                     <span class="visually-hidden">Notificaciones</span>
                 </a>
             </li>
             <li role="none">
-                <a href="productos/CARRITO_DE_COMPRAS.html" role="menuitem" aria-label="Carrito de Compras">
+                <a href="/carrito" role="menuitem" aria-label="Carrito de Compras">
                     <i class="fas fa-shopping-cart"></i>
-                    <span class="visually-hidden">Carrito de Compras</span>
+                    <span class="visually-hidden">Carrito</span>
                 </a>
             </li>
             <li role="none">
-                <a href="pages/AYUDA_CLIENTE.html" role="menuitem" aria-label="Necesito Ayuda!">
+                <a href="/ayuda" role="menuitem" aria-label="Ayuda">
                     <i class="fa-solid fa-circle-exclamation"></i>
-                    <span>Necesito Ayuda!</span>
+                    <span>Ayuda</span>
                 </a>
             </li>
-
-            <div class="user-avatar" onclick="toggleDropdown()">
-                <i class="fas fa-user"></i>
-            </div>
-
-            <div class="dropdown-menu hidden" id="dropdownMenu">
-                <a href="{{ route('logout') }}" class="dropdown-item">Cerrar Sesión</a>
-                <a href="{{ url('/') }}" class="dropdown-item">Ir al Inicio</a>
-            </div>
-
         </ul>
-        <button class="menu-toggle" onclick="toggleMenu()" aria-expanded="false" aria-label="Menú">
+
+        <!-- Avatar de usuario -->
+        <div class="user-avatar" onclick="toggleDropdown()" role="button" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-user"></i>
+
+            <div class="dropdown-menu" id="dropdownMenu">
+                <a href="{{ route('myProfile') }}" class="dropdown-item">Mi Perfil</a>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                    @csrf
+                </form>
+                <a class="nav-link" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    Cerrar Sesión
+                </a>
+
+            </div>
+        </div>
+
+        <!-- Botón hamburguesa -->
+        <button class="menu-toggle" onclick="toggleMobileMenu()" aria-expanded="false" aria-label="Menú">
             <i class="fas fa-bars"></i>
         </button>
     </div>
 </nav>
+
+<!-- Overlay para móvil -->
+<div class="mobile-overlay" id="mobileOverlay" onclick="closeMobileMenu()"></div>
+
+<!-- Menú móvil -->
+<div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-header">
+        <button class="mobile-menu-close" onclick="closeMobileMenu()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <!-- Enlaces de navegación móvil -->
+    <ul class="mobile-nav-links">
+        <li><a href="/">Inicio</a></li>
+        <li><a href="/productos">Productos</a></li>
+        <li><a href="/servicios">Servicios</a></li>
+        <li><a href="/acerca-de">Acerca de</a></li>
+    </ul>
+
+    <!-- Acciones móvil -->
+    <ul class="mobile-nav-actions">
+        <li>
+            <a href="/notificaciones">
+                <i class="fas fa-bell"></i>
+                <span>Notificaciones</span>
+            </a>
+        </li>
+        <li>
+            <a href="/carrito">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Carrito de Compras</span>
+            </a>
+        </li>
+        <li>
+            <a href="/ayuda">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <span>Necesito Ayuda</span>
+            </a>
+        </li>
+        <li>
+            <a href="/perfil">
+                <i class="fas fa-user"></i>
+                <span>Mi Perfil</span>
+            </a>
+        </li>
+        <li>
+            <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Cerrar Sesión</span>
+            </a>
+        </li>
+    </ul>
+</div>
 <main>
-    <section data-aos="zoom-in-down" class="hero">
-        <div data-aos="fade-down" data-aos-delay="100" class="container">
+    <!-- Sección Hero -->
+    <section data-aos="zoom-in-down" class="hero" aria-labelledby="hero-title">
+        <div class="container">
             <div class="hero-text">
-                <h2>La Finca al Día:</h2>
-                <h1>Bienvenido, <?php echo session('nombre_usuario') ? session('nombre_usuario') : 'Invitado'; ?></h1>
+                <h2 data-aos="fade-down">La Finca al Día:</h2>
+                <h1 data-aos="fade-down" data-aos-delay="200" id="hero-title">
+                    @auth
+                    <p>Bienvenido, {{ session('nombre_usuario') ?? Auth::user()->nombre }}!</p>
+                    @else
+                    <p>Por favor, inicia sesión.</p>
+                    @endauth
+                </h1>
+                <p class="welcome-text" data-aos="fade-up" data-aos-delay="400">
+                    Descubre la forma más fácil y conveniente de comprar vegetales frescos directamente
+                    de la finca. Nuestro software de venta en línea te ofrece una experiencia única y de calidad.
+                </p>
             </div>
-            <div data-aos="fade-left" data-aos-delay="1000" class="hero-info">
+            <div data-aos="fade-left" data-aos-delay="600" class="hero-info">
                 <p>Descubre más productos</p>
                 <button class="button"><a href="PRODUCTO.html">Explorar Productos</a></button>
             </div>
         </div>
     </section>
 
-    <section class="products">
-        <div data-aos="zoom-out"
-            data-aos-delay="100"
-            class="container">
-            <h2>Nuestras Galería de Productos</h2>
-            <p>Descubre nuestra selección de frutas y verduras frescas.</p>
-            <p>Explora y descubre cada producto con nuestra galería visual que temos solo para ti.</p>
-            <div data-aos="zoom-in"
-                data-aos-delay="450"
-                class="product-grid">
-                <div class="product-item">
-                    <img src="img/product/Tomate.png" alt="Tomates frescos">
-                    <h3>Tomates Frescos</h3>
-                    <p>Precio: $3000 por kg</p>
+    <!-- Sección de Productos con Grid -->
+    <section data-aos="fade-up" class="products" aria-labelledby="products-title">
+        <div class="container">
+            <h2 id="products-title">Nuestra Galería de Productos</h2>
+            <p>Descubre nuestra selección de frutas y verduras frescas directamente del campo a tu mesa.</p>
+            <p>Explora y descubre cada producto con nuestra galería visual que tenemos solo para ti.</p>
+
+            <div class="carousel-container">
+                <!-- Controles del carrusel -->
+                <button class="carousel-controls prev" aria-label="Producto anterior">‹</button>
+                <button class="carousel-controls next" aria-label="Siguiente producto">›</button>
+
+                <!-- Track del carrusel -->
+                <div class="carousel-track">
+                    <!-- Producto 1 -->
+                    <article class="product-item animate-fade-in-up">
+                        <img src="https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=400&h=300&fit=crop" alt="Tomates frescos" loading="lazy">
+                        <div class="content">
+                            <h3>Tomates Frescos</h3>
+                            <p class="price">$3.000/kg</p>
+                        </div>
+                    </article>
+
+                    <!-- Producto 2 -->
+                    <article class="product-item animate-fade-in-up">
+                        <img src="https://images.unsplash.com/photo-1622206151226-18ca2c9ab4a1?w=400&h=300&fit=crop" alt="Lechuga Orgánica" loading="lazy">
+                        <div class="content">
+                            <h3>Lechuga Orgánica</h3>
+                            <p class="price">$8.000/unidad</p>
+                        </div>
+                    </article>
+
+                    <!-- Producto 3 -->
+                    <article class="product-item animate-fade-in-up">
+                        <img src="https://images.unsplash.com/photo-1445282768818-728615cc910a?w=400&h=300&fit=crop" alt="Zanahorias Dulces" loading="lazy">
+                        <div class="content">
+                            <h3>Zanahorias Dulces</h3>
+                            <p class="price">$2.000/kg</p>
+                        </div>
+                    </article>
+
+                    <!-- Producto 4 -->
+                    <article class="product-item animate-fade-in-up">
+                        <img src="https://images.unsplash.com/photo-1557800636-894a64c1696f?w=400&h=300&fit=crop" alt="Naranja" loading="lazy">
+                        <div class="content">
+                            <h3>Naranja</h3>
+                            <p class="price">$7.000/kg</p>
+                        </div>
+                    </article>
+
+                    <!-- Producto 5 -->
+                    <article class="product-item animate-fade-in-up">
+                        <img src="https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=400&h=300&fit=crop" alt="Espinaca" loading="lazy">
+                        <div class="content">
+                            <h3>Espinaca</h3>
+                            <p class="price">$3.400/unidad</p>
+                        </div>
+                    </article>
+
+                    <!-- Producto 6 -->
+                    <article class="product-item animate-fade-in-up">
+                        <img src="https://images.unsplash.com/photo-1590779033100-9f60a05a013d?w=400&h=300&fit=crop" alt="Pimientos" loading="lazy">
+                        <div class="content">
+                            <h3>Pimientos Rojos</h3>
+                            <p class="price">$4.500/kg</p>
+                        </div>
+                    </article>
+
+                    <!-- Producto 7 -->
+                    <article class="product-item animate-fade-in-up">
+                        <img src="https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=400&h=300&fit=crop" alt="Brócoli" loading="lazy">
+                        <div class="content">
+                            <h3>Brócoli Fresco</h3>
+                            <p class="price">$5.200/unidad</p>
+                        </div>
+                    </article>
+
+                    <!-- Producto 8 -->
+                    <article class="product-item animate-fade-in-up">
+                        <img src="https://images.unsplash.com/photo-1506471403773-610dcc4877e2?w=400&h=300&fit=crop" alt="Manzanas" loading="lazy">
+                        <div class="content">
+                            <h3>Manzanas Rojas</h3>
+                            <p class="price">$6.800/kg</p>
+                        </div>
+                    </article>
                 </div>
-                <div class="product-item">
-                    <img src="img/product/lechuga.webp" alt="Lechuga orgánica">
-                    <h3>Lechuga Orgánica</h3>
-                    <p>Precio: $8000 por unidad</p>
-                </div>
-                <div class="product-item">
-                    <img src="img/product/zha.jfif" alt="Zanahorias dulces">
-                    <h3>Zanahorias Dulces</h3>
-                    <p>Precio: $2000 por kg</p>
-                </div>
-                <div class="product-item">
-                    <img src="img/product/naj.jfif" alt="Naranja Dulce">
-                    <h3>Naranja</h3>
-                    <p>Precio: $7000 por kg</p>
-                </div>
-                <div class="product-item">
-                    <img src="img/product/Espinaca (2).png" alt="Pepino fresco">
-                    <h3>Espinaca</h3>
-                    <p>Precio: $3400 por unidad</p>
-                </div>
+
+                <!-- Indicadores -->
+                <div class="carousel-indicators"></div>
             </div>
         </div>
     </section>
 
-    <section class="mas_para_ti">
-        <div data-aos="fade-right"
-            data-aos-offset="100"
-            data-aos-easing="ease-in-sine"
-            class="container">
-            <h4>Lo Mejor para Ti</h4>
-            <h1>Productos Seleccionados</h1>
-            <p>Conoce los productos que hemos seleccionado especialmente para ti, combinando
-                estilo y frescura.</p>
-            <div data-aos="fade-down-left"
-                data-aos-delay="200"
-                class="box">
-                <div class="item">
+    <!-- Sección "Más para ti" -->
+    <section data-aos="fade-up" class="mas_para_ti" aria-labelledby="features-title">
+        <div class="container">
+            <h4 id="features-title">Lo Mejor para Ti</h4>
+            <h2>Productos Seleccionados</h2>
+            <p>Conoce los productos que hemos seleccionado especialmente para ti, combinando estilo y frescura.</p>
+
+            <div class="features-grid">
+                <div class="feature-item">
                     <h4><i class="fa-solid fa-star"></i> Calidad Garantizada</h4>
                     <p>Tus productos son seleccionados con los más altos estándares de calidad.</p>
                 </div>
-                <div class="item">
+                <div class="feature-item">
                     <h4><i class="fa-solid fa-truck-pickup"></i> Entrega Rápida</h4>
                     <p>Disfruta de un servicio de entrega eficiente para que tus productos lleguen a tiempo.</p>
                 </div>
-                <div class="item">
+                <div class="feature-item">
                     <h4><i class="fa-solid fa-check-to-slot"></i> Productos Destacados</h4>
                     <p>Puedes descubrir nuestra selección especial de productos que están marcando la diferencia este mes.</p>
                 </div>
-                <div class="item">
+                <div class="feature-item">
                     <h4><i class="fa-solid fa-people-carry-box"></i> Atención Personalizada</h4>
                     <p>Nuestro equipo está siempre disponible para ofrecerte una atención personalizada.</p>
                 </div>
@@ -138,12 +266,13 @@
         </div>
     </section>
 
-    <section class="offers">
-        <div data-aos="zoom-out-up" class="container">
+    <!-- Sección de Ofertas -->
+    <section data-aos="fade-up" class="offers">
+        <div class="container">
             <h2>Ofertas Especiales</h2>
             <div class="offer-grid">
                 <div class="offer-image">
-                    <img src="img/es_de_frutas_y_verduras_1.webp" alt="Ofertas Especiales">
+                    <img src="{{asset('img/es_de_frutas_y_verduras_1.webp')}}" alt="Ofertas Especiales">
                 </div>
                 <div class="offer-info">
                     <div class="offer-item">
@@ -158,12 +287,12 @@
             </div>
         </div>
     </section>
-    <section data-aos="zoom-out-up"
-        data-aos-delay="100"
-        class="testimonials">
+
+    <!-- Sección Testimonios -->
+    <section data-aos="fade-up" data-aos-delay="100" class="testimonials">
         <div class="container">
             <h2>Testimonios</h2>
-            <p>¿Aun tines dudas? Acercate a los demás para saber que piensan sobre nosotros.</p>
+            <p>¿Aún tienes dudas? Acércate a los demás para saber qué piensan sobre nosotros.</p>
             <div class="testimonial-grid">
                 <div class="testimonial-item">
                     <div class="testimonial-content">
@@ -173,7 +302,7 @@
                         </div>
                     </div>
                     <div class="testimonial-image">
-                        <img src="img/logo/icon.png" alt="Juan P.">
+                        <img src="{{asset('img/logo/icon.png')}}" alt="Juan P.">
                     </div>
                 </div>
                 <div class="testimonial-item">
@@ -184,13 +313,13 @@
                         </div>
                     </div>
                     <div class="testimonial-image">
-                        <img src="img/product/Carambola.png" alt="María G.">
+                        <img src="{{asset('img/product/Carambola.png')}}" alt="María G.">
                     </div>
                 </div>
             </div>
         </div>
     </section>
-    <section class="preguntas">
+    <section data-aos="fade-up" class="preguntas">
         <div class="container">
             <h2>Preguntas Frecuentes</h2>
             <p>¿Tienes alguna pregunta? Aquí te dejamos algunas respuestas a las preguntas más frecuentes.</p>
@@ -238,7 +367,7 @@
             </div>
         </div>
     </section>
-    <section data-aos="flip-up" class="blog">
+    <section data-aos="fade-up" class="blog">
         <div class="container">
             <h2>Últimos Artículos del Blog</h2>
             <hr>
@@ -246,12 +375,12 @@
                 data-aos-delay="100"
                 class="blog-grid">
                 <div class="blog-item">
-                    <img src="img/verduras_frutas_y_hortalizas_5.webp" alt="">
+                    <img src="{{asset('img/verduras_frutas_y_hortalizas_5.webp')}}" alt="">
                     <h3><a href="https://www.google.com/search?q=beneficios+de+comer+frutas&rlz=1C1GCEA_enCO1117CO1126&oq=beneficios+de+comer+frutas&gs_lcrp=EgZjaHJvbWUyCQgAEEUYORiABDIHCAEQABiABDIHCAIQABiABDIHCAMQABiABDIHCAQQABiABDIHCAUQABiABDIHCAYQABiABDIHCAcQABiABDIHCAgQABiABDIHCAkQABiABNIBCTExMzYyajBqN6gCALACAA&sourceid=chrome&ie=UTF-8">Beneficios de Comer Frutas Frescas</a></h3>
                     <p>Descubre por qué las frutas son esenciales para una dieta saludable.</p>
                 </div>
                 <div class="blog-item">
-                    <img src="img/verduras_frutas_y_hortalizas_6.webp" alt="">
+                    <img src="{{asset('img/verduras_frutas_y_hortalizas_6.webp')}}" alt="">
                     <h3><a href="https://www.google.com/search?q=10+beneficios+de+comer+verduras&sca_esv=c7459735fc04b658&rlz=1C1GCEA_enCO1117CO1126&sxsrf=AHTn8zrwI3Q-HQ8hEHg0TjzndM5w2BrFWg%3A1738192710510&ei=RreaZ53tHoaawbkPq9nduAY&oq=10+benfios+de+comer+verdu&gs_lp=Egxnd3Mtd2l6LXNlcnAiGTEwIGJlbmZpb3MgZGUgY29tZXIgdmVyZHUqAggAMgcQABiABBgNMgYQABgWGB4yBhAAGBYYHkiwLlAAWP0ncAF4AZABAJgBuAGgAd4ZqgEEMC4yNbgBA8gBAPgBAZgCGqACkhuoAhTCAgcQIxgnGOoCwgITEAAYgAQYQxi0AhiKBRjqAtgBAcICChAjGIAEGCcYigXCAgoQABiABBhDGIoFwgIFEAAYgATCAgsQABiABBixAxiDAcICCBAAGIAEGLEDwgILEC4YgAQYsQMY1ALCAgoQABiABBgUGIcCwgIIEAAYFhgKGB7CAgUQIRigAZgDF_EFlltSxCNuiXe6BgYIARABGAGSBwQxLjI1oAetrwE&sclient=gws-wiz-serp">Recetas Deliciosas con Verduras</a></h3>
                     <p>Explora recetas fáciles y deliciosas para incorporar más verduras en tu dieta.</p>
                 </div>
@@ -267,7 +396,7 @@
             <div class="footer-grid">
                 <!-- Sección de información de la empresa -->
                 <div class="footer-section">
-                    <img src="img/logo/icon.png" alt="Logo Finca al Día" class="footer-logo">
+                    <img src="{{asset('img/logo/icon.png')}}" alt="Logo Finca al Día" class="footer-logo">
                     <p class="company-description">Llevamos los productos más frescos del campo a tu mesa, garantizando calidad y frescura en cada entrega.</p>
                     <div class="social-links">
                         <a href="" aria-label="Facebook"><i class="fab fa-facebook"></i></a>

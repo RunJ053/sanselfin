@@ -17,33 +17,200 @@
 
     <link rel="shortcut icon" href="{{ asset('img/logo/icon.png') }}" type="image/x-icon">
 
-    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/styleII.css') }}">
     <link rel="stylesheet" href="{{ asset('css/NAV.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/footer.css') }}">
 </head>
 
 <body>
     @yield('content')
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-    <script src="js/hamburguesa.js"></script>
+    <script src="{{ asset('js/hamburguesa.js') }}"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         AOS.init();
     </script>
-
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            function toggleDropdown() {
-                const dropdown = document.getElementById('dropdownMenu');
-                dropdown.classList.toggle('hidden');
+        class ProductCarousel {
+            constructor() {
+                this.carousel = document.querySelector('.carousel-container');
+                this.track = document.querySelector('.carousel-track');
+                this.prevButton = document.querySelector('.carousel-controls.prev');
+                this.nextButton = document.querySelector('.carousel-controls.next');
+                this.indicators = document.querySelector('.carousel-indicators');
+                this.products = document.querySelectorAll('.product-item');
+                
+                this.currentIndex = 0;
+                this.itemsPerView = this.getItemsPerView();
+                this.maxIndex = Math.max(0, this.products.length - this.itemsPerView);
+                
+                this.init();
             }
-
-            window.onclick = function(event) {
-                if (!event.target.closest('.user-avatar') && !event.target.closest('.dropdown-menu')) {
-                    const dropdown = document.getElementById('dropdownMenu');
-                    dropdown.classList.add('hidden');
+            
+            init() {
+                this.createIndicators();
+                this.bindEvents();
+                this.updateCarousel();
+                this.startAutoPlay();
+                
+                // Actualizar en resize
+                window.addEventListener('resize', () => {
+                    this.itemsPerView = this.getItemsPerView();
+                    this.maxIndex = Math.max(0, this.products.length - this.itemsPerView);
+                    this.currentIndex = Math.min(this.currentIndex, this.maxIndex);
+                    this.updateCarousel();
+                });
+            }
+            
+            getItemsPerView() {
+                const containerWidth = this.carousel.offsetWidth;
+                const itemWidth = 280 + 16; // ancho del item + gap
+                return Math.floor(containerWidth / itemWidth) || 1;
+            }
+            
+            createIndicators() {
+                const indicatorCount = this.maxIndex + 1;
+                this.indicators.innerHTML = '';
+                
+                for (let i = 0; i < indicatorCount; i++) {
+                    const indicator = document.createElement('div');
+                    indicator.className = 'indicator';
+                    indicator.addEventListener('click', () => this.goToSlide(i));
+                    this.indicators.appendChild(indicator);
                 }
             }
+            
+            bindEvents() {
+                this.prevButton.addEventListener('click', () => this.prevSlide());
+                this.nextButton.addEventListener('click', () => this.nextSlide());
+                
+                // Touch/swipe support
+                let startX = 0;
+                let startY = 0;
+                let isDragging = false;
+                
+                this.track.addEventListener('touchstart', (e) => {
+                    startX = e.touches[0].clientX;
+                    startY = e.touches[0].clientY;
+                    isDragging = true;
+                    this.pauseAutoPlay();
+                });
+                
+                this.track.addEventListener('touchmove', (e) => {
+                    if (!isDragging) return;
+                    e.preventDefault();
+                });
+                
+                this.track.addEventListener('touchend', (e) => {
+                    if (!isDragging) return;
+                    
+                    const endX = e.changedTouches[0].clientX;
+                    const endY = e.changedTouches[0].clientY;
+                    const diffX = startX - endX;
+                    const diffY = startY - endY;
+                    
+                    // Solo si el movimiento es más horizontal que vertical
+                    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+                        if (diffX > 0) {
+                            this.nextSlide();
+                        } else {
+                            this.prevSlide();
+                        }
+                    }
+                    
+                    isDragging = false;
+                    this.startAutoPlay();
+                });
+                
+                // Pausar autoplay al hover
+                this.carousel.addEventListener('mouseenter', () => this.pauseAutoPlay());
+                this.carousel.addEventListener('mouseleave', () => this.startAutoPlay());
+            }
+            
+            updateCarousel() {
+                const translateX = -(this.currentIndex * (280 + 16)); // ancho + gap
+                this.track.style.transform = `translateX(${translateX}px)`;
+                
+                // Actualizar indicadores
+                const indicatorElements = this.indicators.querySelectorAll('.indicator');
+                indicatorElements.forEach((indicator, index) => {
+                    indicator.classList.toggle('active', index === this.currentIndex);
+                });
+                
+                // Actualizar estado de los botones
+                this.prevButton.style.opacity = this.currentIndex === 0 ? '0.5' : '1';
+                this.nextButton.style.opacity = this.currentIndex === this.maxIndex ? '0.5' : '1';
+            }
+            
+            nextSlide() {
+                if (this.currentIndex < this.maxIndex) {
+                    this.currentIndex++;
+                } else {
+                    this.currentIndex = 0; // Loop al inicio
+                }
+                this.updateCarousel();
+            }
+            
+            prevSlide() {
+                if (this.currentIndex > 0) {
+                    this.currentIndex--;
+                } else {
+                    this.currentIndex = this.maxIndex; // Loop al final
+                }
+                this.updateCarousel();
+            }
+            
+            goToSlide(index) {
+                this.currentIndex = Math.max(0, Math.min(index, this.maxIndex));
+                this.updateCarousel();
+            }
+            
+            startAutoPlay() {
+                this.pauseAutoPlay(); // Limpiar cualquier intervalo existente
+                this.autoPlayInterval = setInterval(() => {
+                    this.nextSlide();
+                }, 4000); // Cambiar cada 4 segundos
+            }
+            
+            pauseAutoPlay() {
+                if (this.autoPlayInterval) {
+                    clearInterval(this.autoPlayInterval);
+                    this.autoPlayInterval = null;
+                }
+            }
+        }
+        
+        // Inicializar el carrusel cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', () => {
+            new ProductCarousel();
+        });
+        
+        // Animación de aparición progresiva
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        // Observar elementos cuando se carga la página
+        document.addEventListener('DOMContentLoaded', () => {
+            const animatedElements = document.querySelectorAll('.animate-fade-in-up');
+            animatedElements.forEach((el, index) => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(30px)';
+                el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                el.style.transitionDelay = `${index * 0.1}s`;
+                observer.observe(el);
+            });
         });
     </script>
 </body>

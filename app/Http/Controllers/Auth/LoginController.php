@@ -2,42 +2,38 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Models\Usuario;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+use App\Models\TipoCliente;
 
-class LoginController extends Usuario
+class LoginController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Login Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles authenticating users for the application and
-    | redirecting them to your home screen. The controller uses a trait
-    | to conveniently provide its functionality to your applications.
-    |
-    */
-    public function index()
+    
+
+    public function index(Request $request)
     {
-        return view("user.login");
+        // Aquí puedes manejar la lógica para mostrar el formulario de inicio de sesión
+        // o redirigir a la página principal si ya está autenticado.
+        if ($request->user()) {
+            return redirect()->route('user.dashboard');
+        }
+        
+        $tipo_clientes = TipoCliente::all();
+        return view("auth.login", compact('tipo_clientes'));
     }
 
-    public function show(Request $request)
+    public function myProfile()
     {
-        $request->validate([
-            'nombre_usuario' => 'required|string',
-            'password' => 'required|string',
-        ]);
+        if(Auth::check()) {
+            $usuarioId = Auth::id();
+            $usuario = Auth::user();
 
-        $usuario = Usuario::where('nombre_usuario', $request->nombre_usuario)->first();
+            return view('user.perfil', compact('usuario'));
+        } else {
+            // Si no hay usuario autenticado, redirigir a la página de inicio de sesión
+            return redirect()->route('login')->withErrors(['login_error' => 'Debe iniciar sesión primero']);
 
-        if ($usuario && Hash::check($request->password, $usuario->password)) {
-            // Autenticación exitosa
-            session(['usuario_id' => $usuario->id, 'nombre_usuario' => $usuario->nombre_usuario]);
-            return redirect()->route('inicioAdmin');
         }
-
-        return redirect()->back()->with('error', 'Credenciales incorrectas.')->withInput();
     }
 }

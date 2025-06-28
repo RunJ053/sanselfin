@@ -1,34 +1,52 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\DatoUsuarioController;
-use App\Http\Controllers\UsuarioController;
+
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 //inicio de paginas
 Route::get("/", function(){
     return view("index");
 });
 
-Route::get('/Finca_Al_Dia2', function () {
-    return view('index2');
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Rutas de autenticación
+// Aquí puedes definir las rutas para el inicio de sesión, registro, etc.
+//Verificacion de usuario
+
+Route::get("/incio_sesion", [LoginController::class,"index"])->name("login");
+
+Route::post('/login', [AuthController::class, 'login'])->name('iniciarSesion');
+Route::post('/register', [AuthController::class, 'register'])->name('registrarUsuario');
+Route::post('/verify-admin-code', [AuthController::class, 'verifyAdminCode'])->name('verifyAdminCode');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth'); // Protege el logout
+
+// NUEVAS RUTAS PARA RESTABLECIMIENTO DE CONTRASEÑA
+Route::get('/forgot-password', [AuthController::class, 'showForgotPasswordForm'])->name('password.request'); // Muestra el formulario de email
+Route::post('/forgot-password', [AuthController::class, 'sendResetToken'])->name('password.email'); // Envía el token
+
+Route::get('/reset-password', [AuthController::class, 'showResetPasswordForm'])->name('password.reset.form'); // Muestra el formulario de reset
+Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update'); // Procesa el reset
+
+// Rutas protegidas por rol (ejemplos)
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard/user', function () {
+        return view('index2'); // Vista para usuarios normales
+    })->name('user.dashboard'); // Corregido: 'user.index2' a 'user.dashboard' para consistencia con el nombre
+
+    Route::middleware(['is_admin'])->group(function () { // Usaremos un middleware para administradores
+        Route::get('/dashboard/admin', function () {
+            return "Bienvenido, Adminnnnnnnn!"; // Vista para administradores
+        })->name('admin.dashboard');
+    });
 });
 
-//inicio de sesion
-Route::get("/incio_sesion", [LoginController::class,"index"])->name("login");
-Route::post("/login", [UsuarioController::class, "show"])->name("iniciarSesion");
-Route::get("/logout", [UsuarioController::class, "logout"])->name("logout");
+Route::get('/my-profile', [LoginController::class, 'myProfile'])->name('myProfile');
 
-Route::get('/inicio_admin', [UsuarioController::class, 'inicioAdmin'])->name('inicioAdmin');
 
-Route::get('/my-profile', [UsuarioController::class, 'myProfile'])->name('myProfile');
-
-//Creacion de usuarios
-Route::get('crear/usuario/{cliente_id}', [UsuarioController::class,"create"])->name("crearUsuario");
-Route::post('usuario/registrar', [UsuarioController::class,"store"])->name("storeUsuario");
-
-//Registro de usuario
-Route::get("/usuario/registro", [DatoUsuarioController::class,"index"])->name("registro");
-Route::post("/registrado", [DatoUsuarioController::class,"store"])->name("store");
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+// Puedes definir una ruta para el formulario si lo necesitas aparte, o solo usar la raíz
+// Route::get('/auth', [AuthController::class, 'showAuthForm'])->name('auth.form');

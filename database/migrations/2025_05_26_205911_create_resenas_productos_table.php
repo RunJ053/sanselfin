@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('resenas_productos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('usuario_id')->constrained('usuarios')->onDelete('cascade');
+            $table->foreignId('usuario_id')->constrained('datos_usuario')->onDelete('cascade');
             $table->foreignId('producto_id')->constrained('productos')->onDelete('cascade');
             $table->integer('calificacion')->default(0); // Calificación del producto (0-5)
             $table->text('comentario')->nullable();

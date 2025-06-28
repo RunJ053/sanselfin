@@ -34,10 +34,9 @@ class InicialDataSeeder extends Seeder
 
         //Tipo de cliente
         TipoCliente::insert([
-            ['descripcion_cliente' => 'Natural', 'created_at' => now(), 'updated_at' => now()],
-            ['descripcion_cliente' => 'Jurídico', 'created_at' => now(), 'updated_at' => now()],
-            ['descripcion_cliente' => 'Empresa', 'created_at' => now(), 'updated_at' => now()],
-            ['descripcion_cliente' => 'Organización', 'created_at' => now(), 'updated_at' => now()],
+            ['role' => 'Usuario', 'created_at' => now(), 'updated_at' => now()],
+            ['role' => 'Administrador', 'created_at' => now(), 'updated_at' => now()],
+            ['role' => 'Empleado', 'created_at' => now(), 'updated_at' => now()],
         ]);
 
         // Insertar datos en la tabla seguridad

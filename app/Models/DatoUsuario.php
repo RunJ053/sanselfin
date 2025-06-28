@@ -4,21 +4,23 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Auth\Authenticatable; // Importa la interfaz
+use Illuminate\Auth\Authenticatable as AuthenticatableTrait; // Importa el trait
 
-class DatoUsuario extends Model
+class DatoUsuario extends Model implements Authenticatable // Implementa la interfaz
 {
+    use HasFactory, AuthenticatableTrait; // Usa el trait
+
     use HasFactory;
     protected $table = 'datos_usuario';
     protected $primaryKey = 'id';
     protected $fillable = [
         'nombre',
         'apellidos',
-        'segundo_nombre',
         'direccion',
         'pregunta_seguridad',
         'respuesta_seguridad',
         'tipo_docu',
-        'tipo_client',
         'tipo_de_genero',
         'documento',
         'edad',
@@ -26,12 +28,18 @@ class DatoUsuario extends Model
         'email',
         'localidad',
         'nom_imgs',
+        //'nombre_usuario',
+        'password',
+        'user_img',
+        'role', // Añadir esto
+        'is_verified', // Añadir esto
     ];
     protected $hidden = [
+        'password', // Ocultar la contraseña al serializar
         'created_at',
         'updated_at',
     ];
-    protected $guarded = [];
+    //protected $guarded = [];
     public $timestamps = true;
 
     public function tipoDocumento()

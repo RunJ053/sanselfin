@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi Perfil</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="{{ asset('img/logo/icon.png') }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ asset('css/PERFIL.CSS') }}">
 </head>
+
 <body>
     <!-- Header -->
     <header class="header">
@@ -20,7 +23,7 @@
                 </div>
                 <h1 class="brand-name">La Finca Al Día</h1>
             </div>
-            
+
             <div class="header-right">
                 <div class="notification-bell">
                     <i class="fas fa-bell"></i>
@@ -30,9 +33,14 @@
                     <i class="fas fa-user"></i>
                 </div>
                 <div class="dropdown-menu" id="dropdownMenu">
-                    <a href="{{ route('logout') }}" class="dropdown-item">Cerrar Sesión</a>
-                    <a href="{{ url('/') }}" class="dropdown-item">Ir al Inicio</a>
-                </div>     
+                    <a href="{{ route('user.dashboard') }}" class="dropdown-item">Ir al Inicio</a>
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        @csrf
+                    </form>
+                    <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                        Cerrar Sesión
+                    </a>
+                </div>
             </div>
         </div>
     </header>
@@ -247,7 +255,7 @@
                 <div id="cart-content" class="module-content hidden">
                     <div class="content-section">
                         <h2 class="section-title">Mi Carrito de Compras</h2>
-                        
+
                         <div class="cart-item">
                             <div class="cart-item-left">
                                 <div class="cart-item-image">
@@ -357,9 +365,9 @@
         function toggleMobileMenu() {
             const mobileMenu = document.getElementById('mobile-menu');
             const menuIcon = document.getElementById('menu-icon');
-            
+
             isMobileMenuOpen = !isMobileMenuOpen;
-            
+
             if (isMobileMenuOpen) {
                 mobileMenu.classList.add('active');
                 menuIcon.className = 'fas fa-times';
@@ -384,7 +392,7 @@
 
             // Update navigation active states
             updateNavigation(moduleId);
-            
+
             currentModule = moduleId;
 
             // Close mobile menu if open
@@ -421,7 +429,7 @@
         document.addEventListener('click', function(event) {
             const mobileMenu = document.getElementById('mobile-menu');
             const menuToggle = document.querySelector('.menu-toggle');
-            
+
             if (isMobileMenuOpen && !mobileMenu.contains(event.target) && !menuToggle.contains(event.target)) {
                 toggleMobileMenu();
             }
@@ -436,23 +444,23 @@
 
         //#1234
         function toggleDropdown() {
-    const dropdown = document.getElementById('dropdownMenu');
-    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-}
+            const dropdown = document.getElementById('dropdownMenu');
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        }
 
-// Cerrar el menú si se hace clic fuera de él
-window.onclick = function(event) {
-    if (!event.target.matches('.user-avatar')) {
-        const dropdowns = document.getElementsByClassName("dropdown-menu");
-        for (let i = 0; i < dropdowns.length; i++) {
-            const openDropdown = dropdowns[i];
-            if (openDropdown.style.display === 'block') {
-                openDropdown.style.display = 'none';
+        // Cerrar el menú si se hace clic fuera de él
+        window.onclick = function(event) {
+            if (!event.target.matches('.user-avatar')) {
+                const dropdowns = document.getElementsByClassName("dropdown-menu");
+                for (let i = 0; i < dropdowns.length; i++) {
+                    const openDropdown = dropdowns[i];
+                    if (openDropdown.style.display === 'block') {
+                        openDropdown.style.display = 'none';
+                    }
+                }
             }
         }
-    }
-}
-
     </script>
 </body>
+
 </html>

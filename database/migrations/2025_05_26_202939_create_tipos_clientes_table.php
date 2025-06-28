@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('tipos_clientes', function (Blueprint $table) {
             $table->id();
-            $table->string('descripcion_cliente');
+            $table->string('role')->unique();
             $table->timestamps();
         });
     }

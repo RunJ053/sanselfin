@@ -20,7 +20,7 @@ return new class extends Migration
             $table->decimal('descuento_aplicado', 8,2);
             $table->foreignId('pedidos')->constrained('pedidos')->onDelete('cascade');
             $table->foreignId('productos')->constrained('productos')->onDelete('cascade');
-            $table->foreignId('usuario')->constrained('usuarios')->onDelete('cascade');
+            $table->foreignId('usuario')->constrained('datos_usuario')->onDelete('cascade');
             $table->foreignId('estados')->constrained('estados')->onDelete('cascade');
             $table->timestamps();
         });
