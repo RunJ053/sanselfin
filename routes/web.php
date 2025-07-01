@@ -38,7 +38,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::middleware(['is_admin'])->group(function () { // Usaremos un middleware para administradores
         Route::get('/dashboard/admin', function () {
-            return "Bienvenido, Adminnnnnnnn!"; // Vista para administradores
+            return view('admin.factura'); // Vista para administradores
         })->name('admin.dashboard');
     });
 });

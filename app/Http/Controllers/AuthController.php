@@ -41,21 +41,26 @@ class AuthController extends Controller
             ]);
         }
 
-        if ($user->role == TipoCliente::ROLE_ADMINISTRADOR && !$user->is_verified) {
-            return redirect()->back()->withErrors(['email' => 'Tu cuenta de administrador aún no ha sido verificada.']);
-        }
-
-        // Inicia sesión al usuario
-        Auth::login($user);
-
-        $request->session()->regenerate();
-
-        // Redirigir según el rol (role)
         if ($user->role == TipoCliente::ROLE_ADMINISTRADOR) {
+            if (!$user->is_verified) {
+                Auth::logout();
+                return redirect('/incio_sesion')->withErrors([
+                    'email' => 'Tu cuenta de administrador aún no ha sido verificada. Por favor, revisa tu correo electrónico.',
+                ]);
+            }
+            
+            // Si es un administrador y está verificado:
+            Auth::login($user);
+            $request->session()->regenerate();
+            session(['usuario_id' => $user->id, 'nombre_usuario' => $user->nombre, 'nombre_img' => $user->user_img]);
             return redirect()->route('admin.dashboard'); // Ruta para administradores
+
+        } else { 
+            Auth::login($user);
+            $request->session()->regenerate();
+            session(['usuario_id' => $user->id, 'nombre_usuario' => $user->nombre, 'nombre_img' => $user->user_img]);
+            return redirect()->route('user.dashboard'); // Ruta para usuarios normales
         }
-        session(['usuario_id' => $user->id, 'nombre_usuario' => $user->nombre, 'nombre_img' => $user->user_img]);
-        return redirect()->route('user.dashboard'); // Ruta para usuarios normales
     }
 
     /**

@@ -1,0 +1,227 @@
+/* Estilos personalizados para el login del administrador */
+
+:root {
+    --primary-color: #bcea76;
+    --secondary-color: #dbd09c;
+    --text-muted: #6c757d;
+    --border-color: #dee2e6;
+    --shadow-light: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    --shadow-hover: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+body {
+    background: linear-gradient(
+        135deg,
+        var(--primary-color) 0%,
+        var(--secondary-color) 100%
+    );
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Mejoras sutiles al contenedor principal */
+.container {
+    animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Card con efecto glassmorphism sutil */
+.login-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    box-shadow: var(--shadow-hover);
+    transition: all 0.3s ease;
+}
+
+.login-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.2);
+}
+
+/* Mejoras a la imagen */
+.img-fluid {
+    filter: drop-shadow(0 10px 30px rgba(102, 126, 234, 0.2));
+    transition: transform 0.3s ease;
+}
+
+.img-fluid:hover {
+    transform: scale(1.02);
+}
+
+/* Logo con efecto hover */
+.logo-img {
+    transition: transform 0.3s ease;
+    border-radius: 10px;
+    box-shadow: var(--shadow-light);
+}
+
+.logo-img:hover {
+    transform: scale(1.1);
+}
+
+/* Título con gradiente sutil */
+.brand-title {
+    background: linear-gradient(
+        135deg,
+        var(--primary-color),
+        var(--secondary-color)
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+}
+
+/* Mejoras a los form-control */
+.form-control {
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+    background: rgba(248, 249, 250, 0.8);
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    background: white;
+    transform: translateY(-2px);
+}
+
+/* Botón con gradiente y efectos */
+.btn-primary-custom {
+    background: linear-gradient(
+        135deg,
+        var(--primary-color),
+        var(--secondary-color)
+    );
+    border: none;
+    border-radius: 12px;
+    padding: 0.75rem 1rem; /* Cambiado de 2rem a 1rem */
+    font-weight: 600;
+    font-size: 1rem;
+    transition: box-shadow 0.3s, background 0.3s, transform 0.3s; /* Solo transiciones necesarias */
+    position: relative;
+    overflow: hidden;
+    width: 100%; /* Asegura que el botón siempre ocupe el 100% del contenedor */
+    min-width: 120px; /* Opcional: ancho mínimo para evitar que se haga muy pequeño */
+    box-sizing: border-box; /* Asegura que el padding no aumente el ancho */
+}
+
+.btn-primary-custom::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+    );
+    transition: left 0.5s;
+}
+
+
+.btn-primary-custom:hover::before {
+    left: 100%;
+}
+
+.btn-primary-custom:hover {
+    transform: translateY(0);
+    box-shadow: var(--shadow-hover);
+}
+
+/* Enlaces con hover suave */
+.text-decoration-none {
+    transition: all 0.3s ease;
+}
+
+.text-decoration-none:hover {
+    color: var(--primary-color) !important;
+    text-decoration: underline !important;
+}
+
+/* Animación sutil para los labels */
+.form-label {
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.form-control:focus + .form-label,
+.form-control:not(:placeholder-shown) + .form-label {
+    color: var(--primary-color);
+    transform: scale(0.9);
+}
+
+/* Efectos de hover para el texto */
+.text-muted:hover {
+    color: var(--primary-color) !important;
+    transition: color 0.3s ease;
+}
+
+.modal {
+    backdrop-filter: blur(10px); /* Esto es para el efecto de desenfoque del fondo, ¡muy bien! */
+}
+
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: block; /* MDBootstrap lo controla con .show/.fade clases, no necesitas ponerlo directamente */
+    opacity: 0.5; /* Usa la opacidad directa o la variable, pero asegúrate de que sea 0.5 */
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente */
+    z-index: 1050 !important; /* Fuerza el backdrop a estar debajo del modal (MDB default es 1050) */
+}
+
+/* Responsive mejoras */
+@media (max-width: 768px) {
+    .login-card {
+        margin: 1rem;
+        border-radius: 15px;
+    }
+
+    .container {
+        padding: 1rem;
+    }
+}
+
+/* Animaciones de entrada para elementos */
+.fade-in-1 {
+    animation: fadeIn 0.8s ease-out 0.2s both;
+}
+.fade-in-2 {
+    animation: fadeIn 0.8s ease-out 0.4s both;
+}
+.fade-in-3 {
+    animation: fadeIn 0.8s ease-out 0.6s both;
+}
+.fade-in-4 {
+    animation: fadeIn 0.8s ease-out 0.8s both;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

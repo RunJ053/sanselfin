@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use App\Models\TipoCliente;
 use Illuminate\Support\Facades\Auth;
 
 class IsAdmin
@@ -15,13 +16,14 @@ class IsAdmin
      * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
+
     public function handle(Request $request, Closure $next)
     {
-        if (Auth::check() && Auth::user()->role === 'admin' && Auth::user()->is_verified) {
+        if (Auth::check() && Auth::user()->role == TipoCliente::ROLE_ADMINISTRADOR && Auth::user()->is_verified) {
             return $next($request);
         }
 
-        Auth::logout(); // Opcional: cerrar sesión si no es admin o no está verificado
+        Auth::logout();
         return redirect('/incio_sesion')->withErrors('No tienes permisos de administrador o tu cuenta no ha sido verificada.');
     }
 }
