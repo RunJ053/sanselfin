@@ -1,4 +1,4 @@
-@extends('layouts.auth.reset-password_Layout')
+@extends('layouts.auth.reset_password_Layout')
 
 @section('title', 'Restablecer Contraseña')
 

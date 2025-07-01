@@ -46,7 +46,15 @@
 
         <!-- Avatar de usuario -->
         <div class="user-avatar" onclick="toggleDropdown()" role="button" aria-haspopup="true" aria-expanded="false">
-            <i class="fas fa-user"></i>
+            @auth <!-- Verificamos que el usuario esté autenticado -->
+                @if (Auth::user()->user_img)
+                    <img src="{{ asset('img/usuario_img/' . Auth::user()->user_img) }}" 
+                        alt="Avatar de {{ Auth::user()->nombre }}" 
+                        class="avatar-image">
+                @else
+                    <i class="fas fa-user"></i>
+                @endif
+            @endauth
 
             <div class="dropdown-menu" id="dropdownMenu">
                 <a href="{{ route('myProfile') }}" class="dropdown-item">Mi Perfil</a>

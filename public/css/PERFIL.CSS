@@ -1,12 +1,14 @@
 * {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;}
+    box-sizing: border-box;
+}
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f9fafb;
-    line-height: 1.6;}
+    line-height: 1.6;
+}
 
 /* Header */
 .header {
@@ -15,7 +17,8 @@ body {
     border-bottom: 1px solid #e5e7eb;
     position: sticky;
     top: 0;
-    z-index: 40;}
+    z-index: 40;
+}
 
 .header-content {
     max-width: 100%;
@@ -24,11 +27,13 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 64px;}
+    height: 64px;
+}
 
 .logo-area {
     display: flex;
-    align-items: center;}
+    align-items: center;
+}
 
 .menu-toggle {
     display: none;
@@ -37,41 +42,49 @@ body {
     padding: 0.5rem;
     border-radius: 0.5rem;
     cursor: pointer;
-    margin-right: 1rem;}
+    margin-right: 1rem;
+}
 
 .menu-toggle:hover {
-    background-color: #f3f4f6;}
+    background-color: #f3f4f6;
+}
 
 .logo {
     background: #10b981;
     padding: 0rem;
     border-radius: 0.75rem;
-    margin-right: 0.75rem;}
+    margin-right: 0.75rem;
+}
 
 .logo img {
     width: 49px;
     height: 49px;
-    border-radius: 50%;}
+    border-radius: 50%;
+}
 
 .brand-name {
     font-size: 1.25rem;
     font-weight: bold;
-    color: #1f2937;}
+    color: #1f2937;
+}
 
 .header-right {
     display: flex;
     align-items: center;
-    gap: 1rem;}
+    gap: 1rem;
+}
 
 .notification-bell {
     position: relative;
     cursor: pointer;
     padding: 0.5rem;
     color: #6b7280;
-    transition: color 0.3s;}
+    transition: color 0.3s;
+}
 
 .notification-bell:hover {
-    color: #10b981;}
+    color: #10b981;
+}
 
 .notification-badge {
     position: absolute;
@@ -85,7 +98,8 @@ body {
     border-radius: 50%;
     display: flex;
     align-items: center;
-    justify-content: center;}
+    justify-content: center;
+}
 
 .user-avatar {
     width: 32px;
@@ -95,16 +109,19 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;}
+    cursor: pointer;
+}
 
 .user-avatar i {
-    color: white;}
+    color: white;
+}
 
 /* Main Container */
 .main-container {
     max-width: 90%;
     margin: 0 auto;
-    padding: 2rem 1rem;}
+    padding: 2rem 1rem;
+}
 
 /* Mobile Menu */
 .mobile-menu {
@@ -114,15 +131,18 @@ body {
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     border: 1px solid #e5e7eb;
     padding: 1rem;
-    margin-bottom: 2rem;}
+    margin-bottom: 2rem;
+}
 
 .mobile-menu.active {
-    display: block;}
+    display: block;
+}
 
 .mobile-menu-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 0.75rem;}
+    gap: 0.75rem;
+}
 
 .mobile-menu-item {
     display: flex;
@@ -134,18 +154,22 @@ body {
     cursor: pointer;
     transition: background-color 0.3s;
     width: 100%;
-    text-align: left;}
+    text-align: left;
+}
 
 .mobile-menu-item:hover {
-    background-color: #f3f4f6;}
+    background-color: #f3f4f6;
+}
 
 .mobile-menu-item.active {
     background-color: #dcfce7;
-    color: #15803d;}
+    color: #15803d;
+}
 
 .mobile-menu-item i {
     margin-right: 0.5rem;
-    width: 20px;}
+    width: 20px;
+}
 
 .mobile-menu-item .badge {
     margin-left: auto;
@@ -276,7 +300,225 @@ body {
     font-size: 1.5rem;
     font-weight: bold;
 }
+/* Sección principal del contenido */
 
+/* Párrafo descriptivo */
+.content-section > p {
+    color: #6b7280;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 1rem;
+}
+
+/* Línea divisoria */
+.content-section hr {
+    border: none;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #e5e7eb, transparent);
+    margin: 2rem 0;
+}
+/* Estilos para el contenedor del avatar, si lo tienes */
+.header-right {
+    position: relative; /* Para que el menú desplegable se posicione correctamente */
+}
+
+.user-avatar {
+    cursor: pointer; /* Cambia el cursor al pasar sobre el avatar */
+}
+
+.avatar-image {
+    width: 40px; /* Ajusta el tamaño según sea necesario */
+    height: 40px; /* Ajusta el tamaño según sea necesario */
+    border-radius: 50%; /* Para hacer la imagen circular */
+    pointer-events: none; /* Evita que la imagen bloquee el clic */
+}
+
+.dropdown-menu {
+    display: none; /* Oculta el menú por defecto */
+    position: absolute; /* Posiciona el menú en relación al contenedor */
+    right: 0; /* Alinea el menú a la derecha */
+    background-color: white; /* Color de fondo del menú */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Sombra para el menú */
+    z-index: 1000; /* Asegúrate de que el menú esté por encima de otros elementos */
+}
+
+.dropdown-menu.show {
+    display: block; /* Muestra el menú cuando se activa */
+}
+
+/* Contenedor de información del perfil */
+.profile-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+/* Elementos de información individual */
+.profile-info p {
+    background: #f9fafb;
+    padding: 1rem 1.25rem;
+    border-radius: 8px;
+    margin: 0;
+    border-left: 3px solid #3b82f6;
+    transition: all 0.2s ease;
+}
+
+.profile-info p:hover {
+    background: #f3f4f6;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Etiquetas en negrita */
+.profile-info p strong {
+    display: block;
+    color: #374151;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+/* Contenido después del strong */
+.profile-info p strong + * {
+    color: #1f2937;
+    font-weight: 400;
+    font-size: 1rem;
+}
+
+/* Imagen de usuario */
+.profile-info img {
+    width: 40%;
+    height: 40%;
+    border-radius: 50%;
+    border: 3px solid #e5e7eb;
+    object-fit: cover;
+    margin-top: 0.5rem;
+    transition: transform 0.2s ease;
+}
+
+.profile-info img:hover {
+    transform: scale(1.05);
+    border-color: #3b82f6;
+}
+
+/* Contenedor de acciones */
+.profile-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Botones de acción */
+.edit-profile-btn,
+.change-password-btn {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    border: none;
+    border-radius: 8px;
+    padding: 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+    overflow: hidden;
+    position: relative;
+}
+
+.edit-profile-btn:hover,
+.change-password-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.edit-profile-btn:active,
+.change-password-btn:active {
+    transform: translateY(0);
+}
+
+/* Enlaces dentro de los botones */
+.edit-profile-btn a,
+.change-password-btn a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    padding: 0.875rem 2rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    position: relative;
+    z-index: 2;
+}
+
+/* Efecto hover en los enlaces */
+.edit-profile-btn a:hover,
+.change-password-btn a:hover {
+    color: white;
+}
+
+/* Botón de cambiar contraseña con color diferente */
+.change-password-btn {
+    background: linear-gradient(135deg, #6b7280, #374151);
+    box-shadow: 0 2px 4px rgba(107, 114, 128, 0.2);
+}
+
+.change-password-btn:hover {
+    box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .content-section {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+
+    .section-title {
+        font-size: 1.75rem;
+    }
+
+    .profile-info {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .profile-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .edit-profile-btn,
+    .change-password-btn {
+        width: 100%;
+        max-width: 280px;
+    }
+}
+
+/* Animación sutil para la carga */
+.content-section {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Estado de verificación */
+.profile-info p:has(strong:contains("Verificado")) {
+    border-left-color: #10b981;
+}
+
+.profile-info p:has(strong:contains("Verificado")) strong {
+    color: #065f46;
+}
 /* Module Cards */
 .modules-grid {
     display: grid;
@@ -402,7 +644,8 @@ body {
 }
 
 .activity-icon {
-    margin-right: 0.75rem;}
+    margin-right: 0.75rem;
+}
 
 .activity-icon.success {
     color: #059669;
@@ -431,11 +674,13 @@ body {
     padding: 1rem;
     border: 1px solid #e5e7eb;
     border-radius: 0.75rem;
-    margin-bottom: 1rem;}
+    margin-bottom: 1rem;
+}
 
 .cart-item-left {
     display: flex;
-    align-items: center;}
+    align-items: center;
+}
 
 .cart-item-image {
     width: 64px;
@@ -445,50 +690,61 @@ body {
     margin-right: 1rem;
     display: flex;
     align-items: center;
-    justify-content: center;}
+    justify-content: center;
+}
 
 .cart-item-image i {
     color: #059669;
-    font-size: 2rem;}
+    font-size: 2rem;
+}
 
 .cart-item-info h3 {
     font-weight: 600;
-    margin-bottom: 0.25rem;}
+    margin-bottom: 0.25rem;
+}
 
 .cart-item-info p {
     color: #6b7280;
-    font-size: 0.875rem;}
+    font-size: 0.875rem;
+}
 
 .cart-item-right {
-    text-align: right;}
+    text-align: right;
+}
 
 .cart-item-price {
     font-weight: 600;
-    margin-bottom: 0.25rem;}
+    margin-bottom: 0.25rem;
+}
 
 .cart-item-quantity {
     font-size: 0.875rem;
-    color: #6b7280;}
+    color: #6b7280;
+}
 
 .cart-total {
     border-top: 1px solid #e5e7eb;
     padding-top: 1rem;
-    margin-top: 1rem;}
+    margin-top: 1rem;
+}
 
 .cart-total-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1rem;}
+    margin-bottom: 1rem;
+}
 
 .cart-total-label {
     font-size: 1.125rem;
-    font-weight: 600;}
+    font-weight: 600;
+}
 
 .cart-total-value {
     font-size: 1.25rem;
     font-weight: bold;
-    color: #10b981;}
+    color: #10b981;
+}
 
 .checkout-btn {
     width: 100%;
@@ -499,26 +755,49 @@ body {
     border-radius: 0.75rem;
     font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.3s;}
+    transition: background-color 0.3s;
+}
 
 .checkout-btn:hover {
-    background: #059669;}
+    background: #059669;
+}
 
 /* Module Colors */
-.module-home { background: #10b981;}
-.module-cart { background: #f97316;}
-.module-orders { background: #3b82f6;}
-.module-profile { background: #8b5cf6;}
-.module-coupons { background: #ef4444;}
-.module-favorites { background: #ec4899;}
-.module-addresses { background: #14b8a6;}
-.module-payments { background: #6366f1;}
-.module-notifications { background: #eab308;}
-.module-settings { background: #6b7280;}
+.module-home {
+    background: #10b981;
+}
+.module-cart {
+    background: #f97316;
+}
+.module-orders {
+    background: #3b82f6;
+}
+.module-profile {
+    background: #8b5cf6;
+}
+.module-coupons {
+    background: #ef4444;
+}
+.module-favorites {
+    background: #ec4899;
+}
+.module-addresses {
+    background: #14b8a6;
+}
+.module-payments {
+    background: #6366f1;
+}
+.module-notifications {
+    background: #eab308;
+}
+.module-settings {
+    background: #6b7280;
+}
 
 .user-avatar {
     position: relative;
-    cursor: pointer;}
+    cursor: pointer;
+}
 
 .dropdown-menu {
     display: none; /* Ocultar el menú por defecto */
@@ -529,45 +808,57 @@ body {
     border: 1px solid #ddd;
     border-radius: 4px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    z-index: 1000; /* Asegurarse de que esté por encima de otros elementos */}
+    z-index: 1000; /* Asegurarse de que esté por encima de otros elementos */
+}
 
 .dropdown-item {
     display: block;
     padding: 10px 15px;
     color: #333;
-    text-decoration: none;}
+    text-decoration: none;
+}
 
 .dropdown-item:hover {
-    background-color: #f0f0f0; /* Cambiar color al pasar el mouse */}
+    background-color: #f0f0f0; /* Cambiar color al pasar el mouse */
+}
 .user-avatar:hover .dropdown-menu {
-    display: block; /* Mostrar el menú al pasar el mouse */}
+    display: block; /* Mostrar el menú al pasar el mouse */
+}
 
 /* Responsive */
 @media (max-width: 1024px) {
-.sidebar {
-    display: none;}
-            
-.menu-toggle {
+    .sidebar {
+        display: none;
+    }
+
+    .menu-toggle {
         display: block;
-}}
+    }
+}
 
 @media (max-width: 768px) {
-.header-right .search-container {
-    display: none;}
-            
-.modules-grid {
-    grid-template-columns: 1fr;}
-            
-.stats-grid {
-    grid-template-columns: 1fr;}
-            
-.welcome-section {
-    padding: 1.5rem;}
-            
-.welcome-title {
-    font-size: 1.5rem;
-}}
+    .header-right .search-container {
+        display: none;
+    }
+
+    .modules-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .welcome-section {
+        padding: 1.5rem;
+    }
+
+    .welcome-title {
+        font-size: 1.5rem;
+    }
+}
 
 /* Hidden class */
 .hidden {
-    display: none;}
+    display: none;
+}

@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Contracts\Auth\Authenticatable; // Importa la interfaz
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Auth\Authenticatable as AuthenticatableTrait; // Importa el trait
 
 class DatoUsuario extends Model implements Authenticatable // Implementa la interfaz
@@ -18,8 +18,6 @@ class DatoUsuario extends Model implements Authenticatable // Implementa la inte
         'nombre',
         'apellidos',
         'direccion',
-        'pregunta_seguridad',
-        'respuesta_seguridad',
         'tipo_docu',
         'tipo_de_genero',
         'documento',
@@ -28,14 +26,13 @@ class DatoUsuario extends Model implements Authenticatable // Implementa la inte
         'email',
         'localidad',
         'nom_imgs',
-        //'nombre_usuario',
         'password',
         'user_img',
-        'role', // Añadir esto
-        'is_verified', // Añadir esto
+        'role',
+        'is_verified',
     ];
     protected $hidden = [
-        'password', // Ocultar la contraseña al serializar
+        'password',
         'created_at',
         'updated_at',
     ];
@@ -54,8 +51,8 @@ class DatoUsuario extends Model implements Authenticatable // Implementa la inte
     {
         return $this->belongsTo(Genero::class, 'tipo_de_genero');
     }
-    public function seguridad()
+    public function localidad()
     {
-        return $this->belongsTo(Seguridad::class, 'pregunta_seguridad');
+        return $this->belongsTo(Localidad::class, 'localidad');
     }
 }

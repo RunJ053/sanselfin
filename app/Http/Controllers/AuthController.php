@@ -11,7 +11,7 @@ use App\Models\DatoUsuario;
 use App\Models\TipoCliente;
 use App\Models\AdminVerificationCode;
 
-use Illuminate\Support\Facades\DB; // NUEVO: Para interactuar con la tabla password_resets
+use Illuminate\Support\Facades\DB; //Para interactuar con la tabla password_resets
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -41,7 +41,7 @@ class AuthController extends Controller
             ]);
         }
 
-        if (($user->role == TipoCliente::ROLE_ADMINISTRADOR || $user->role == TipoCliente::ROLE_SUPER_ADMIN) && !$user->is_verified) {
+        if ($user->role == TipoCliente::ROLE_ADMINISTRADOR && !$user->is_verified) {
             return redirect()->back()->withErrors(['email' => 'Tu cuenta de administrador aún no ha sido verificada.']);
         }
 
@@ -51,10 +51,10 @@ class AuthController extends Controller
         $request->session()->regenerate();
 
         // Redirigir según el rol (role)
-        if ($user->role == TipoCliente::ROLE_ADMINISTRADOR || $user->role == TipoCliente::ROLE_SUPER_ADMIN) {
+        if ($user->role == TipoCliente::ROLE_ADMINISTRADOR) {
             return redirect()->route('admin.dashboard'); // Ruta para administradores
         }
-        session(['usuario_id' => $user->id, 'nombre_usuario' => $user->nombre]);
+        session(['usuario_id' => $user->id, 'nombre_usuario' => $user->nombre, 'nombre_img' => $user->user_img]);
         return redirect()->route('user.dashboard'); // Ruta para usuarios normales
     }
 
@@ -88,13 +88,11 @@ class AuthController extends Controller
                 'email' => $data['email'],
                 'edad' => $data['fecha_nac'],
                 'password' => Hash::make($data['password']),
-                'localidad' => $data['direccion'],
                 'role' => $data['role'],
                 'is_verified' => $data['is_verified'],
 
                 // ¡AÑADE ESTOS CAMPOS CON VALORES!
-                'pregunta_seguridad' => null,
-                'respuesta_seguridad' => null,
+                'localidad'=> null,
                 'tipo_docu' => null,
                 'tipo_de_genero' => null,
                 'documento' => null,
@@ -136,12 +134,9 @@ class AuthController extends Controller
                 'edad' => $data['fecha_nac'],
                 'role' => $data['role'],
                 'is_verified' => $data['is_verified'],
-                'password' => null, // La contraseña se establecerá después de la verificación
-                'localidad' => $data['direccion'],
-
+                'password' => null,
                 // ¡AÑADE ESTOS CAMPOS CON VALORES!
-                'pregunta_seguridad' => null,
-                'respuesta_seguridad' => null,
+                'localidad' => null,
                 'tipo_docu' => null, 
                 'tipo_de_genero' => null, 
                 'documento' => null,

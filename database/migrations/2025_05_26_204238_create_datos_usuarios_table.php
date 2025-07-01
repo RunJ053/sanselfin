@@ -15,25 +15,21 @@ return new class extends Migration
     {
         Schema::create('datos_usuario', function (Blueprint $table) {
             $table->id();
-            //informacion necesaria para el usuario
-            $table->string('nombre');
-            $table->string('apellidos');
-            $table->string('direccion');
-            $table->foreignId('pregunta_seguridad')->constrained('seguridad')->onDelete('cascade')->nullable();
-            $table->string('respuesta_seguridad')->nullable();
+            // Información necesaria para el usuario
+            $table->string('nombre')->nullable();
+            $table->string('apellidos')->nullable();
+            $table->string('direccion')->nullable();
             $table->foreignId('tipo_docu')->constrained('tipos_documentos')->onDelete('cascade')->nullable();
             $table->foreignId('tipo_de_genero')->constrained('generos')->onDelete('cascade')->nullable();
             $table->bigInteger('documento')->unique()->nullable();
             $table->date('edad')->nullable();
             $table->bigInteger('telefono')->unique()->nullable();
-            $table->string('email')->unique();
-            $table->string('localidad')->nullable();
-            //creacion de una cuenta para el usuario
-            //$table->string('nombre_usuario');
-            $table->string('password');
+            $table->string('email')->unique()->nullable();
+            $table->foreignId('localidad')->constrained('localidades')->onDelete('cascade')->nullable();
+            $table->string('password')->nullable();
             $table->string('user_img')->nullable();
-            $table->foreignId('role')->constrained('tipos_clientes')->onDelete('cascade')->default(1); // Añadir columna role
-            $table->boolean('is_verified')->default(false); // Añadir columna is_verified
+            $table->foreignId('role')->constrained('tipos_clientes')->onDelete('cascade')->default(1)->nullable();
+            $table->boolean('is_verified')->default(false);
             $table->string('nom_imgs')->nullable();
             
             $table->timestamps();
@@ -47,6 +43,6 @@ return new class extends Migration
      */
     public function down()
     {
-       Schema::dropIfExists('datos_usuario'); // Luego elimina la tabla
-   }
+        Schema::dropIfExists('datos_usuario'); // Luego elimina la tabla
+    }
 };

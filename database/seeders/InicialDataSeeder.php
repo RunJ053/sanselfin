@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Genero;
 use App\Models\TipoDocumento;
-use App\Models\Seguridad;
+use App\Models\Localidad;
 use App\Models\TipoCliente;
 
 class InicialDataSeeder extends Seeder
@@ -36,21 +36,31 @@ class InicialDataSeeder extends Seeder
         TipoCliente::insert([
             ['role' => 'Usuario', 'created_at' => now(), 'updated_at' => now()],
             ['role' => 'Administrador', 'created_at' => now(), 'updated_at' => now()],
-            ['role' => 'Empleado', 'created_at' => now(), 'updated_at' => now()],
         ]);
 
         // Insertar datos en la tabla seguridad
-        Seguridad::insert([
-            ['descripcion' => '¿Cuál es el nombre de tu primera mascota?', 'created_at' => now(), 'updated_at' => now()],
-            ['descripcion' => '¿Cuál es el nombre de tu ciudad natal?', 'created_at' => now(), 'updated_at' => now()],
-            ['descripcion' => '¿Cuál fue el nombre de tu mejor amigo en la infancia?', 'created_at' => now(), 'updated_at' => now()],
-            ['descripcion' => '¿Cuál es el nombre de tu escuela primaria?', 'created_at' => now(), 'updated_at' => now()],
-            ['descripcion' => '¿Cuál es tu comida favorita?', 'created_at' => now(), 'updated_at' => now()],
-            ['descripcion' => '¿Cuál es el modelo de tu primer automóvil?', 'created_at' => now(), 'updated_at' => now()],
-            ['descripcion' => '¿Cuál es el nombre de tu madre?', 'created_at' => now(), 'updated_at' => now()],
-            ['descripcion' => '¿Cuál es el lugar de nacimiento de tu padre?', 'created_at' => now(), 'updated_at' => now()],
-            ['descripcion' => '¿Cuál fue tu primer empleo?', 'created_at' => now(), 'updated_at' => now()],
-            ['descripcion' => '¿Cuál es el nombre de tu primer profesor?', 'created_at' => now(), 'updated_at' => now()],
+        Localidad::insert([
+            ['descripcion' => 'Antonio Nariño', 'created_at' => now(), 'updated_at' => now()],
+            ['descripcion' => 'Barrios Unidos', 'create_at' => now(), 'updated_at' => now()],
+            ['descripcion' => 'Bosa', 'created_at' => now(), 'updated_at' => now()],
+            ['descripcion' => 'Chapinero ', 'created_at' => now(), 'updated_at' => now()],
+            ['descripcion' => 'Ciudad Bolívar', 'created_at' => now(), 'updated_at' => now()],
+            ['descripcion' => 'Engativá', 'created_at' => now(), 'updated_at' => now()],
+            ['descripcion' => 'Fontibón', 'created_at' => now(), 'updated_at' => now()],
+            ['descripcion' => 'Kennedy', 'created_at' => now(), 'updated_at' => now()],
+            ['descripcion' => 'La Candelaria', 'created_at' => now(), 'updated_at' => now()],
+            ['descripcion' => 'Los Mártires', 'created_at' => now(), 'updated_at' => now()],
+            ['descripcion' => 'Puente Aranda', 'created_at' => now(), 'updated_at' => now()],
+            ['descripcion' => 'Rafael Uribe Uribe', 'created_at' => now(), 'updated_at' => now()],
+            ['descripcion' => 'San Cristóbal', 'created_at' => now(), 'updated_at' => now()],
+            ['descripcion' => 'Santa Fé', 'created_at' => now(), 'updated_at' => now()],
+            ['descripcion' => 'Suba', 'created_at' => now(), 'updated_at' => now()],
+            ['descripcion' => 'Sumapaz', 'created_at' => now(), 'updated_at' => now()],
+            ['descripcion' => 'Teusaquillo', 'created_at' => now(), 'updated_at' => now()],
+            ['descripcion' => 'Tunjuelito', 'created_at' => now(), 'updated_at' => now()],
+            ['descripcion' => 'Usaquén', 'created_at' => now(), 'updated_at' => now()],
+            ['descripcion' => 'Usme', 'created_at' => now(), 'updated_at' => now()],
+
         ]);
     }
 }

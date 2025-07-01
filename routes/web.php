@@ -14,8 +14,6 @@ Route::get("/", function(){
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Rutas de autenticación
-// Aquí puedes definir las rutas para el inicio de sesión, registro, etc.
 //Verificacion de usuario
 
 Route::get("/incio_sesion", [LoginController::class,"index"])->name("login");
@@ -46,7 +44,9 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::get('/my-profile', [LoginController::class, 'myProfile'])->name('myProfile');
-
-
+Route::get('/user/edit/{id}', [DatoUsuarioController::class, 'edit'])->name('user.edit');
+Route::put('/user/update/{id}', [DatoUsuarioController::class, 'update'])->name('user.update');
+Route::get('/user/change-password', [DatoUsuarioController::class, 'changePasswordForm'])->name('user.changePasswordForm');
+Route::post('/user/change-password', [DatoUsuarioController::class, 'changePassword'])->name('user.changePassword');
 // Puedes definir una ruta para el formulario si lo necesitas aparte, o solo usar la raíz
 // Route::get('/auth', [AuthController::class, 'showAuthForm'])->name('auth.form');

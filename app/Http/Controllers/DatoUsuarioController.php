@@ -3,56 +3,84 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Validator;
-use RealRashid\SweetAlert\Facades\Alert;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+
 use App\Models\DatoUsuario;
 use App\Models\Genero;
 use App\Models\TipoDocumento;
-use App\Models\Seguridad;
+use App\Models\Localidad;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class DatoUsuarioController extends Controller
 {
-    public function index()
+    public function __construct()
     {
-        $genero = Genero::all();
-        $tipoDocumento = TipoDocumento::all();
-        $seguridad = Seguridad::all();
-
-        return view("user.registro_usuario", compact('genero', 'tipoDocumento', 'seguridad'));
+        $this->middleware('auth');
+    }
+    public function changePasswordForm()
+    {
+        return view('user.cambiar_contrasena');
     }
 
-    public function store(Request $request)
+    public function changePassword(Request $request)
     {
-        // Validar la solicitud
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|min:8|confirmed',
+        ]);
+
+        $user = Auth::user();
+
+        // Verificar la contraseña actual
+        if (!Hash::check($request->current_password, $user->password)) {
+            return redirect()->back()->withErrors(['current_password' => 'La contraseña actual es incorrecta.']);
+        }
+
+        // Actualizar la contraseña
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+
+        return redirect()->route('myProfile')->with('success', 'Contraseña actualizada exitosamente.');
+    }
+
+    public function edit($id)
+    {
+        $usuario = DatoUsuario::findOrFail($id);
+        $genero = Genero::all();
+        $tipoDocumento = TipoDocumento::all();
+        $localidad = Localidad::all();
+        return view('user.edicion_usuario', compact('usuario', 'genero', 'tipoDocumento', 'localidad'));
+    }
+
+
+    public function update(Request $request, $id)
+    {
         $validator = Validator::make($request->all(), [
-            'doc' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'doc' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'img_user' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
             'nom' => 'required|string|max:255|regex:/^[A-Za-záéíóúÁÉÍÓÚüÜñÑ\s]+$/',
             'ape' => 'required|string|max:255|regex:/^[A-Za-záéíóúÁÉÍÓÚüÜñÑ\s]+$/',
-            'Direccion' => 'required|string|max:255',
-            'Pregunta_seguridad' => 'required|string|max:255',
-            'Respuesta_pregunta' => 'required|string|max:255|regex:/^[A-Za-z0-9áéíóúÁÉÍÓÚüÜñÑ\s]+$/',
-            'tipodocu' => 'required|string|max:255',
+            'tipodocu' => 'required|exists:tipos_documentos,id',
             'num_doc' => 'required|string|max:255',
-            'sexo' => 'required|string|max:255',
-            'fecha_nac' => 'required|date',
+            'sexo' => 'required|exists:generos,id',
+            'fecha_nac' => 'required|date|before_or_equal:today',
             'telefono' => 'required|string|max:15',
             'correo' => 'required|email|max:255',
-            'Localidad' => 'required|string|max:255',
+            'Localidad' => 'required|exists:localidades,id',
+            'Direccion' => 'required|string|max:255',
         ]);
+
         if ($validator->fails()) {
-            // Redirigir con errores de validación
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput();
+            return redirect()->back()->withErrors($validator)->withInput();
         }
+
         try {
-            $datos = new DatoUsuario;
+            $datos = DatoUsuario::findOrFail($id);
             $datos->nombre = $request->nom;
             $datos->apellidos = $request->ape;
             $datos->direccion = $request->Direccion;
-            $datos->pregunta_seguridad = $request->Pregunta_seguridad;
-            $datos->respuesta_seguridad = $request->Respuesta_pregunta;
             $datos->tipo_docu = $request->tipodocu;
             $datos->documento = $request->num_doc;
             $datos->tipo_de_genero = $request->sexo;
@@ -60,52 +88,41 @@ class DatoUsuarioController extends Controller
             $datos->telefono = $request->telefono;
             $datos->email = $request->correo;
             $datos->localidad = $request->Localidad;
-            $datos->tipo_client = 1;
 
-            // Manejo de la carga del documento
+            // Manejo del documento de identidad
             if ($request->hasFile('doc')) {
+                // Eliminar archivo anterior si existe
+                if ($datos->nom_imgs && file_exists(public_path('img/documents/' . $datos->nom_imgs))) {
+                    unlink(public_path('img/documents/' . $datos->nom_imgs));
+                }
                 $archivo = $request->file('doc');
-                $nombreArchivo = Str::slug($request->nom) . "-" . time() . "." . $archivo->guessExtension(); // Generar un nombre único
-                $ruta = public_path('img/documents');
-                $archivo->move($ruta, $nombreArchivo);
-                $datos->nom_imgs = $nombreArchivo; // Asignar el nombre del archivo a la propiedad del modelo
+                $nombreArchivoDoc = Str::slug($request->nom . '-' . $request->num_doc) . "-doc-" . time() . "." . $archivo->guessExtension();
+                $ruta = public_path('img/documents/');
+                $archivo->move($ruta, $nombreArchivoDoc);
+                $datos->nom_imgs = $nombreArchivoDoc; // Usar el campo correcto de tu modelo
             }
+
+            // Manejo de la imagen de perfil del usuario
+            if ($request->hasFile('img_user')) {
+                // Eliminar archivo anterior si existe
+                if ($datos->user_img && file_exists(public_path('img/usuario_img/' . $datos->user_img))) {
+                    unlink(public_path('img/usuario_img/' . $datos->user_img));
+                }
+                $archivo = $request->file('img_user');
+                $nombreArchivoUser = Str::slug($request->nom . '-' . $id) . "-avatar-" . time() . "." . $archivo->guessExtension();
+                $ruta = public_path('img/usuario_img/');
+                $archivo->move($ruta, $nombreArchivoUser);
+                $datos->user_img = $nombreArchivoUser; // Usar el campo correcto de tu modelo
+            }
+
             $datos->save();
-            return redirect()->route('crearUsuario', ['cliente_id' => $datos->id])->with('success', 'Usuario creado exitosamente!');
+
+            // Redirección corregida (sin pasar 'id' si la ruta myProfile no lo necesita)
+            return redirect()->route('myProfile')->with('success', '¡Tus datos han sido actualizados exitosamente! 🎉');
         } catch (\Exception $e) {
-            // Manejo de excepciones
-            return redirect()->back()->with('error', 'Error al crear el usuario. Por favor, verifica que no exista un usuario con esos datos.');
+            // Para depuración, puedes ver el mensaje de error real:
+            // dd($e->getMessage()); 
+            return redirect()->back()->with('error', 'Hubo un problema al actualizar tu información: ' . $e->getMessage() . '. Intenta de nuevo más tarde o contacta a soporte.');
         }
-    }
-
-    public function show(DatoUsuario $datoUsuario) {}
-
-    public function edit($id)
-    {
-        $pais = DatoUsuario::findOrFail($id);
-        return view('paises.editas_pais', [
-            'nombre' => $pais->nombre,
-            'capital' => $pais->capital,
-            'codigo' => $pais->codigo,
-            'continente' => $pais->continente,
-            'id' => $id
-        ]);
-    }
-
-
-    public function update(Request $request, $id)
-    {
-        $pais = DatoUsuario::findOrFail($id);
-        $pais->nombre = $request->nombre;
-        $pais->capital = $request->capital;
-        $pais->codigo = $request->codigo;
-        $pais->continente = $request->continente;
-        $pais->save();
-        return redirect()->route('pais.index');
-    }
-
-    public function destroy(DatoUsuario $datoUsuario)
-    {
-        //
     }
 }
