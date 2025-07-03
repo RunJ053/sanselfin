@@ -104,25 +104,3 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = './productos/CARRITO_DE_COMPRAS.html';
     });
 });
-
-function cargarProductos() {
-    fetch('./json/productos.json')
-        .then(response => {
-            if (!response.ok) throw new Error(`Error: ${response.status}`);
-            return response.json();
-        })
-        .then(data => {
-            data.forEach((product, index) => {
-                const nuevoProducto = new Producto(
-                    index + 1,
-                    product.nombre,
-                    parseFloat(product.valor), // Asegúrate de que el valor sea un número
-                    product.imagen,
-                    product.descripcion
-                );
-                productos.push(nuevoProducto); // Agregar el nuevo producto al array de productos
-            });
-            renderizarProductos(); // Llamar a la función para renderizar los productos
-        })
-        .catch(error => console.error('Error cargando productos:', error));
-}

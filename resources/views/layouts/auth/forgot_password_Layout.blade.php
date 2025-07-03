@@ -11,7 +11,7 @@
     <!-- SweetAlert2 CDN -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <link rel="stylesheet" href="{{ asset('css/ADMINISTRADOR.CSS') }}"> <!-- Asegúrate de que tu CSS exista -->
+    <link rel="stylesheet" href="{{ asset('css/LOGIN.CSS') }}">
     <link rel="shortcut icon" href="{{ asset('img/logo/icon.png')}}" type="image/x-icon">
 
 
@@ -81,7 +81,7 @@
                 Swal.fire({
                     icon: 'error',
                     title: '¡Error!',
-                    html: errorMessage || 'Ha ocurrido un error inesperado.', // Muestra un mensaje genérico si no hay errores específicos
+                    html: errorMessage || 'Ha ocurrido un error inesperado.',
                     confirmButtonText: 'Entendido'
                 });
             }

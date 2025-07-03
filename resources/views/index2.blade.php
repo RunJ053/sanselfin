@@ -15,7 +15,7 @@
     <div class="nav-center">
         <ul class="nav-links" role="menubar">
             <li role="none"><a href="{{ route('user.dashboard') }}" role="menuitem">Inicio</a></li>
-            <li role="none"><a href="/productos" role="menuitem">Productos</a></li>
+            <li role="none"><a href="{{ route('producto') }}" role="menuitem">Productos</a></li>
             <li role="none"><a href="/servicios" role="menuitem">Servicios</a></li>
             <li role="none"><a href="/acerca-de" role="menuitem">Acerca de</a></li>
         </ul>
@@ -88,8 +88,8 @@
 
     <!-- Enlaces de navegación móvil -->
     <ul class="mobile-nav-links">
-        <li><a href="/">Inicio</a></li>
-        <li><a href="/productos">Productos</a></li>
+        <li><a href="{{ route('user.dashboard') }}">Inicio</a></li>
+        <li><a href="{{ route('producto') }}">Productos</a></li>
         <li><a href="/servicios">Servicios</a></li>
         <li><a href="/acerca-de">Acerca de</a></li>
     </ul>

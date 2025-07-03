@@ -9,14 +9,14 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
 //inicio de paginas
-Route::get("/", function(){
+Route::get("/", function () {
     return view("index");
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Verificacion de usuario
 
-Route::get("/incio_sesion", [LoginController::class,"index"])->name("login");
+Route::get("/incio_sesion", [LoginController::class, "index"])->name("login");
 
 Route::post('/login', [AuthController::class, 'login'])->name('iniciarSesion');
 Route::post('/register', [AuthController::class, 'register'])->name('registrarUsuario');
@@ -30,11 +30,24 @@ Route::post('/forgot-password', [AuthController::class, 'sendResetToken'])->name
 Route::get('/reset-password', [AuthController::class, 'showResetPasswordForm'])->name('password.reset.form'); // Muestra el formulario de reset
 Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update'); // Procesa el reset
 
-// Rutas protegidas por rol (ejemplos)
+// Rutas protegidas por rol
 Route::middleware(['auth'])->group(function () {
+
     Route::get('/dashboard/user', function () {
-        return view('index2'); // Vista para usuarios normales
-    })->name('user.dashboard'); // Corregido: 'user.index2' a 'user.dashboard' para consistencia con el nombre
+        return view('index2');
+    })->name('user.dashboard');
+
+    //Rutas de perfil de usuario
+    Route::get('/my-profile', [LoginController::class, 'myProfile'])->name('myProfile');
+    Route::get('/user/edit/{id}', [DatoUsuarioController::class, 'edit'])->name('user.edit');
+    Route::put('/user/update/{id}', [DatoUsuarioController::class, 'update'])->name('user.update');
+    Route::get('/user/change-password', [DatoUsuarioController::class, 'changePasswordForm'])->name('user.changePasswordForm');
+    Route::post('/user/change-password', [DatoUsuarioController::class, 'changePassword'])->name('user.changePassword');
+
+    // Rutas para el carrito de compras
+    Route::get('/producto', function () {
+        return view('producto'); // Vista del carrito de compras
+    })->name('producto');
 
     Route::middleware(['is_admin'])->group(function () { // Usaremos un middleware para administradores
         Route::get('/dashboard/admin', function () {
@@ -43,10 +56,7 @@ Route::middleware(['auth'])->group(function () {
     });
 });
 
-Route::get('/my-profile', [LoginController::class, 'myProfile'])->name('myProfile');
-Route::get('/user/edit/{id}', [DatoUsuarioController::class, 'edit'])->name('user.edit');
-Route::put('/user/update/{id}', [DatoUsuarioController::class, 'update'])->name('user.update');
-Route::get('/user/change-password', [DatoUsuarioController::class, 'changePasswordForm'])->name('user.changePasswordForm');
-Route::post('/user/change-password', [DatoUsuarioController::class, 'changePassword'])->name('user.changePassword');
+
+
 // Puedes definir una ruta para el formulario si lo necesitas aparte, o solo usar la raíz
 // Route::get('/auth', [AuthController::class, 'showAuthForm'])->name('auth.form');
