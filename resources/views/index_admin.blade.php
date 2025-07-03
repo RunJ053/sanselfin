@@ -81,7 +81,7 @@
     <ul class="nav flex-column">
       <li class="nav-item mb-2"><a class="nav-link text-white" href="{{ route('inventario.index') }}"><i class="fas fa-home me-2"></i>Inicio</a></li>
       <li class="nav-item mb-2"><a class="nav-link text-white" href="{{ route('producto.index') }}"><i class="fas fa-boxes me-2"></i>Inventario</a></li>
-      <li class="nav-item mb-2"><a class="nav-link text-white" href="admin/PRODUCTOS_RECI.php"><i class="fas fa-carrot me-2"></i>Reportes</a></li>
+      <li class="nav-item mb-2"><a class="nav-link text-white" href="{{ route('dashboard.index') }}"><i class="fas fa-carrot me-2"></i>Reportes</a></li>
       <li class="nav-item mt-5"><a class="nav-link text-danger" href=""><i class="fas fa-sign-out-alt me-2"></i>Salir</a></li>
     </ul>
   </div>
@@ -96,7 +96,7 @@
   <ul class="nav flex-column">
     <li class="nav-item mb-2"><a class="nav-link text-white" href="{{ route('inventario.index') }}"><i class="fas fa-home me-2"></i>Inicio</a></li>
     <li class="nav-item mb-2"><a class="nav-link text-white" href="{{ route('producto.index') }}"><i class="fas fa-boxes me-2"></i>Inventario</a></li>
-    <li class="nav-item mb-2"><a class="nav-link text-white" href="admin/PRODUCTOS_RECI.php"><i class="fas fa-carrot me-2"></i>Reportes</a></li>
+    <li class="nav-item mb-2"><a class="nav-link text-white" href="{{ route('dashboard.index') }}"><i class="fas fa-carrot me-2"></i>Reportes</a></li>
     <li class="nav-item mt-5"><a class="nav-link text-danger" href="index.html"><i class="fas fa-sign-out-alt me-2"></i>Salir</a></li>
   </ul>
 </div>
