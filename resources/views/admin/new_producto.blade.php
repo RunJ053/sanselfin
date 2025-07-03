@@ -9,7 +9,7 @@
     <body>
     <div class="container">
         <h2>Registrar Nuevo Producto</h2>
-        <form action="{{ route('producto.store') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('Producto.guardar') }}" method="POST" enctype="multipart/form-data">
             @csrf
         <div class="form-group">
             <label for="nombre">Nombre del Producto</label>
@@ -17,15 +17,15 @@
         </div>
 
         <div class="form-group">
-            <label>categoría:</label>
-            <select name="categoria" required>
-                <option value="">Seleccione una categoría</option>
-                @foreach($categorias as $categoria)
-                    <option value="{{ $categoria->id }}">
-                        {{ $categoria->nombre }}</option>
+            <label for="categoria">Categoría</label>
+            <select name="Categoria" id="">
+                <option value="">Selecione la categoria</option>
+                @foreach ($categorias as $categoria)
+                <option value="{{ $categoria->id }}">
+                    {{ $categoria->nombre}}
+                </option>
                 @endforeach
             </select>
-
         </div>
 
         <div class="form-group">
@@ -61,9 +61,10 @@
                 @endforeach
             </select>
         </div>
+
         <div class="form-group">
             <label for="imagen">Imagen</label>
-            <input type="file" name="imagen" accept=".jpg,.jpeg,.png" required>
+            <input type="file" name="imagen" accept="image/*">
         </div>
 
         <button type="submit">Registrar Producto</button>
