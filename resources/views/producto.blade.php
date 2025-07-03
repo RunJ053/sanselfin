@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VerdeFresh - Ecommerce de Verduras</title>
+    <title>Podructos - La Finca al Día</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.10.1/sweetalert2.all.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="{{ asset('css/NAV.CSS') }}">
@@ -25,6 +25,7 @@
 
         main {
             display: flex;
+            width: 100%;
             max-width: 1200px;
             margin: 2rem auto;
             gap: 2rem;
@@ -165,8 +166,8 @@
 
         .products_co {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 2fr));
+            gap: 0.5rem;
         }
 
         .product {
@@ -359,137 +360,130 @@
 <body>
     <header class="header">
         <nav class="main-nav" aria-label="Navegación principal">
-            <!-- Logo -->
-            <div class="nav-left">
-                <a href="{{ route('user.dashboard') }}" class="logo-link">
-                    <img src="{{asset ('img/logo/icon.png')}}" alt="Logo de La Finca al Día" width="120" height="40">
+    <!-- Logo -->
+    <div class="nav-left">
+        <a href="{{ route('user.dashboard') }}" class="logo-link">
+            <img src="{{asset ('img/logo/icon.png')}}" alt="Logo de La Finca al Día" width="120" height="40">
+        </a>
+    </div>
+
+    <!-- Enlaces de navegación centrales -->
+    <div class="nav-center">
+        <ul class="nav-links" role="menubar">
+            <li role="none"><a href="{{ route('user.dashboard') }}" role="menuitem">Inicio</a></li>
+            <li role="none"><a href="{{ route('producto') }}" role="menuitem">Productos</a></li>
+            <li role="none"><a href="{{ route('servicio')}}" role="menuitem">Servicios</a></li>
+            <li role="none"><a href="{{ route('acerca_de')}}" role="menuitem">Acerca de</a></li>
+        </ul>
+    </div>
+
+    <!-- Acciones de la derecha -->
+    <div class="nav-right">
+        <ul class="nav-actions" role="menubar">
+            <li role="none">
+                <a href="/notificaciones" role="menuitem" aria-label="Notificaciones">
+                    <i class="fas fa-bell"></i>
+                    <span class="visually-hidden">Notificaciones</span>
                 </a>
-            </div>
+            </li>
+            <li role="none">
+                <a href="/carrito" role="menuitem" aria-label="Carrito de Compras">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="visually-hidden">Carrito</span>
+                </a>
+            </li>
+            <li role="none">
+                <a href="/ayuda" role="menuitem" aria-label="Ayuda">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    <span>Ayuda</span>
+                </a>
+            </li>
+        </ul>
 
-            <!-- Enlaces de navegación centrales -->
-            <div class="nav-center">
-                <ul class="nav-links" role="menubar">
-                    <li role="none"><a href="{{ route('user.dashboard') }}" role="menuitem">Inicio</a></li>
-                    <li role="none"><a href="{{ route('producto') }}" role="menuitem">Productos</a></li>
-                    <li role="none"><a href="/servicios" role="menuitem">Servicios</a></li>
-                    <li role="none"><a href="/acerca-de" role="menuitem">Acerca de</a></li>
-                </ul>
-            </div>
-
-            <!-- Acciones de la derecha -->
-            <div class="nav-right">
-                <ul class="nav-actions" role="menubar">
-                    <li role="none">
-                        <a href="/notificaciones" role="menuitem" aria-label="Notificaciones">
-                            <i class="fas fa-bell"></i>
-                            <span class="visually-hidden">Notificaciones</span>
-                        </a>
-                    </li>
-                    <li role="none">
-                        <a href="/carrito" role="menuitem" aria-label="Carrito de Compras">
-                            <div class="cart-icon" onclick="showCart()">
-                                <i class="fas fa-shopping-cart"></i>
-                                <span class="cart-count" id="cartCount">0</span>
-                            </div>
-                            <span>Carrito</span>
-                        </a>
-                    </li>
-                    <li role="none">
-                        <a href="/ayuda" role="menuitem" aria-label="Ayuda">
-                            <i class="fa-solid fa-circle-exclamation"></i>
-                            <span>Ayuda</span>
-                        </a>
-                    </li>
-                </ul>
-
-                <!-- Avatar de usuario -->
-                <div class="user-avatar" onclick="toggleDropdown()" role="button" aria-haspopup="true" aria-expanded="false">
-                    @auth <!-- Verificamos que el usuario esté autenticado -->
-                    @if (Auth::user()->user_img)
-                    <img src="{{ asset('img/usuario_img/' . Auth::user()->user_img) }}"
-                        alt="Avatar de {{ Auth::user()->nombre }}"
+        <!-- Avatar de usuario -->
+        <div class="user-avatar" onclick="toggleDropdown()" role="button" aria-haspopup="true" aria-expanded="false">
+            @auth <!-- Verificamos que el usuario esté autenticado -->
+                @if (Auth::user()->user_img)
+                    <img src="{{ asset('img/usuario_img/' . Auth::user()->user_img) }}" 
+                        alt="Avatar de {{ Auth::user()->nombre }}" 
                         class="avatar-image">
-                    @else
+                @else
                     <i class="fas fa-user"></i>
-                    @endif
-                    @endauth
+                @endif
+            @endauth
 
-                    <div class="dropdown-menu" id="dropdownMenu">
-                        <a href="{{ route('myProfile') }}" class="dropdown-item">Mi Perfil</a>
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                            @csrf
-                        </form>
-                        <a class="nav-link" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                            Cerrar Sesión
-                        </a>
+            <div class="dropdown-menu" id="dropdownMenu">
+                <a href="{{ route('myProfile') }}" class="dropdown-item">Mi Perfil</a>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                    @csrf
+                </form>
+                <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    Cerrar Sesión
+                </a>
 
-                    </div>
-                </div>
-
-                <!-- Botón hamburguesa -->
-                <button class="menu-toggle" onclick="toggleMobileMenu()" aria-expanded="false" aria-label="Menú">
-                    <i class="fas fa-bars"></i>
-                </button>
             </div>
-        </nav>
-
-        <!-- Overlay para móvil -->
-        <div class="mobile-overlay" id="mobileOverlay" onclick="closeMobileMenu()"></div>
-
-        <!-- Menú móvil -->
-        <div class="mobile-menu" id="mobileMenu">
-            <div class="mobile-menu-header">
-                <button class="mobile-menu-close" onclick="closeMobileMenu()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-
-            <!-- Enlaces de navegación móvil -->
-            <ul class="mobile-nav-links">
-                <li><a href="{{ asset('user.dashboard') }}">Inicio</a></li>
-                <li><a href="{{ asset('producto') }}">Productos</a></li>
-                <li><a href="/servicios">Servicios</a></li>
-                <li><a href="/acerca-de">Acerca de</a></li>
-            </ul>
-
-            <!-- Acciones móvil -->
-            <ul class="mobile-nav-actions">
-                <li>
-                    <a href="/notificaciones">
-                        <i class="fas fa-bell"></i>
-                        <span>Notificaciones</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="/carrito">
-                        <div class="cart-icon" onclick="showCart()">
-                            <i class="fas fa-shopping-cart"></i>
-                            <span class="cart-count" id="cartCount">0</span>
-                        </div>
-                        <span>Carrito</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="/ayuda">
-                        <i class="fa-solid fa-circle-exclamation"></i>
-                        <span>Necesito Ayuda</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="/perfil">
-                        <i class="fas fa-user"></i>
-                        <span>Mi Perfil</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                        <i class="fas fa-sign-out-alt"></i>
-                        <span>Cerrar Sesión</span>
-                    </a>
-                </li>
-            </ul>
         </div>
 
+        <!-- Botón hamburguesa -->
+        <button class="menu-toggle" onclick="toggleMobileMenu()" aria-expanded="false" aria-label="Menú">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+</nav>
+
+<!-- Overlay para móvil -->
+<div class="mobile-overlay" id="mobileOverlay" onclick="closeMobileMenu()"></div>
+
+<!-- Menú móvil -->
+<div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-header">
+        <button class="mobile-menu-close" onclick="closeMobileMenu()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <!-- Enlaces de navegación móvil -->
+    <ul class="mobile-nav-links">
+        <li><a href="{{ route('user.dashboard') }}">Inicio</a></li>
+        <li><a href="{{ route('producto') }}">Productos</a></li>
+        <li><a href="{{ route('servicio')}}">Servicios</a></li>
+        <li><a href="{{ route('acerca_de')}}">Acerca de</a></li>
+    </ul>
+
+    <!-- Acciones móvil -->
+    <ul class="mobile-nav-actions">
+        <li>
+            <a href="/notificaciones">
+                <i class="fas fa-bell"></i>
+                <span>Notificaciones</span>
+            </a>
+        </li>
+        <li>
+            <a href="/carrito">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Carrito de Compras</span>
+            </a>
+        </li>
+        <li>
+            <a href="/ayuda">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <span>Necesito Ayuda</span>
+            </a>
+        </li>
+        <li>
+            <a href="/perfil">
+                <i class="fas fa-user"></i>
+                <span>Mi Perfil</span>
+            </a>
+        </li>
+        <li>
+            <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Cerrar Sesión</span>
+            </a>
+        </li>
+    </ul>
+</div>
     </header>
 
     <main>
@@ -935,6 +929,8 @@
             });
         }
     </script>
+    <script src="{{ asset('js/hamburguesa.js') }}"></script>
+
 </body>
 
 </html>

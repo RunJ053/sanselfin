@@ -1,9 +1,9 @@
 body {
-    font-family:Georgia, 'Times New Roman', Times, serif;
     line-height: 1.6;
     margin: 0;
     padding: 0;
-    background: linear-gradient(#FFFAF0, #eedcc5);
+    background: linear-gradient(to bottom, #cfe8a9, #f8f4e3);
+    font-family: Georgia, "Times New Roman", Times, serif;
     color: #333;
 }
 

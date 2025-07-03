@@ -26,7 +26,7 @@ class LoginController extends Controller
     public function myProfile()
     {
         if (Auth::check()) {
-            $usuario = DatoUsuario::with(['tipoDocumento', 'genero', 'localidad'])->find(Auth::id());
+            $usuario = DatoUsuario::with(['tipoDocumento', 'genero', 'datoslocalidad'])->find(Auth::id());
 
             // Si por alguna razón el usuario autenticado no se encuentra en la DB (situación rara pero posible)
             if (!$usuario) {

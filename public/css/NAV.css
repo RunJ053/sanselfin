@@ -52,7 +52,6 @@ body {
     height: 51px;
     object-fit: contain;
     border-radius: 8px;
-    
     padding: 5px;
 }
 
@@ -159,6 +158,13 @@ body {
 .user-avatar i {
     color: white;
     font-size: 18px;
+}
+/* Agrega esto para la imagen del avatar */
+.user-avatar .avatar-image { /* O simplemente .avatar-image si no necesitas el selector anidado */
+    width: 100%; /* La imagen ocupará el 100% del ancho de su contenedor (.user-avatar) */
+    height: 100%; /* La imagen ocupará el 100% del alto de su contenedor (.user-avatar) */
+    object-fit: cover; /* ¡Crucial! Esto asegura que la imagen cubra el área sin distorsionarse, recortando los bordes si es necesario. */
+    border-radius: 50%; /* Asegura que la imagen sea redonda como su contenedor */
 }
 
 /* Menú desplegable */

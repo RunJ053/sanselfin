@@ -16,8 +16,8 @@
         <ul class="nav-links" role="menubar">
             <li role="none"><a href="{{ route('user.dashboard') }}" role="menuitem">Inicio</a></li>
             <li role="none"><a href="{{ route('producto') }}" role="menuitem">Productos</a></li>
-            <li role="none"><a href="/servicios" role="menuitem">Servicios</a></li>
-            <li role="none"><a href="/acerca-de" role="menuitem">Acerca de</a></li>
+            <li role="none"><a href="{{ route('servicio')}}" role="menuitem">Servicios</a></li>
+            <li role="none"><a href="{{ route('acerca_de')}}" role="menuitem">Acerca de</a></li>
         </ul>
     </div>
 
@@ -61,7 +61,7 @@
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                     @csrf
                 </form>
-                <a class="nav-link" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                     Cerrar Sesión
                 </a>
 
@@ -90,8 +90,8 @@
     <ul class="mobile-nav-links">
         <li><a href="{{ route('user.dashboard') }}">Inicio</a></li>
         <li><a href="{{ route('producto') }}">Productos</a></li>
-        <li><a href="/servicios">Servicios</a></li>
-        <li><a href="/acerca-de">Acerca de</a></li>
+        <li><a href="{{ route('servicio')}}">Servicios</a></li>
+        <li><a href="{{ route('acerca_de')}}">Acerca de</a></li>
     </ul>
 
     <!-- Acciones móvil -->

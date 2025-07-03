@@ -5,51 +5,139 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Servicios - La Finca al Día</title>
     <link rel="shortcut icon" href="img/logo/icon.png" type="image/x-icon">
-    <link rel="stylesheet" href="css/SERVICIOS.css">
-    <link rel="stylesheet" href="css/NAV.css">
-    <link rel="stylesheet" href="css/footer.css">
+    <link rel="stylesheet" href="{{asset('css/SERVICIOS.css')}}">
+    <link rel="stylesheet" href="{{asset('css/NAV.css')}}">
+    <link rel="stylesheet" href="{{asset('css/footer.css')}}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 </head>
 <body>
     <header>
       <nav class="main-nav" aria-label="Navegación principal">
-          <div class="nav-left">
-              <a href="index2.html" class="logo-link">
-                  <img src="img/logo/icon.png" alt="Logo de La Finca al Día" width="150" height="50">
-              </a>
-          </div>
-          <div class="nav-center">
-              <ul class="nav-links" role="menubar">
-                  <li role="none"><a href="index2.html" role="menuitem">Inicio</a></li>
-                  <li role="none"><a href="PRODUCTO.html" role="menuitem">Productos</a></li>
-                  <li role="none"><a href="SERVICIOS.html" role="menuitem">Servicios</a></li>
-                  <li role="none"><a href="ACERCA_DE.html" role="menuitem">Acerca de</a></li>
-              </ul>
-          </div>
-          <div class="nav-right">
-              <ul class="nav-actions" role="menubar">
-                  <li role="none">
-                      <a href="pages/NOTIFICACION.html" role="menuitem" aria-label="Notificaciones">
-                          <i class="fas fa-bell"></i>
-                          <span class="visually-hidden">Notificaciones</span>
-                      </a>
-                  </li>
-                  <li role="none">
-                      <a href="productos/CARRITO_DE_COMPRAS.html" role="menuitem" aria-label="Carrito de Compras">
-                          <i class="fas fa-shopping-cart"></i>
-                          <span class="visually-hidden">Carrito de Compras</span>
-                      </a>
-                  </li>
-                  <li role="none">
-                      <a href="index.html" class="logout-button" role="menuitem">Cerrar Sesión</a>
-                  </li>
-              </ul>
-              <button class="menu-toggle" onclick="toggleMenu()" aria-expanded="false" aria-label="Menú">
-                  <i class="fas fa-bars"></i>
-              </button>
-          </div>
-      </nav>
+    <!-- Logo -->
+    <div class="nav-left">
+        <a href="{{ route('user.dashboard') }}" class="logo-link">
+            <img src="{{asset ('img/logo/icon.png')}}" alt="Logo de La Finca al Día" width="120" height="40">
+        </a>
+    </div>
+
+    <!-- Enlaces de navegación centrales -->
+    <div class="nav-center">
+        <ul class="nav-links" role="menubar">
+            <li role="none"><a href="{{ route('user.dashboard') }}" role="menuitem">Inicio</a></li>
+            <li role="none"><a href="{{ route('producto') }}" role="menuitem">Productos</a></li>
+            <li role="none"><a href="{{ route('servicio')}}" role="menuitem">Servicios</a></li>
+            <li role="none"><a href="{{ route('acerca_de')}}" role="menuitem">Acerca de</a></li>
+        </ul>
+    </div>
+
+    <!-- Acciones de la derecha -->
+    <div class="nav-right">
+        <ul class="nav-actions" role="menubar">
+            <li role="none">
+                <a href="/notificaciones" role="menuitem" aria-label="Notificaciones">
+                    <i class="fas fa-bell"></i>
+                    <span class="visually-hidden">Notificaciones</span>
+                </a>
+            </li>
+            <li role="none">
+                <a href="/carrito" role="menuitem" aria-label="Carrito de Compras">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="visually-hidden">Carrito</span>
+                </a>
+            </li>
+            <li role="none">
+                <a href="/ayuda" role="menuitem" aria-label="Ayuda">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    <span>Ayuda</span>
+                </a>
+            </li>
+        </ul>
+
+        <!-- Avatar de usuario -->
+        <div class="user-avatar" onclick="toggleDropdown()" role="button" aria-haspopup="true" aria-expanded="false">
+            @auth <!-- Verificamos que el usuario esté autenticado -->
+                @if (Auth::user()->user_img)
+                    <img src="{{ asset('img/usuario_img/' . Auth::user()->user_img) }}" 
+                        alt="Avatar de {{ Auth::user()->nombre }}" 
+                        class="avatar-image">
+                @else
+                    <i class="fas fa-user"></i>
+                @endif
+            @endauth
+
+            <div class="dropdown-menu" id="dropdownMenu">
+                <a href="{{ route('myProfile') }}" class="dropdown-item">Mi Perfil</a>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                    @csrf
+                </form>
+                <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    Cerrar Sesión
+                </a>
+
+            </div>
+        </div>
+
+        <!-- Botón hamburguesa -->
+        <button class="menu-toggle" onclick="toggleMobileMenu()" aria-expanded="false" aria-label="Menú">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+</nav>
+
+<!-- Overlay para móvil -->
+<div class="mobile-overlay" id="mobileOverlay" onclick="closeMobileMenu()"></div>
+
+<!-- Menú móvil -->
+<div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-header">
+        <button class="mobile-menu-close" onclick="closeMobileMenu()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <!-- Enlaces de navegación móvil -->
+    <ul class="mobile-nav-links">
+        <li><a href="{{ route('user.dashboard') }}">Inicio</a></li>
+        <li><a href="{{ route('producto') }}">Productos</a></li>
+        <li><a href="{{ route('servicio')}}">Servicios</a></li>
+        <li><a href="{{ route('acerca_de')}}">Acerca de</a></li>
+    </ul>
+
+    <!-- Acciones móvil -->
+    <ul class="mobile-nav-actions">
+        <li>
+            <a href="/notificaciones">
+                <i class="fas fa-bell"></i>
+                <span>Notificaciones</span>
+            </a>
+        </li>
+        <li>
+            <a href="/carrito">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Carrito de Compras</span>
+            </a>
+        </li>
+        <li>
+            <a href="/ayuda">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <span>Necesito Ayuda</span>
+            </a>
+        </li>
+        <li>
+            <a href="/perfil">
+                <i class="fas fa-user"></i>
+                <span>Mi Perfil</span>
+            </a>
+        </li>
+        <li>
+            <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Cerrar Sesión</span>
+            </a>
+        </li>
+    </ul>
+</div>
   </header>
     <main>
         <div class="accordion" id="accordionExample">
@@ -205,7 +293,7 @@
         </div>
     </footer>
 
-  <script src="js/hamburguesa.js"></script>
+  <script src="{{ asset('js/hamburguesa.js') }}"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
 </body>

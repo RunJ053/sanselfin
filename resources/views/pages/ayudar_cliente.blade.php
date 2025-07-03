@@ -4,12 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Centro de Ayuda</title>
-  <link rel="stylesheet" href="../css/AYUDA_CLIENTE.CSS">
-  <link rel="stylesheet" href="../css/footer.css">
-  <link rel="shortcut icon" href="../img/logo/icon.png" type="image/x-icon">
+  <link rel="stylesheet" href="{{asset('css/AYUDA_CLIENTE.CSS')}}">
+  <link rel="stylesheet" href="{{asset('/css/footer.css')}}">
+  <link rel="shortcut icon" href="{{asset('img/logo/icon.png')}}" type="image/x-icon">
 </head>
 <body>
-  <button><a href="../index2.html">Volver al inicio</a></button>
+  <button><a href="{{route('login')}}">Volver al inicio</a></button>
   <section>
  
     <header class="text-center">

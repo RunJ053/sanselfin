@@ -51,7 +51,7 @@ class DatoUsuario extends Model implements Authenticatable // Implementa la inte
     {
         return $this->belongsTo(Genero::class, 'tipo_de_genero');
     }
-    public function localidad()
+    public function datoslocalidad()
     {
         return $this->belongsTo(Localidad::class, 'localidad');
     }

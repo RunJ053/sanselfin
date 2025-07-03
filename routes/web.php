@@ -21,6 +21,9 @@ Route::get("/incio_sesion", [LoginController::class, "index"])->name("login");
 Route::post('/login', [AuthController::class, 'login'])->name('iniciarSesion');
 Route::post('/register', [AuthController::class, 'register'])->name('registrarUsuario');
 Route::post('/verify-admin-code', [AuthController::class, 'verifyAdminCode'])->name('verifyAdminCode');
+Route::get('/Ayuda-al-cliente', function() {
+    return view('pages.ayudar_cliente');
+})-> name('ayuda_cliente');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth'); // Protege el logout
 
 // NUEVAS RUTAS PARA RESTABLECIMIENTO DE CONTRASEÑA
@@ -48,6 +51,16 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/producto', function () {
         return view('producto'); // Vista del carrito de compras
     })->name('producto');
+
+    //Ruta para mostrar los servicios
+    Route::get('/Servicios', function () {
+        return view('servicios'); // Vista del carrito de compras
+    })->name('servicio');
+
+    //Ruta para el acerca de
+    Route::get('/Acerca/de', function () {
+        return view('acerca_de'); // Vista del carrito de compras
+    })->name('acerca_de');
 
     Route::middleware(['is_admin'])->group(function () { // Usaremos un middleware para administradores
         Route::get('/dashboard/admin', function () {

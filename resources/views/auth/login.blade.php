@@ -7,7 +7,16 @@
     <div class="container py-5 h-100">
         <div class="row d-flex align-items-center justify-content-center h-100">
             <div class="col-md-8 col-lg-7 col-xl-6 fade-in-1">
-                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.svg" class="img-fluid" alt="Phone image">
+
+            <marquee style="max-width: 100%; font-family:Georgia, 'Times New Roman', Times, serif;" behavior="scroll" direction="left" scrollamount="14">
+                <strong>Si te registras puedes comprar más de lo que esperas ;) </strong>
+                <img style="width: 40px;  height: auto; border-radius: 50%;" src="{{asset('img/es_de_frutas_y_verduras_1.webp')}}" alt="imagen_prueba">
+                <strong>Sabias que las compras online son inseguras, por eso nos preocupamos por tu seguridad</strong> <i class="fas fa-lock me-2"></i>
+                Asegurate de tener una buena contraseña :)
+                <img style="width: 40px;  height: auto; border-radius: 30%;" src="{{asset('img/es_de_frutas_y_verduras_3.png')}}" alt="imagen_prueba">
+            </marquee>
+
+                <img style="margin-top:15%;" src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.svg" class="img-fluid" alt="Phone image">
             </div>
             <div class="col-md-7 col-lg-5 col-xl-5 offset-xl-1">
                 <div class="login-card p-4">
@@ -64,7 +73,7 @@
                                     <a href="#!" class="text-decoration-none" style="color: #393f81;" id="showRegisterTab"><strong>Regístrate aquí</strong></a>
                                 </p>
                                 <div class="text-center fade-in-4">
-                                    <a href="#!" class="small text-muted text-decoration-none me-3"><i class="fas fa-file-contract me-1"></i>Términos de uso</a>
+                                    <a href="{{ route('ayuda_cliente')}}" class="small text-muted text-decoration-none me-3"><i class="fas fa-file-contract me-1"></i>Necesitas Ayuda</a>
                                     <a href="#!" class="small text-muted text-decoration-none"><i class="fas fa-shield-alt me-1"></i>Política de privacidad</a>
                                 </div>
                             </form>

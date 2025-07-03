@@ -27,11 +27,6 @@
                 <i class="fas fa-user"></i>
                 <span>Mi Perfil</span>
             </button>
-            <button class="mobile-menu-item" onclick="showModule('coupons')">
-                <i class="fas fa-tag"></i>
-                <span>Cupones</span>
-                <span class="badge">2</span>
-            </button>
             <button class="mobile-menu-item" onclick="showModule('addresses')">
                 <i class="fas fa-map-marker-alt"></i>
                 <span>Direcciones</span>
@@ -65,11 +60,6 @@
                     <button class="nav-item" onclick="showModule('profile')">
                         <i class="fas fa-user"></i>
                         <span>Mi Perfil</span>
-                    </button>
-                    <button class="nav-item" onclick="showModule('coupons')">
-                        <i class="fas fa-tag"></i>
-                        <span>Cupones</span>
-                        <span class="badge">2</span>
                     </button>
                     <button class="nav-item" onclick="showModule('addresses')">
                         <i class="fas fa-map-marker-alt"></i>
@@ -143,20 +133,6 @@
                             </div>
                         </div>
                         <h3 class="module-title">Mi Perfil</h3>
-                        <div class="module-footer">
-                            <span>Ver detalles</span>
-                            <i class="fas fa-chevron-right"></i>
-                        </div>
-                    </div>
-
-                    <div class="module-card" onclick="showModule('coupons')">
-                        <div class="module-header">
-                            <div class="module-icon module-coupons">
-                                <i class="fas fa-tag"></i>
-                            </div>
-                            <span class="module-badge">2</span>
-                        </div>
-                        <h3 class="module-title">Cupones</h3>
                         <div class="module-footer">
                             <span>Ver detalles</span>
                             <i class="fas fa-chevron-right"></i>
@@ -258,7 +234,7 @@
                         <p><strong>Fecha de Nacimiento:</strong> {{ $usuario->edad }}</p>
                         <p><strong>Número Telefónico:</strong> {{ $usuario->telefono }}</p>
                         <p><strong>Email:</strong> {{ $usuario->email }}</p>
-                        <p><strong>Localidad:</strong> {{ $usuario->localidad->descripcion ?? 'No especificada' }}</p>
+                        <p><strong>Localidad:</strong> {{ $usuario->datosLocalidad->descripcion ?? 'No especificada' }}</p>
                         <p><strong>Orientación sexual:</strong> {{ $usuario->genero->descripcion_gen ?? 'No especificada' }}</p>
                         <p><strong>Verificado:</strong> {{ $usuario->is_verified ? 'Sí' : 'No' }}</p>
                         <p><strong>Imagen de Usuario:</strong>
@@ -293,13 +269,6 @@
                 </div>
             </div>
 
-            <div id="coupons-content" class="module-content hidden">
-                <div class="content-section">
-                    <h2 class="section-title">Cupones de Descuento</h2>
-                    <p>Aquí encontrarás todos tus cupones disponibles...</p>
-                </div>
-            </div>
-
             <div id="favorites-content" class="module-content hidden">
                 <div class="content-section">
                     <h2 class="section-title">Mis Favoritos</h2>
@@ -310,15 +279,16 @@
             <div id="addresses-content" class="module-content hidden">
                 <div class="content-section">
                     <h2 class="section-title">Mis Direcciones</h2>
+                    <img style="position: absolute; top: 0; right: 0; width: 22%; height: 40%;" src="{{asset('img/logo/icon.png')}}" alt="Logo">
                     <p>Gestiona las direcciones de entrega...</p>
-                    <br>
                     <hr>
-                    <p>Agrega, edita o elimina tus direcciones de envío para facilitar tus compras.</p>
+                    <p class="profile-info">Agrega, edita o elimina tus direcciones de envío desde tú perfil para facilitar tus compras.</p>
+                    <p>Cuando soicites tu pedido te lo enviaremos a la siguiente dirección:</p>
                     </hr>
                     </br>
-                    <div class="address-item">
-                        <p><strong>Dirección 1:</strong> Calle Falsa 123, Ciudad, País</p>
-                        <button class="edit-address-btn">Editar</button>
+                    <div class="profile-info">  
+                        <p><strong>Tu dirección actual es:</strong> {{ $usuario->direccion }}</p>
+                        <p><strong>En la localidad de:</strong> {{ $usuario->datosLocalidad->descripcion ?? 'No especificada' }}</p>
                     </div>
                 </div>
             </div>
