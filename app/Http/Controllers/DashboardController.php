@@ -13,8 +13,8 @@ class DashboardController extends Controller
         // Productos recientes con relación a categoría
         $productosRecientes = Producto::with('categorias')
             ->orderBy('created_at', 'desc')
-            ->limit(5)
-            ->get();
+            ->simplePaginate(3); 
+           
 
         // Datos para gráfico: productos por categoría
         $dataCat = DB::table('productos')

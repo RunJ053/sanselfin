@@ -9,7 +9,7 @@
     <body>
     <div class="container">
         <h2>Registrar Nuevo Producto</h2>
-        <form action="{{ route('Producto.guardar') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('producto.guardar') }}" method="POST" enctype="multipart/form-data">
             @csrf
         <div class="form-group">
             <label for="nombre">Nombre del Producto</label>
@@ -62,9 +62,9 @@
             </select>
         </div>
 
-        <div class="form-group">
+       <div class="form-group">
             <label for="imagen">Imagen</label>
-            <input type="file" name="imagen" accept="image/*">
+            <input type="file" name="imagen" accept=".jpg,.jpeg,.png" required>
         </div>
 
         <button type="submit">Registrar Producto</button>

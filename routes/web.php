@@ -45,16 +45,16 @@ Route::get('/inventario', [ProductoController::class, 'index'])->name('producto.
 Route::get('/producto/create', [ProductoController::class, 'create'])->name('producto.create');
 
 // Guardar nuevo producto
-Route::post('/producto/guardar', [ProductoController::class, 'store'])->name('producto.store');
+Route::post('/producto/guardar', [ProductoController::class, 'store'])->name('producto.guardar');
 
 // Editar producto
-Route::get('/productos/{producto}/edit', [ProductoController::class, 'edit'])->name('productos.edit');
+Route::get('/productos/{producto}/edit', [ProductoController::class, 'edit'])->name('producto.edit');
 
 // Actualizar producto
 Route::put('/actualizar_producto/{producto}', [ProductoController::class, 'update'])->name('productos.update');
 
 // Eliminar producto
-Route::delete('/productos/{id}', [ProductoController::class, 'destroy'])->name('productos.destroy');
+Route::delete('/productos/{id}', [ProductoController::class, 'destroy'])->name('producto.destroy');
 
 //reporte dela admin
 
