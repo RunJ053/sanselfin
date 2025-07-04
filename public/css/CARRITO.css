@@ -17,7 +17,7 @@ body {
     border-radius: 6px;
     margin-left: 5%;
     margin-right: 5%;
-    background-image: url('../img/es_de_frutas_y_verduras_2.png');
+    background-image: url("../img/es_de_frutas_y_verduras_2.webp");
     background-size: cover; 
     background-position: center center; 
     color: white;

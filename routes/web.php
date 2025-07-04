@@ -4,6 +4,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\DatoUsuarioController;
+use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\CarritoCompraController;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -21,9 +23,9 @@ Route::get("/incio_sesion", [LoginController::class, "index"])->name("login");
 Route::post('/login', [AuthController::class, 'login'])->name('iniciarSesion');
 Route::post('/register', [AuthController::class, 'register'])->name('registrarUsuario');
 Route::post('/verify-admin-code', [AuthController::class, 'verifyAdminCode'])->name('verifyAdminCode');
-Route::get('/Ayuda-al-cliente', function() {
+Route::get('/Ayuda-al-cliente', function () {
     return view('pages.ayudar_cliente');
-})-> name('ayuda_cliente');
+})->name('ayuda_cliente');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth'); // Protege el logout
 
 // NUEVAS RUTAS PARA RESTABLECIMIENTO DE CONTRASEÑA
@@ -47,19 +49,37 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/user/change-password', [DatoUsuarioController::class, 'changePasswordForm'])->name('user.changePasswordForm');
     Route::post('/user/change-password', [DatoUsuarioController::class, 'changePassword'])->name('user.changePassword');
 
-    // Rutas para el carrito de compras
-    Route::get('/producto', function () {
-        return view('producto'); // Vista del carrito de compras
-    })->name('producto');
+    // Ruta principal para mostrar productos con filtros y búsqueda
+    Route::get('/productos', [ProductoController::class, 'indexUsuarioPro'])->name('producto');
+
+    // Ruta para obtener los detalles de un solo producto para el modal (si aún lo necesitas con AJAX)
+    // Esta ruta devolverá JSON y será consumida por el JavaScript del modal.
+    Route::get('/productos/{id}/details', [ProductoController::class, 'showProductDetails'])->name('productos.details');
+
+    // Ruta para mostrar la vista del carrito (no es una API, es una vista)
+    Route::get('/carrito', function () {
+        return view('productos.carrito_de_comprar'); // Asegúrate de que 'pages.carrito_compra' sea la ruta correcta a tu vista del carrito
+    })->name('carrito.index');
+
+    // Rutas de la API del carrito (para JS)
+    Route::prefix('api/carrito')->group(function () {
+        Route::get('/', [CarritoCompraController::class, 'index'])->name('api.carrito.index'); // Obtener todos los ítems
+        Route::post('/add', [CarritoCompraController::class, 'add'])->name('api.carrito.add'); // Añadir producto
+        Route::get('/count', [CarritoCompraController::class, 'getCartCount'])->name('api.carrito.count'); // Obtener conteo
+        Route::post('/update/{itemId}', [CarritoCompraController::class, 'update'])->name('api.carrito.update'); // ¡Asegúrate de tener el método update en el controlador!
+        // Nueva ruta para eliminar un ítem
+        Route::post('/remove/{itemId}', [CarritoCompraController::class, 'remove'])->name('api.carrito.remove'); // <<< --- ¡PEGA ESTA LÍNEA AQUÍ!
+        // Añade aquí rutas para actualizar cantidad, eliminar, etc. si las implementas.
+    });
 
     //Ruta para mostrar los servicios
     Route::get('/Servicios', function () {
-        return view('servicios'); // Vista del carrito de compras
+        return view('servicios');
     })->name('servicio');
 
     //Ruta para el acerca de
     Route::get('/Acerca/de', function () {
-        return view('acerca_de'); // Vista del carrito de compras
+        return view('acerca_de');
     })->name('acerca_de');
 
     Route::middleware(['is_admin'])->group(function () { // Usaremos un middleware para administradores
