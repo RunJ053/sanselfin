@@ -1,0 +1,344 @@
+/* ==== ESTILOS GENERALES ==== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "Segoe UI", sans-serif;
+    background: linear-gradient(to bottom, #cfe8a9, #f8f4e3);
+}
+
+/* ==== LOGIN ==== */
+.login-container {
+    border: 1px solid #8b8b8b;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 25px 40px;
+    border-radius: 15px;
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+    margin: 40px auto;
+}
+
+.login-container h2 {
+    margin-bottom: 20px;
+    color: #4d774e;
+    font-family: "Georgia", serif;
+}
+
+label {
+    display: block;
+    text-align: left;
+    font-size: 14px;
+    color: #4d774e;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #333;
+    border-radius: 25px;
+    font-size: 14px;
+    background-color: #f1f8e9;
+    text-indent: 10px;
+}
+
+input:focus {
+    border-color: #5cb85c;
+    outline: none;
+}
+
+.login-btn {
+    background-color: #8bd774;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s ease;
+}
+
+.login-btn:hover {
+    background-color: #74c260;
+}
+
+a {
+    color: #2d85c4;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+p {
+    font-size: 14px;
+    color: #333;
+    margin-top: 10px;
+}
+
+.imagen-grande {
+    width: 250px;
+    height: auto;
+    display: block;
+    margin: 20px auto;
+}
+
+.social-icons {
+    margin-top: 10px;
+}
+
+.social-icons a {
+    color: #74c260;
+    font-size: 20px;
+    margin: 0 10px;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.social-icons a:hover {
+    color: #5cb85c;
+}
+
+/* ==== DASHBOARD: SIDEBAR ==== */
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #ebecae;
+    color: white;
+    padding: 20px;
+}
+
+.sidebar .nav-link {
+    color: white;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+}
+
+.sidebar .nav-link:hover {
+    background-color: #1a6e1a;
+    border-radius: 5px;
+}
+
+/* ==== DASHBOARD: CONTENIDO ==== */
+.main-content {
+    margin-left: 250px;
+    padding: 20px;
+    background-color: #f8f9fa;
+}
+
+.hero h2 {
+    font-weight: 700;
+}
+
+.product-img {
+    height: 180px;
+    object-fit: cover;
+}
+
+/* ==== FOOTER GENERAL ==== */
+.footer {
+    background-color: #fffde7;
+    font-family: "Segoe UI", sans-serif;
+    padding: 40px 0 20px;
+}
+
+.footer-top {
+    background-color: #fefce8;
+    padding: 40px 20px;
+}
+
+.footer-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: space-between;
+}
+
+.footer-section {
+    flex: 1 1 220px;
+}
+
+.footer-logo {
+    width: 100px;
+    margin-bottom: 15px;
+}
+
+.footer-section h3 {
+    color: #6d4c41;
+    margin-bottom: 15px;
+    font-size: 18px;
+}
+
+.footer-section p,
+.footer-section a {
+    font-size: 14px;
+    color: #4e4e4e;
+}
+
+.footer-section a {
+    text-decoration: none;
+    margin-bottom: 8px;
+    display: inline-block;
+    transition: color 0.2s ease;
+}
+
+.footer-section a:hover {
+    color: #6d4c41;
+}
+
+/* Redes sociales */
+.social-links {
+    margin-top: 15px;
+}
+
+.social-links a {
+    font-size: 18px;
+    margin-right: 10px;
+    color: #4e4e4e;
+    transition: color 0.3s ease;
+}
+
+.social-links a:hover {
+    color: #6d4c41;
+}
+
+/* Formulario newsletter */
+.newsletter-form input[type="email"] {
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 14px;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.newsletter-form button,
+.btn-suscribir {
+    background-color: #aed581;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #33691e;
+    width: 100%;
+    transition: background-color 0.3s ease;
+}
+
+.newsletter-form button:hover {
+    background-color: #9ccc65;
+}
+
+/* Parte inferior del footer */
+.footer-bottom {
+    background-color: #f1f8e9;
+    border-top: 1px solid #c0c0c0;
+    text-align: center;
+    padding: 20px 10px;
+    font-size: 14px;
+    color: #4e4e4e;
+}
+
+.payment-methods img {
+    width: 40px;
+    margin: 0 8px;
+    vertical-align: middle;
+}
+
+/* Íconos */
+.footer i {
+    margin-right: 6px;
+    color: #6d4c41;
+}
+
+/* ==== RESPONSIVE ==== */
+@media (max-width: 768px) {
+    .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    .hero-img {
+        max-height: 230px;
+        object-fit: contain;
+        width: 100%;
+    }
+
+    .login-container {
+        margin: 20px;
+        padding: 20px;
+    }
+
+    .footer-grid {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .footer-section {
+        margin-bottom: 30px;
+    }
+
+    .social-links {
+        justify-content: center;
+    }
+
+    .payment-methods img {
+        margin-top: 10px;
+    }
+
+    .footer-top .footer-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .footer-section {
+        flex: 1 1 100%; /* En móviles: ocupa toda la fila */
+    }
+
+    @media (min-width: 768px) {
+        .footer-section {
+            flex: 1 1 25%; /* En pantallas medianas/grandes: 4 columnas */
+        }
+    }
+
+    .newsletter-form input,
+    .newsletter-form button {
+        width: 100%;
+    }
+
+    .social-links a {
+        display: inline-block;
+        margin-right: 10px;
+    }
+
+    .payment-methods {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .payment-methods img {
+        width: 40px;
+    }
+}
