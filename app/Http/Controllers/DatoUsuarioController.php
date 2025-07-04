@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Hash; 
 
 use App\Models\DatoUsuario;
 use App\Models\Genero;
@@ -120,8 +120,6 @@ class DatoUsuarioController extends Controller
             // Redirección corregida (sin pasar 'id' si la ruta myProfile no lo necesita)
             return redirect()->route('myProfile')->with('success', '¡Tus datos han sido actualizados exitosamente! 🎉');
         } catch (\Exception $e) {
-            // Para depuración, puedes ver el mensaje de error real:
-            // dd($e->getMessage()); 
             return redirect()->back()->with('error', 'Hubo un problema al actualizar tu información: ' . $e->getMessage() . '. Intenta de nuevo más tarde o contacta a soporte.');
         }
     }

@@ -15,6 +15,12 @@ body {
         var(--primary-color) 0%,
         var(--secondary-color) 100%
     );
+    background-image: url("../img/fondo_2.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: top left; 
+    /*background-position: bottom right;*/
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
