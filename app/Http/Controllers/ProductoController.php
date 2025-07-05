@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Producto;
 use App\Models\Categoria;
 use App\Models\Impuesto;
-
+use Illuminate\Support\Str;
 use App\Models\Promocion;
 use App\Models\Categoria;
 use Illuminate\Http\Request;
@@ -51,18 +51,25 @@ class ProductoController extends Controller
      */
     public function store(Request $request)
     {
-        $prod= new Producto;
+       $prod = new Producto;
 
         $prod->nombre_producto = $request->nombre;
-        $prod->categoria_id = $request-> Categoria;
+        $prod->categoria_id = $request->Categoria;
         $prod->descripccion = $request->descripcion;
-        //$prod->stock = $request->Stock;
-        $prod->precio_unitario= $request->valor_unitario;
-        $prod->impuesto_id= $request->Impuesto;
-        $prod->descuento_id= $request->Promocion;
-        $prod->save();
-        return redirect()->route('producto.index');
+        $prod->precio_unitario = $request->valor_unitario;
+        $prod->impuesto_id = $request->Impuesto;
+        $prod->descuento_id = $request->Promocion;
 
+        if ($request->hasFile('imagen')) {
+            $file = $request->file('imagen');
+            $filename = Str::slug($prod->nombre_producto) . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('img/product'), $filename);
+            $prod->imagen = $filename;
+        }
+
+        $prod->save();
+
+        return redirect()->route('producto.index');
     }
     /**
      * Display the specified resource.
@@ -75,14 +82,15 @@ class ProductoController extends Controller
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Producto  $producto
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Producto $producto)
+      public function edit(Producto $producto)
     {
+        $categorias = Categoria::all();
+        $impuestos = Impuesto::all();
+        $promociones = Promocion::all();
+
+        return view('admin.edit_produc', compact('producto', 'categorias', 'impuestos', 'promociones'));
+    }
+
         //
     }
 
@@ -160,7 +168,27 @@ class ProductoController extends Controller
      */
     public function update(Request $request, Producto $producto)
     {
-        //
+        $producto->nombre_producto = $request->nombre;
+        $producto->descripccion = $request->descripcion;
+        $producto->precio_unitario = $request->valor_unitario;
+        $producto->categoria_id = $request->Categoria;
+        $producto->impuesto_id = $request->Impuesto;
+        $producto->descuento_id = $request->Promocion;
+
+        if ($request->hasFile('imagen')) {
+                // Eliminar archivo anterior si existe
+                if ($producto->imagen && file_exists(public_path('img/product/' . $producto->imagen))) {
+                    unlink(public_path('img/product/' . $producto->imagen));
+                }
+                $archivo = $request->file('imagen');
+                $nombreArchivoDoc = Str::slug($request->nombre . '-' . $request->Categoria) . "-imagen-" . time() . "." . $archivo->guessExtension();
+                $ruta = public_path('img/product/');
+                $archivo->move($ruta, $nombreArchivoDoc);
+                $producto->imagen = $nombreArchivoDoc; // Usar el campo correcto de tu modelo
+            }
+        $producto->save();
+
+        return redirect()->route('producto.index')->with('success', 'Producto actualizado correctamente.');
     }
 
     /**

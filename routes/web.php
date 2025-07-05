@@ -10,6 +10,7 @@ use App\Http\Controllers\CarritoCompraController;
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\UsuarioController;
+use App\Http\Controllers\DashboardController;
 use App\Models\DatoUsuario;
 use App\Models\Inventario;
 use App\Models\Usuario;
@@ -117,11 +118,30 @@ Route::post('usuario/registrar', [UsuarioController::class,"store"])->name("stor
 Route::get("/usuario/registro", [DatoUsuarioController::class,"index"])->name("registro");
 Route::post("/registrado", [DatoUsuarioController::class,"store"])->name("store");
 
+
 //inventario
-Route::get('/inventario', [InventarioController::class, 'index'])->name('inventario.index');
+Route::get('/inicio_admin', [InventarioController::class, 'index'])->name('inventario.index');
 
 
 //Productos
-Route::get('/producto', [ProductoController::class, 'index'])->name('producto.index');
+// Listado de productos
+Route::get('/inventario', [ProductoController::class, 'index'])->name('producto.index');
+
+// Formulario de creación
 Route::get('/producto/create', [ProductoController::class, 'create'])->name('producto.create');
-Route::post('/producto/guardar', [ProductoController::class, 'store'])->name('Producto.guardar'); 
+
+// Guardar nuevo producto
+Route::post('/producto/guardar', [ProductoController::class, 'store'])->name('producto.guardar');
+
+// Editar producto
+Route::get('/productos/{producto}/edit', [ProductoController::class, 'edit'])->name('producto.edit');
+
+// Actualizar producto
+Route::put('/actualizar_producto/{producto}', [ProductoController::class, 'update'])->name('productos.update');
+
+// Eliminar producto
+Route::delete('/productos/{id}', [ProductoController::class, 'destroy'])->name('producto.destroy');
+
+//reporte dela admin
+
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');   
