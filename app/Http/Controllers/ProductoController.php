@@ -87,9 +87,11 @@ class ProductoController extends Controller
     public function edit(Producto $producto)
     {
         $categorias = Categoria::all();
+        $producto = Producto::findOrFail($producto->id);
+        $inventario = Inventario::where('producto_id', $producto->id)->first();
         $impuestos = Impuesto::all();
         $promociones = Promocion::all();
-        return view('admin.edit_produc', compact('producto', 'categorias', 'impuestos', 'promociones'));
+        return view('admin.edit_produc', compact('producto', 'categorias','inventario', 'impuestos', 'promociones'));
     }
     /**
      * Display a listing of the resource for users.
@@ -108,12 +110,7 @@ class ProductoController extends Controller
         $categoriaNombre = $request->categoria;
         $categoria = Categoria::where('nombre', $categoriaNombre)->first();
         if ($categoria) {
-            // Asegúrate de que categoria_id es el nombre de la columna en tu tabla productos
             $query->where('categoria_id', $categoria->id);
-        } else {
-            // Opcional: Si la categoría no existe, podrías devolver una respuesta vacía
-            // o simplemente continuar para no filtrar por categoría
-            // \Log::warning("Categoría no encontrada: " . $categoriaNombre);
         }
     }
 
@@ -122,24 +119,20 @@ class ProductoController extends Controller
         $searchTerm = $request->search;
         $query->where(function ($q) use ($searchTerm) {
             $q->where('nombre_producto', 'like', '%' . $searchTerm . '%')
-              ->orWhere('descripccion', 'like', '%' . $searchTerm . '%');
+            ->orWhere('descripccion', 'like', '%' . $searchTerm . '%');
         });
     }
 
     // --- APLICAR LA PAGINACIÓN AQUÍ ---
     $productosPaginados = $query->paginate($perPage);
 
-    // --- Mapear los productos después de la paginación ---
-    // Mapea solo los productos de la página actual.
-    // Esto es CRÍTICO: Debes manejar los valores nulos para evitar errores.
     $productosMapeados = $productosPaginados->getCollection()->map(function ($producto) {
         $precioUnitario = $producto->precio_unitario;
 
         // VERIFICA SIEMPRE QUE LA RELACIÓN EXISTE ANTES DE ACCEDER A SUS PROPIEDADES
-        if ($producto->promociones && $producto->promociones->porcentaje_descuento > 0) { // Asumí que 'promociones' es el nombre correcto de la relación para el descuento
+        if ($producto->promociones && $producto->promociones->porcentaje_descuento > 0) { 
             $precioUnitario = $precioUnitario * (1 - ($producto->promociones->porcentaje_descuento / 100));
         }
-        // Si tu descuento viene de una relación llamada 'descuento' como en tu script original
         // if ($producto->descuento && $producto->descuento->porcentaje_descuento > 0) {
         //     $precioUnitario = $precioUnitario * (1 - ($producto->descuento->porcentaje_descuento / 100));
         // }
@@ -149,26 +142,20 @@ class ProductoController extends Controller
         $imagenUrl = asset($imagenPath);
 
         // Agrega una comprobación para la existencia del archivo de imagen
-        // Esto es muy importante, un asset() que apunta a un archivo inexistente NO suele dar error 500,
-        // pero sí un 404 en el navegador que puede confundir.
         if (empty($producto->imagen) || !file_exists(public_path($imagenPath))) {
-            $imagenUrl = asset('img/default.png'); // Asegúrate de tener una imagen por defecto
+            $imagenUrl = asset('img/es_de_frutas_y_verduas_1.webp');
         }
 
         return [
             'id' => $producto->id,
             'nombre' => $producto->nombre_producto,
             'descripcion' => $producto->descripccion,
-            'valor' => number_format($precioUnitario, 0, ',', '.'), // Quita el '$' aquí, añádelo en el JS/Blade
+            'valor' => number_format($precioUnitario, 0, ',', '.'),
             'precio_base' => $producto->precio_unitario,
             'imagen' => $imagenUrl,
-            'rating' => rand(3, 5), // Asumiendo que rating es dinámico o un campo en DB
-            // Ajusta esto según el nombre real de tu relación de descuento
+            'rating' => rand(3, 5),
             'descuento' => $producto->promociones && $producto->promociones->porcentaje_descuento > 0,
             'descuento_porcentaje' => $producto->promociones ? $producto->promociones->porcentaje_descuento : 0,
-            // O si es la relación 'descuento'
-            // 'descuento' => $producto->descuento && $producto->descuento->porcentaje_descuento > 0,
-            // 'descuento_porcentaje' => $producto->descuento ? $producto->descuento->porcentaje_descuento : 0,
         ];
     });
 
@@ -220,17 +207,16 @@ class ProductoController extends Controller
 
         // Verificar si el archivo realmente existe en el servidor
         if (!file_exists(public_path($imagenPath))) {
-            $imagenUrl = asset('img/default.png'); // Usa tu imagen por defecto si no se encuentra
+            $imagenUrl = asset('img/es_de_frutas_y_verduas_1.webp');
         }
-        // Si $producto->imagen es null o vacío, también podrías asignar la imagen por defecto aquí.
-
+        
         return [
             'id' => $producto->id,
             'nombre' => $producto->nombre_producto,
             'descripcion' => $producto->descripccion,
             'valor' => '$' . number_format($precioUnitario, 0, ',', '.'),
             'precio_base' => $producto->precio_unitario,
-            'imagen' => $imagenUrl, // Ya es la URL completa y gestiona el default.png
+            'imagen' => $imagenUrl,
             'categoria' => $producto->categoria ? $producto->categoria->nombre : 'Sin Categoría',
             'rating' => rand(3, 5),
             'descuento' => $producto->descuento_id !== null,
@@ -244,8 +230,21 @@ class ProductoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, Producto $producto)
+   public function update(Request $request, Producto $producto, Inventario $inventario)
     {
+        // Validación de los datos del formulario
+        $request->validate([
+            'nombre' => 'required|string|max:255',
+            'Categoria' => 'required|integer',
+            'descripcion' => 'required|string',
+            'valor_unitario' => 'required|numeric',
+            'Impuesto' => 'required|integer',
+            'Promocion' => 'required|integer',
+            'cantidad' => 'required|integer|min:0',
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        // Actualizar los datos del producto
         $producto->nombre_producto = $request->nombre;
         $producto->descripccion = $request->descripcion;
         $producto->precio_unitario = $request->valor_unitario;
@@ -253,18 +252,37 @@ class ProductoController extends Controller
         $producto->impuesto_id = $request->Impuesto;
         $producto->descuento_id = $request->Promocion;
 
+        // Subir imagen si existe
         if ($request->hasFile('imagen')) {
             // Eliminar archivo anterior si existe
             if ($producto->imagen && file_exists(public_path('img/product/' . $producto->imagen))) {
                 unlink(public_path('img/product/' . $producto->imagen));
             }
+            // Subir la nueva imagen
             $archivo = $request->file('imagen');
             $nombreArchivoDoc = Str::slug($request->nombre . '-' . $request->Categoria) . "-imagen-" . time() . "." . $archivo->guessExtension();
             $ruta = public_path('img/product/');
             $archivo->move($ruta, $nombreArchivoDoc);
-            $producto->imagen = $nombreArchivoDoc; // Usar el campo correcto de tu modelo
+            $producto->imagen = $nombreArchivoDoc;
         }
+
+        // Guardar el producto
         $producto->save();
+
+        // Verificar si el inventario ya existe para este producto
+        $inventario = Inventario::where('producto_id', $producto->id)->first();
+
+        if ($inventario) {
+            // Si el inventario ya existe, solo actualizarlo
+            $inventario->stock = $request->cantidad;
+            $inventario->save();
+        } else {
+            // Si no existe, crear un nuevo inventario
+            Inventario::create([
+                'producto_id' => $producto->id,
+                'stock' => $request->cantidad
+            ]);
+        }
 
         return redirect()->route('producto.index')->with('success', 'Producto actualizado correctamente.');
     }
@@ -275,10 +293,11 @@ class ProductoController extends Controller
      * @param  \App\Models\Producto  $producto
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Producto $producto)
+    public function destroy($id)
     {
+        $producto = Producto::findOrFail($id);
         $producto->delete();
 
-        return redirect()->route('inventario.index')->with('success', 'Producto eliminado correctamente.');
+        return redirect()->route('admin.dashboard')->with('success', 'Producto eliminado correctamente.');
     }
 }

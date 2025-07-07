@@ -108,7 +108,6 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/productos/{id}', [ProductoController::class, 'destroy'])->name('producto.destroy');
 
         //reporte dela admin
-
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
     });
 });

@@ -20,10 +20,9 @@
         </div>
     @endif
 
-    <form action="{{ route('productos.update', $producto->id) }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('productos.update', ['producto' => $producto->id, 'inventario' => $inventario->id]) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
-
         <div class="mb-3">
             <label for="nombre" class="form-label">Nombre del Producto</label>
             <input type="text" name="nombre" class="form-control" value="{{ old('nombre', $producto->nombre_producto) }}" required>
@@ -49,6 +48,11 @@
         <div class="mb-3">
             <label for="valor_unitario" class="form-label">Valor Unitario</label>
             <input type="number" name="valor_unitario" class="form-control" step="0.01" value="{{ old('valor_unitario', $producto->precio_unitario) }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="cantidad" class="form-label">Cantidad Registrada</label>
+            <input type="number" name="cantidad" class="form-control" step="0.01" value="{{ old('cantidad', $inventario->stock) }}" required>
         </div>
 
         <div class="mb-3">

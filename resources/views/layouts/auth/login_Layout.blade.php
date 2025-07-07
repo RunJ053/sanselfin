@@ -115,8 +115,8 @@
             const sessionStatus = "{{ session('status') }}";
             const sessionSuccess = "{{ session('success') }}";
             const sessionMessage = "{{ session('message') }}"; // Para mensajes generales del controlador
-            const hasAnyErrors = @json($errors - > any());
-            const allErrors = @json($errors - > all());
+            const hasAnyErrors = @json($errors->any());
+            const allErrors = @json($errors->all());
 
             // Mensajes de éxito
             if (sessionStatus) {
