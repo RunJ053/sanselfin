@@ -5,46 +5,72 @@ namespace App\Http\Controllers;
 use App\Models\DatoUsuario;
 use App\Models\Inventario;
 use App\Models\Producto;
+use App\Models\Tarea;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\DB;
+
 
 class InventarioController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        
+
         $inventarios = Producto::all();
         $numeroUsuarios = DatoUsuario::count();
         $cantidadMax = Inventario::max('stock');
         $cantidadMin = Inventario::min('stock');
-        return view('index_admin', compact('inventarios', 'cantidadMax', 'cantidadMin'));
-    }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return view('admin.new_producto');
-    }
+        $productosRecientes = Producto::with('categorias')
+            ->orderBy('created_at', 'desc')
+            ->simplePaginate(3); 
+           
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        $inventario= new Inventario;
+        // Datos para gráfico: productos por categoría
+        $dataCat = DB::table('productos')
+            ->join('categorias', 'productos.categoria_id', '=', 'categorias.id')
+            ->select('categorias.nombre', DB::raw('COUNT(*) as total'))
+            ->groupBy('categorias.nombre')
+            ->pluck('total', 'nombre');
 
-        $inventario->nombre_producto = $request->nombre;
-        $inventario->descripcion = $request->descripcion;
-        $inventario->stock = $request->Stock;
-        $inventario->precio_unitario->Valor_Unitario;
+            
+        // Fechas para filtrar tareas
+        $desde = $request->input('desde', now()->subDays(7)->format('Y-m-d'));
+        $hasta = $request->input('hasta', now()->format('Y-m-d'));
 
-        $inventario->save();
-        return redirect()->route('inventario.index');
+        // Tareas pendientes
+        $pendientes = Tarea::where('tipo', 'pendiente')->get();
 
+        // Tareas hechas
+        $hechas = Tarea::where('tipo', 'hecha')->get();
+
+        // Gráfico de tareas (pendientes vs hechas)
+        $resumen = Tarea::selectRaw('tipo, COUNT(*) as total')->groupBy('tipo')->get();
+        $labelsTareas = $resumen->pluck('tipo');
+        $datosTareas = $resumen->pluck('total');
+
+        // Productos recientes con categoría relacionada
+        $productosRecientes = Producto::with('categorias')
+            ->orderBy('created_at', 'desc')
+            ->paginate(5);
+
+        // Datos para gráfica de productos por categoría
+        $dataCat = Producto::with('categorias')
+            ->get()
+            ->groupBy(fn($item) => $item->categorias->nombre ?? 'Sin categoría')
+            ->map(fn($items) => count($items));
+        // Retornar a la vista con todos los datos
+      
+            return view('index_admin', compact('inventarios', 'cantidadMax', 'cantidadMin','productosRecientes','dataCat', 'pendientes',
+            'hechas',
+            'labelsTareas',
+            'datosTareas',
+            'desde',
+            'hasta',));
     }
 
     /**
@@ -64,28 +90,15 @@ class InventarioController extends Controller
         return view('admin.edit_produc', compact('inventario'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Inventario $inventario)
+    public function galeria(Producto $productos)
     {
-        $request->validate([
-            'nombre' => 'required|string|max:255',
-            'cantidad' => 'required|integer|min:0',
-            'precio' => 'required|numeric|min:0',
-        ]);
+        $productos = Producto::whereNotNull('imagen')
+            ->orderBy('categoria_id')
+            ->get();
 
-        $inventario->update($request->all());
+        $agrupados = $productos->groupBy(fn($p) => $p->categoria->nombre ?? 'Sin Categoría');
 
-        return redirect()->route('inventario.index')
-                        ->with('success', 'Producto actualizado correctamente.');
+        return view('admin.dashboard', compact('agrupados'));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Inventario $inventario)
-    {
-
-    }
 }

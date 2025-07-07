@@ -36,7 +36,7 @@
 
                 <div class="form-group">
                     <label for="cantidad">Cantidad</label>
-                    <input type="number" name="cantidad" required>
+                    <input type="number" name="cantidad" min="1" max="100" required>
                 </div>
 
                 <div class="form-group">

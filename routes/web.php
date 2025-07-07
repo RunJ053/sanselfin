@@ -8,6 +8,7 @@ use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\CarritoCompraController;
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\TareaController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -108,6 +109,12 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/productos/{id}', [ProductoController::class, 'destroy'])->name('producto.destroy');
 
         //reporte dela admin
-        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+        Route::get('/galeria-productos', [InventarioController::class, 'galeria'])->name('dashboard.index');
     });
 });
+
+//tareadel admin
+//Route::get('/dashboard', [TareaController::class, 'index'])->name('dashboard.index');
+Route::post('/dashboard/tareas', [TareaController::class, 'store'])->name('tarea.store');
+Route::get('/dashboard/tareas/hecha/{id}', [TareaController::class, 'marcarHecha'])->name('tarea.hecha');
+Route::get('/dashboard/tareas/eliminar/{id}', [TareaController::class, 'eliminar'])->name('tarea.eliminar');

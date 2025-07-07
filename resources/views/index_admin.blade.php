@@ -1,65 +1,120 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>La Finca al Día - Panel Admin</title>
+  <meta charset="UTF-8">
+  <title>Dashboard Inventario</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Favicon y CSS -->
   <link rel="shortcut icon" href="{{ asset('img/logo/icon.png') }}" type="image/x-icon" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="{{ asset('css/ADMINISTRADOR.CSS') }}">
+  <link rel="stylesheet" href="{{ asset('css/reporte_admin.css') }}">
   <link rel="stylesheet" href="{{ asset('css/footer.css') }}">
+
+  <!-- Bootstrap y Chart.js -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+
+  <!-- Iconos -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    .main-content { padding: 20px; }
+    .chart-container {
+      position: relative;
+      height: 350px;
+      width: 100%;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .chart-card, .table-card {
+      background-color: white;
+      border-radius: 10px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+    @media (min-width: 768px) { .main-content { margin-left: 250px; } }
+
+    .tarea-card {
+      background-color: #f9f9f9;
+      border-left: 4px solid #ffc107;
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+    .tarea-card.hecha {
+      border-left-color: #28a745;
+      background-color: #eaf6ea;
+    }
+    .tarea-acciones a {
+      margin-right: 6px;
+    }
+    .grafico-contenedor {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+      justify-content: center;
+      align-items: center;
+    }
+    .grafico-contenedor canvas {
+      background: #fff;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      width: 300px !important;
+      height: 300px !important;
+      max-width: 100%;
+    }
+
+    .tarea-acciones a { margin-right: 5px; }
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main-content { margin-left: 0; padding: 15px; }
+    }
+  </style>
 </head>
 
 <body>
+<!-- Sidebar móvil -->
+<button class="btn btn-success d-md-none m-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar">
+  <i class="fas fa-bars"></i>
+</button>
 
-  <!-- Botón hamburguesa para móviles -->
-  <button class="btn btn-success d-md-none m-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar">
-    <i class="fas fa-bars"></i>
-  </button>
-
-  <!-- Sidebar Offcanvas para móviles -->
-  <div class="offcanvas offcanvas-start bg-success text-white" tabindex="-1" id="sidebar">
-    <div class="offcanvas-header">
-      <h5 class="offcanvas-title">Finca al Día</h5>
-      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
-    </div>
-    <div class="offcanvas-body">
-      <ul class="nav flex-column">
-        <li class="nav-item mb-2"><a class="nav-link text-white" href="{{ route('admin.dashboard') }}"><i class="fas fa-home me-2"></i>Inicio</a></li>
-        <li class="nav-item mb-2"><a class="nav-link text-white" href="{{ route('producto.index') }}"><i class="fas fa-boxes me-2"></i>Inventario</a></li>
-        <li class="nav-item mb-2"><a class="nav-link text-white" href="{{ route('dashboard.index') }}"><i class="fas fa-carrot me-2"></i>Reportes</a></li>
-        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-          @csrf
-          <li class="nav-item mt-5"><a class="nav-link text-danger" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="fas fa-sign-out-alt me-2"></i>Salir</a></li>
-
-        </form>
-
-      </ul>
-    </div>
+<div class="offcanvas offcanvas-start bg-success text-white" tabindex="-1" id="sidebar">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title">Finca al Día</h5>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
   </div>
-
-  <!-- Sidebar fijo para pantallas grandes -->
-  <div class="sidebar bg-success text-white p-3 d-none d-md-block" style="width:250px; height:100vh; position:fixed;">
-    <div class="text-center mb-4">
-      <img src="{{ asset('img/logo/icon.png') }}" alt="Logo" class="img-fluid" width="100" />
-      <h5 class="mt-2">Finca al Día</h5>
-    </div>
+  <div class="offcanvas-body">
     <ul class="nav flex-column">
-      <li class="nav-item mb-2"><a class="nav-link text-white" href="{{ route('admin.dashboard') }}"><i class="fas fa-home me-2"></i>Inicio</a></li>
-      <li class="nav-item mb-2"><a class="nav-link text-white" href="{{ route('producto.index') }}"><i class="fas fa-boxes me-2"></i>Inventario</a></li>
-      <li class="nav-item mb-2"><a class="nav-link text-white" href="{{ route('dashboard.index') }}"><i class="fas fa-carrot me-2"></i>Reportes</a></li>
-      <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-        @csrf
-      </form>
-
+      <li class="nav-item"><a class="nav-link text-white" href="{{ route('admin.dashboard') }}"><i class="fas fa-home me-2"></i>Inicio</a></li>
+      <li class="nav-item"><a class="nav-link text-white" href="{{ route('producto.index') }}"><i class="fas fa-boxes me-2"></i>Inventario</a></li>
+      <li class="nav-item"><a class="nav-link text-white" href="{{ route('dashboard.index') }}"><i class="fas fa-carrot me-2"></i>Reportes</a></li>
+      <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">@csrf</form>
       <li class="nav-item mt-5"><a class="nav-link text-danger" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="fas fa-sign-out-alt me-2"></i>Salir</a></li>
     </ul>
   </div>
+</div>
 
-  <!-- Contenido principal -->
-  <div class="main-content bg-light p-3" style="margin-left: 250px;">
+<!-- Sidebar escritorio -->
+<div class="sidebar bg-success text-white p-3 d-none d-md-block position-fixed" style="width:250px; height:100vh;">
+  <div class="text-center mb-4">
+    <img src="{{ asset('img/logo/icon.png') }}" alt="Logo" class="img-fluid" width="100" />
+    <h5 class="mt-2">Finca al Día</h5>
+  </div>
+  <ul class="nav flex-column">
+    <li class="nav-item"><a class="nav-link text-white" href="{{ route('admin.dashboard') }}"><i class="fas fa-home me-2"></i>Inicio</a></li>
+    <li class="nav-item"><a class="nav-link text-white" href="{{ route('producto.index') }}"><i class="fas fa-boxes me-2"></i>Inventario</a></li>
+    <li class="nav-item"><a class="nav-link text-white" href="{{ route('dashboard.index') }}"><i class="fas fa-carrot me-2"></i>Reportes</a></li>
+    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">@csrf</form>
+    <li class="nav-item mt-5"><a class="nav-link text-danger" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="fas fa-sign-out-alt me-2"></i>Salir</a></li>
+  </ul>
+</div>
+
+<main class="main-content">
+  
+    <!-- Contenido principal -->
+  <div class="main-content bg-light p-3" style="margin-left: 2px;">
     <section class="hero bg-white p-4 rounded shadow-sm mb-4">
       <div class="row align-items-center">
         <div class="col-md-6 text-start">
@@ -125,112 +180,199 @@
         </div>
       </div>
     </div>
+    <section>
+    <h2 class="mb-4"><i class="fas fa-chart-bar me-2"></i>Dashboard General</h2>
 
-    <!-- Carrusel -->
-    <section class="products mt-5">
-      <h3 class="mb-4 text-center">Nuestros Productos</h3>
-      <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-inner">
-          <div class="carousel-item active">
-            <div class="d-flex flex-column flex-sm-row justify-content-center gap-4 flex-wrap">
-              <div class="card text-center" style="width: 16rem;">
-                <img src="{{ asset('img/product/tomate.jpg') }}" class="product-img card-img-top" alt="Tomates">
-                <div class="card-body">
-                  <h5 class="card-title">Tomates Frescos</h5>
-                  <p class="card-text">Precio: $3000 por kg</p>
-                </div>
-              </div>
-              <div class="card text-center" style="width: 16rem;">
-                <img src="{{ asset('img/product/lechuga.webp') }}" class="product-img card-img-top" alt="Lechuga">
-                <div class="card-body">
-                  <h5 class="card-title">Lechuga Orgánica</h5>
-                  <p class="card-text">Precio: $8000 por unidad</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="carousel-item">
-            <div class="d-flex flex-column flex-sm-row justify-content-center gap-4 flex-wrap">
-              <div class="card text-center" style="width: 16rem;">
-                <img src="{{ asset('img/product/zha.jfif') }}" class="product-img card-img-top" alt="Zanahorias">
-                <div class="card-body">
-                  <h5 class="card-title">Zanahorias Dulces</h5>
-                  <p class="card-text">Precio: $20000 por kg</p>
-                </div>
-              </div>
-              <div class="card text-center" style="width: 16rem;">
-                <img src="{{ asset('img/product/naj.jfif') }}" class="product-img card-img-top" alt="Naranja">
-                <div class="card-body">
-                  <h5 class="card-title">Naranja</h5>
-                  <p class="card-text">Precio: $10000 por kg</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
-          <span class="carousel-control-prev-icon bg-dark rounded-circle"></span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
-          <span class="carousel-control-next-icon bg-dark rounded-circle"></span>
-        </button>
-      </div>
-    </section>
-  </div>
-
-  <!-- Footer -->
-  <footer class="footer mt-5">
-    <div class="container">
-      <div class="footer-grid">
-        <div class="footer-section">
-          <img src="{{ asset('img/logo/icon.png') }}" alt="Logo" class="footer-logo">
-          <p>Llevamos los productos más frescos del campo a tu mesa.</p>
-          <div class="social-links">
-            <a href="#"><i class="fab fa-facebook"></i></a>
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-whatsapp"></i></a>
-          </div>
-        </div>
-
-        <div class="footer-section">
-          <h3>Enlaces Rápidos</h3>
-          <a href="#">Nuestros Productos</a><br>
-          <a href="#">Recetas</a><br>
-          <a href="#">Blog</a><br>
-          <a href="#">Sobre Nosotros</a><br>
-          <a href="#">FAQ</a>
-        </div>
-
-        <div class="footer-section">
-          <h3>Contacto</h3>
-          <p><i class="fas fa-clock"></i> Lunes a Sábados, 8:00 a.m a 6:00 p.m</p>
-          <p><i class="fas fa-map-marker-alt"></i> [Tu dirección aquí]</p>
-          <p><i class="fas fa-envelope"></i> informacion@gmail.com</p>
-          <p><i class="fas fa-phone"></i> 300 123 4567</p>
-        </div>
-
-        <div class="footer-section">
-          <h3>Boletín Informativo</h3>
-          <p>Suscríbete para recibir ofertas y novedades frescas.</p>
-          <form class="newsletter-form">
-            <input type="email" placeholder="Tu correo electrónico" required>
-            <button type="submit" class="btn btn-success mt-2">Suscribirse</button>
-          </form>
-        </div>
+    <!-- Gráfico productos por categoría -->
+    <div class="chart-card mb-4">
+      <h5 class="mb-3">📊 Productos por Categoría</h5>
+      <div class="chart-container">
+        <canvas id="graficoCategorias"></canvas>
       </div>
     </div>
 
-    <div class="footer-bottom text-center py-3">
-      <p class="mb-2">&copy; 2024 Finca al Día. Todos los derechos reservados.</p>
-      <div class="payment-methods">
-        <img src="{{ asset('img/logo/visa.png') }}" alt="Visa">
-        <img src="{{ asset('img/logo/logo-Mastercard.png') }}" alt="Mastercard">
-        <img src="{{ asset('img/logo/nequi.png') }}" alt="Nequi">
+    <!-- Gráfico tareas por tipo -->
+    <div class="chart-card mb-4">
+      <h5 class="mb-3">📈 Resumen de Tareas</h5>
+      <div class="chart-container">
+        <canvas id="graficoTareas"></canvas>
       </div>
     </div>
-  </footer>
-  <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Gestión de Tareas -->
+    <div class="chart-card mb-4">
+      <h5 class="mb-3">📝 Gestión de Tareas</h5>
+
+      <!-- Formulario -->
+      <form method="POST" action="{{ route('tarea.store') }}" class="row g-3 mb-3">
+        @csrf
+        <div class="col-md-4"><input type="text" name="tarea_titulo" class="form-control" placeholder="Título" required></div>
+        <div class="col-md-4"><input type="text" name="tarea_descripcion" class="form-control" placeholder="Descripción (opcional)"></div>
+        <div class="col-md-2">
+          <select name="tarea_tipo" class="form-select">
+            <option value="pendiente">Pendiente</option>
+            <option value="hecha">Hecha</option>
+          </select>
+        </div>
+        <div class="col-md-2"><button class="btn btn-success w-100">Agregar</button></div>
+      </form>
+
+      <!-- Listado -->
+      <div class="row">
+        <div class="col-md-6">
+  <h6 class="text-warning">Pendientes</h6>
+  @forelse($pendientes ?? [] as $tarea)
+    <div class="tarea-card">
+      <strong>{{ $tarea->titulo }}</strong>
+      <p class="mb-1">{{ $tarea->descripcion }}</p>
+      <small>{{ $tarea->fecha_creacion }}</small>
+      <div class="tarea-acciones mt-2">
+        <a href="{{ route('tarea.hecha', $tarea->id) }}" class="btn btn-sm btn-success"><i class="fas fa-check"></i></a>
+        <a href="{{ route('tarea.eliminar', $tarea->id) }}" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></a>
+      </div>
+    </div>
+  @empty
+    <p class="text-muted">No hay tareas pendientes.</p>
+  @endforelse
+</div>
+
+          <div class="col-md-6">
+            <h6 class="text-success">Hechas</h6>
+            @forelse($hechas ?? [] as $tarea)
+              <div class="tarea-card hecha">
+                <strong>{{ $tarea->titulo }}</strong>
+                <p class="mb-1">{{ $tarea->descripcion }}</p>
+                <small>{{ $tarea->fecha_creacion }}</small>
+                <div class="tarea-acciones mt-2">
+                  <a href="{{ route('tarea.eliminar', $tarea->id) }}" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></a>
+                </div>
+              </div>
+              @empty
+              <p class="text-muted">No hay tareas echas.</p>
+            @endforelse
+          </div>
+        </div>
+    </div>
+
+      
+
+    <!-- Productos recientes -->
+    <div class="table-card">
+      <h5 class="mb-3">🆕 Productos Recientes</h5>
+      <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+          <thead class="table-success">
+            <tr>
+              <th>Imagen</th>
+              <th>Nombre</th>
+              <th>Descripción</th>
+              <th>Precio</th>
+              <th>Categoría</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody>
+            @foreach($productosRecientes as $producto)
+            <tr>
+              <td>
+                @if ($producto->imagen)
+                  <img src="{{ asset('img/product/' . $producto->imagen) }}" width="45" height="45" style="object-fit:cover; border-radius:6px;">
+                @else
+                  Sin imagen
+                @endif
+              </td>
+              <td>{{ $producto->nombre_producto }}</td>
+              <td>{{ $producto->descripccion }}</td>
+              <td>${{ number_format($producto->precio_unitario, 0, ',', '.') }}</td>
+              <td>{{ $producto->categorias->nombre ?? 'Sin categoría' }}</td>
+              <td>{{ \Carbon\Carbon::parse($producto->created_at)->format('Y-m-d') }}</td>
+            </tr>
+            @endforeach
+          </tbody>
+        </table>
+        <div class="paginador d-flex justify-content-center">
+          {{ $productosRecientes->links() }}
+        </div>
+      </div>
+      
+    </div>
+  </section>
+</main>
+
+<!-- Footer -->
+
+
+<!-- Chart.js Scripts -->
+<script>
+  const ctxCat = document.getElementById('graficoCategorias').getContext('2d');
+  const gradient = ctxCat.createLinearGradient(0, 0, 0, 300);
+  gradient.addColorStop(0, 'rgba(42, 193, 50, 0.4)');
+  gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+  new Chart(ctxCat, {
+    type: 'bar',
+    data: {
+      labels: {!! json_encode($dataCat->isNotEmpty() ? array_keys($dataCat->toArray()) : []) !!},
+      datasets: [{
+        label: "Cantidad de productos",
+        data: {!! json_encode($dataCat->isNotEmpty() ? array_values($dataCat->toArray()) : []) !!},
+        backgroundColor: gradient,
+        borderWidth: 1,
+        borderColor: '#2d2d2d',
+        hoverBackgroundColor: '#606060',
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#2e7d32',
+          titleColor: '#fff',
+          bodyColor: '#fff'
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: '#555', font: { size: 12 } },
+          grid: { display: false }
+        },
+        y: {
+          beginAtZero: true,
+          ticks: { stepSize: 1, color: '#555', font: { size: 12 } },
+          grid: { color: 'rgba(0,0,0,0.05)' }
+        }
+      }
+    }
+  });
+
+  @if (!empty($labelsTareas) && !empty($datosTareas))
+  const ctxTareas = document.getElementById('graficoTareas').getContext('2d');
+  new Chart(ctxTareas, {
+    type: 'doughnut',
+    data: {
+      labels: {!! json_encode($labelsTareas) !!},
+      datasets: [{
+        label: "Tareas",
+        data: {!! json_encode($datosTareas) !!},
+        backgroundColor: ['#ffc107', '#28a745'],
+        borderColor: '#fff',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: { color: '#444' }
+        }
+      }
+    }
+  });
+  @endif
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>

@@ -98,58 +98,38 @@
   <!-- Contenido principal -->
   <main class="main-content">
     <section>
-      <h2 class="mb-3"><i class="fas fa-chart-bar me-2"></i>Dashboard de Productos</h2>
+      <div class="d-flex justify-content-between align-items-center mb-4">
+  <h2>Galería Visual de Productos</h2>
+  <a href="{{ route('dashboard.index') }}" class="btn btn-outline-success">
+    <i class="fas fa-sync-alt"></i> Recargar Galería
+  </a>
+</div>
 
-      <!-- Gráfico -->
-      <div class="chart-card mb-4">
-        <h5 class="mb-3">📊 Productos por Categoría</h5>
-        <div class="chart-container">
-          <canvas id="graficoCategorias"></canvas>
-        </div>
-      </div>
-
-      <!-- Tabla -->
-      <div class="table-card">
-        <h5 class="mb-3">🆕 Productos Recientes</h5>
-        <div class="table-responsive">
-          <table class="table table-striped table-hover align-middle">
-            <thead class="table-success">
-              <tr>
-                <th>Imagen</th>
-                <th>Nombre</th>
-                <th>Descripción</th>
-                <th>Precio</th>
-                <th>Categoría</th>
-                <th>Fecha</th>
-              </tr>
-            </thead>
-            <tbody>
-              @foreach($productosRecientes as $producto)
-              <tr>
-                <td>
-                  @if ($producto->imagen)
-                  <img src="{{asset('img/product/' . $producto->imagen)}}" alt="img" width="45" height="45" style="object-fit:cover; border-radius:6px;">
-                  @else
-                  Aun no tiene imagen el producto
-                  @endif
-                </td>
-
-                <td>{{ $producto->nombre_producto }}</td>
-                <td>{{ $producto->descripccion }}</td>
-                <td>${{ number_format($producto->precio_unitario, 0, ',', '.') }}</td>
-                <td>{{ $producto->categorias->nombre ?? 'Sin categoría' }}</td>
-                <td>{{ \Carbon\Carbon::parse($producto->created_at)->format('Y-m-d') }}</td>
-              </tr>
-              @endforeach
-            </tbody>
-
-          </table>
-          <div class="paginador" style="display: flex; justify-content: center;">
-            {{ $productosRecientes->links()}}
+@if($agrupados->isNotEmpty())
+  @foreach($agrupados as $categoria => $lista)
+    <div class="categoria-section">
+      <div class="categoria-title">{{ $categoria }}</div>
+      <div class="row g-4">
+        @foreach($lista as $p)
+          <div class="col-sm-6 col-md-4 col-lg-3">
+            <div class="producto-card">
+              <img src="{{ asset('img/product/'.$p->imagen) }}" alt="{{ $p->nombre_producto }}">
+              <div class="producto-info text-center">
+                <strong>{{ $p->nombre_producto }}</strong><br>
+                <small class="text-muted">${{ number_format($p->precio_unitario, 2, ',', '.') }}</small><br>
+                <span class="badge bg-{{ $p->stock > 0 ? 'success' : 'danger' }}">
+                  {{ $p->stock > 0 ? 'Stock: '.$p->stock : 'Agotado' }}
+                </span>
+              </div>
+            </div>
           </div>
-
-        </div>
+        @endforeach
       </div>
+    </div>
+  @endforeach
+@else
+  <div class="alert alert-info">No hay productos con imágenes para mostrar.</div>
+@endif
     </section>
   </main>
   <!-- Footer -->
@@ -204,67 +184,6 @@
     </div>
   </footer>
   </main>
-  <!-- Chart.js Script -->
-  <script>
-    const ctx = document.getElementById('graficoCategorias').getContext('2d');
-    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-    gradient.addColorStop(0, 'rgba(42, 193, 50, 0.4)');
-    gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
-
-    new Chart(ctx, {
-       type: 'bar',
-       data: {
-           labels: <?= json_encode($dataCat->isNotEmpty() ? array_keys($dataCat->toArray()) : []); ?>,
-           datasets: [{
-               label: "Cantidad de productos",
-               data: <?= json_encode($dataCat->isNotEmpty() ? array_values($dataCat->toArray()) : []); ?>,
-               backgroundColor: gradient,
-               borderWidth: 1,
-               borderColor: '#2d2d2d',
-               hoverBackgroundColor: '#606060',
-           }]
-       },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: {
-            display: false
-          },
-          tooltip: {
-            backgroundColor: '#2e7d32',
-            titleColor: '#fff',
-            bodyColor: '#fff'
-          }
-        },
-        scales: {
-          x: {
-            ticks: {
-              color: '#555',
-              font: {
-                size: 12
-              }
-            },
-            grid: {
-              display: false
-            }
-          },
-          y: {
-            beginAtZero: true,
-            ticks: {
-              stepSize: 1,
-              color: '#555',
-              font: {
-                size: 12
-              }
-            },
-            grid: {
-              color: 'rgba(0,0,0,0.05)'
-            }
-          }
-        }
-      }
-    });
-</script>
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
