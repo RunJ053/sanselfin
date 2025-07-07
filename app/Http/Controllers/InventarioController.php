@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DatoUsuario;
 use App\Models\Inventario;
 use App\Models\Producto;
 use Illuminate\Http\Request;
@@ -14,8 +15,11 @@ class InventarioController extends Controller
      */
     public function index()
     {
-        return view('index_admin');
-
+        $inventarios = Producto::all();
+        $numeroUsuarios = DatoUsuario::count();
+        $cantidadMax = Inventario::max('stock');
+        $cantidadMin = Inventario::min('stock');
+        return view('index_admin', compact('inventarios', 'cantidadMax', 'cantidadMin'));
     }
 
     /**

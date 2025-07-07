@@ -20,6 +20,7 @@ return new class extends Migration
             $table->foreignId('categoria_id')->constrained('categorias')->onDelete('cascade');
             $table->string('nombre_producto');
             $table->text('descripccion')->nullable();
+            $table->string('imagen')->nullable();
             $table->decimal('precio_unitario',10,2)->default(0.00);
             $table->timestamps();
         });

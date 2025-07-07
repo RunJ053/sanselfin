@@ -23,6 +23,6 @@ class DashboardController extends Controller
             ->groupBy('categorias.nombre')
             ->pluck('total', 'nombre');
 
-        return view('dashboard', compact('productosRecientes', 'dataCat'));
+        return view('admin.dashboard', compact('productosRecientes', 'dataCat'));
     }
 }

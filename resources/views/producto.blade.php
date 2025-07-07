@@ -37,15 +37,23 @@
         }
 
         aside {
-            width: 250px;
+            width: 280px;
+            /* Un poco más de ancho para el sidebar */
             background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            padding: 1.5rem;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
+            border-radius: 18px;
+            /* Bordes más suaves */
+            padding: 1.8rem;
+            /* Aumento de padding */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            /* Sombra más pronunciada */
+            backdrop-filter: blur(8px);
+            /* Efecto blur actualizado */
             height: fit-content;
             position: sticky;
             top: 100px;
+            /* Ajusta esto si tu header tiene una altura diferente */
+            align-self: flex-start;
+            /* Asegura que se alinee al inicio del flex container */
         }
 
         .filter-title {
@@ -59,7 +67,7 @@
         }
 
         .search-container {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.8rem;
             position: relative;
         }
 
@@ -338,7 +346,83 @@
             }
         }
 
+        /* Centrar y organizar paginador de Laravel 9 */
+        .paginador {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        /* Arreglar la estructura del nav de Laravel */
+        .paginador nav {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Centrar el texto de resultados */
+        .paginador nav p {
+            text-align: center;
+            margin: 0;
+            color: #6b7280;
+            font-size: 0.875rem;
+            order: 2;
+            /* Mover el texto abajo */
+        }
+
+        /* Centrar los enlaces de paginación */
+        .paginador nav div {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            order: 1;
+            /* Mover los enlaces arriba */
+        }
+
+        /* Arreglar el espaciado de los enlaces */
+        .paginador nav a,
+        .paginador nav span {
+            margin: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        /* Arreglar las flechas de navegación */
+        .paginador nav a[rel="prev"],
+        .paginador nav a[rel="next"] {
+            display: inline-flex;
+            align-items: center;
+        }
+
+        /* Responsive - en móvil mantener centrado */
+        @media (max-width: 640px) {
+            .paginador {
+                margin: 1rem 0;
+            }
+
+            .paginador nav p {
+                font-size: 0.75rem;
+            }
+
+            .paginador nav div {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+
         /* SweetAlert2 Custom Styles */
+        .swal2-container {
+            /* Este es el contenedor principal de SweetAlert2 */
+            z-index: 10000 !important;
+            /* Asegura que esté por encima de todo */
+        }
+
         .swal2-popup {
             border-radius: 15px !important;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
@@ -497,17 +581,19 @@
                 Categorías
             </div>
             <ul class="filter-list">
-                {{-- Usamos href para las categorías para que sean enlaces reales --}}
+                {{-- Usaremos data-attributes para los enlaces de categoría y los manejaremos con JS --}}
                 <li class="filter-item {{ $currentCategory == 'all' ? 'active' : '' }}">
-                    <a href="{{ route('producto', ['search' => $searchTerm]) }}" data-category="all" style="text-decoration: none; color: inherit; display: flex; align-items: center; width: 100%;">
+                    {{-- CAMBIO: href vacío, usamos data-category para JS --}}
+                    <a href="#" data-category="all" class="category-link" style="text-decoration: none; color: inherit; display: flex; align-items: center; width: 100%;">
                         <i class="fas fa-th-large"></i>
                         Todos los productos
                     </a>
                 </li>
                 @foreach ($categoriaId as $cate)
                 <li class="filter-item {{ $currentCategory == $cate->nombre ? 'active' : '' }}">
-                    <a href="{{ route('producto', ['categoria' => $cate->nombre, 'search' => $searchTerm]) }}" data-category="{{ $cate->nombre }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; width: 100%;">
-                        <i class="fas fa-apple-alt"></i> {{-- Icono genérico, puedes ajustarlo por categoría si tienes un campo para ello --}}
+                    {{-- CAMBIO: href vacío, usamos data-category para JS --}}
+                    <a href="#" data-category="{{ $cate->nombre }}" class="category-link" style="text-decoration: none; color: inherit; display: flex; align-items: center; width: 100%;">
+                        <i class="fas fa-apple-alt"></i>
                         <span>{{ $cate->nombre }}</span>
                     </a>
                 </li>
@@ -522,85 +608,239 @@
             </div>
 
             {{-- Formulario para la búsqueda --}}
-            <form action="{{ route('producto') }}" method="GET" id="searchForm">
+            {{-- CAMBIO: quitamos action y method, usaremos JS para el submit --}}
+            <form id="searchForm">
                 <div class="search-container">
                     <i class="fas fa-search search-icon"></i>
                     <input type="text" class="search-input" id="searchInput" name="search" placeholder="Buscar productos por nombre..." value="{{ $searchTerm }}">
                     <button type="button" class="clear-search" id="clearSearch" style="{{ !empty($searchTerm) ? 'display: flex;' : 'display: none;' }}">
                         <i class="fas fa-times"></i>
                     </button>
-                    {{-- Campo oculto para mantener la categoría seleccionada al buscar --}}
+                    {{-- Este hidden input es ahora gestionado por JS --}}
                     <input type="hidden" name="categoria" id="hiddenCategoryInput" value="{{ $currentCategory }}">
-                    <button type="submit" style="display: none;"></button> {{-- Botón de submit oculto para que el Enter funcione --}}
+                    <button type="submit" style="display: none;"></button>
                 </div>
             </form>
 
-            <div class="search-results-info {{ ($searchTerm || $currentCategory !== 'all') && $productos->count() === 0 ? 'no-results' : '' }}" id="searchResultsInfo" style="{{ ($searchTerm || $currentCategory !== 'all') ? 'display: block;' : 'display: none;' }}">
+            <div class="search-results-info {{ ($searchTerm || $currentCategory !== 'all') && $productos->total() === 0 ? 'no-results' : '' }}" id="searchResultsInfo" style="{{ ($searchTerm || $currentCategory !== 'all') ? 'display: block;' : 'display: none;' }}">
                 @if($searchTerm && $currentCategory !== 'all')
-                Se encontraron {{ $productos->count() }} producto(s) que contienen "{{ $searchTerm }}" en la categoría "{{ $currentCategory }}"
+                Se encontraron {{ $productos->total() }} producto(s) que contienen "{{ $searchTerm }}" en la categoría "{{ $currentCategory }}"
                 @elseif($searchTerm)
-                Se encontraron {{ $productos->count() }} producto(s) que contienen "{{ $searchTerm }}"
+                Se encontraron {{ $productos->total() }} producto(s) que contienen "{{ $searchTerm }}"
                 @elseif($currentCategory !== 'all')
-                Mostrando {{ $productos->count() }} producto(s) de la categoría "{{ $currentCategory }}"
+                Mostrando {{ $productos->total() }} producto(s) de la categoría "{{ $currentCategory }}"
+                @else
+                Se encontraron {{ $productos->total() }} producto(s) en total.
                 @endif
             </div>
 
-            {{-- Aquí se cargarán los productos --}}
             <div class="products_co" id="productsContainer">
-                @include('partials.productos_list', ['productos' => $productos, 'searchTerm' => $searchTerm, 'currentFilter' => $currentCategory])
+                @include('partials.productos_list', ['productos' => $productos->items(), 'searchTerm' => $searchTerm, 'currentFilter' => $currentCategory])
+            </div>
+            <div class="paginador">
+                {{ $productos->links() }}
             </div>
         </section>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        // Variables y selectores iniciales
         const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
         const searchInput = document.getElementById('searchInput');
-        const clearSearch = document.getElementById('clearSearch');
+        const clearSearchButton = document.getElementById('clearSearch'); // Renombrado para mayor claridad
         const hiddenCategoryInput = document.getElementById('hiddenCategoryInput');
+        const productsContainer = document.getElementById('productsContainer');
         const searchResultsInfo = document.getElementById('searchResultsInfo');
+        const paginationContainer = document.querySelector('.paginador'); // Nuevo: Contenedor de la paginación
 
-        // ... Tu lógica existente para búsqueda y filtros ...
+        // --- Funciones para la Carga de Productos y Paginación (NUEVAS / MODIFICADAS) ---
+
+        /**
+         * Carga los productos usando AJAX, aplicando filtros de categoría y búsqueda,
+         * y actualiza la paginación.
+         * @param {string} category - La categoría seleccionada.
+         * @param {string} searchTerm - El término de búsqueda.
+         * @param {string} pageUrl - La URL de la página de paginación (opcional, para clics en paginador).
+         */
+        async function loadProducts(category = 'all', searchTerm = '', pageUrl = null) {
+            // Mostrar spinner de carga
+            productsContainer.innerHTML = `
+            <div class="loading">
+                <div class="spinner"></div> Cargando productos...
+            </div>
+        `;
+            searchResultsInfo.style.display = 'none'; // Ocultar info mientras carga
+
+            let url = pageUrl || "{{ route('producto') }}";
+            const params = new URLSearchParams();
+
+            // Si no es un clic de paginación (es decir, una nueva búsqueda/filtro),
+            // reiniciamos la página a 1 agregando los parámetros.
+            // Si es un clic de paginación, la URL ya contendrá 'page'.
+            if (!pageUrl) {
+                if (category && category !== 'all') {
+                    params.append('categoria', category);
+                }
+                if (searchTerm) {
+                    params.append('search', searchTerm);
+                }
+                // Adjuntar parámetros solo si no están ya en la URL de paginación
+                if (params.toString()) {
+                    url += '?' + params.toString();
+                }
+            }
+
+
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest' // Para que Laravel sepa que es una petición AJAX
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                productsContainer.innerHTML = data.html; // Carga los productos renderizados por el parcial
+                updateSearchResultsInfo(data.productCount, searchTerm, category); // Actualiza la información de resultados
+
+                // Actualizar los enlaces de paginación
+                if (paginationContainer) {
+                    paginationContainer.innerHTML = data.pagination;
+                    attachPaginationEvents(); // Volver a adjuntar eventos a los nuevos enlaces
+                }
+
+            } catch (error) {
+                console.error('Error al cargar productos:', error);
+                productsContainer.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-exclamation-triangle" style="color: #dc3545;"></i>
+                    <h3>Error al cargar productos</h3>
+                    <p>Por favor, inténtalo de nuevo más tarde.</p>
+                </div>
+            `;
+                searchResultsInfo.style.display = 'none';
+                if (paginationContainer) {
+                    paginationContainer.innerHTML = ''; // Limpiar paginación en caso de error
+                }
+            }
+        }
+
+        /**
+         * Adjunta event listeners a todos los enlaces de paginación.
+         */
+        function attachPaginationEvents() {
+            document.querySelectorAll('.paginador .pagination a').forEach(link => {
+                // Eliminar listeners existentes para evitar duplicados si la función se llama varias veces
+                link.removeEventListener('click', handlePaginationClick);
+                link.addEventListener('click', handlePaginationClick);
+            });
+        }
+
+        /**
+         * Maneja el clic en un enlace de paginación, cargando la nueva página con AJAX.
+         * @param {Event} e - El evento de clic.
+         */
+        function handlePaginationClick(e) {
+            e.preventDefault(); // Evita la navegación normal de la página
+            const pageUrl = e.target.getAttribute('href'); // Obtiene la URL de la página a cargar
+
+            // Obtenemos los valores actuales de búsqueda y categoría para persistirlos
+            const currentCategory = hiddenCategoryInput.value;
+            const currentSearchTerm = searchInput.value;
+
+            // Cargar la nueva página con AJAX, manteniendo los filtros actuales
+            loadProducts(currentCategory, currentSearchTerm, pageUrl);
+        }
+
+        /**
+         * Actualiza el mensaje de información de resultados de búsqueda.
+         * @param {number} count - Número total de productos.
+         * @param {string} term - Término de búsqueda actual.
+         * @param {string} category - Categoría actual.
+         */
+        function updateSearchResultsInfo(count, term, category) {
+            let message = '';
+            if (term && category !== 'all') {
+                message = `Se encontraron ${count} producto(s) que contienen "${term}" en la categoría "${category}"`;
+            } else if (term) {
+                message = `Se encontraron ${count} producto(s) que contienen "${term}"`;
+            } else if (category !== 'all') {
+                message = `Mostrando ${count} producto(s) de la categoría "${category}"`;
+            } else {
+                message = `Se encontraron ${count} producto(s) en total.`;
+            }
+            searchResultsInfo.innerHTML = message;
+            searchResultsInfo.style.display = 'block';
+
+            if (count === 0 && (term || category !== 'all')) {
+                // Si no hay resultados y hay filtros/búsqueda, mostrar el estado vacío
+                productsContainer.innerHTML = `
+                <div class="empty-state">
+                    <i class="${term ? 'fas fa-search-minus' : 'fas fa-box-open'}" style="color: #ccc;"></i>
+                    <h3>${term ? `No hay productos que coincidan con "${term}"` : `No hay productos en la categoría "${category}"`}</h3>
+                    <p>Intenta con otros términos de búsqueda o categorías</p>
+                </div>
+            `;
+                searchResultsInfo.style.display = 'none'; // Ocultar el mensaje si el estado vacío ya explica
+            }
+        }
+
+
+        // --- Lógica Existente para Búsqueda y Filtros (MODIFICADA para usar loadProducts) ---
 
         // Mantiene el botón de limpiar visible si hay término de búsqueda inicial
         if (searchInput.value.trim() !== '') {
-            clearSearch.classList.add('visible');
+            clearSearchButton.classList.add('visible');
         }
 
         searchInput.addEventListener('input', (e) => {
             if (e.target.value.trim()) {
-                clearSearch.classList.add('visible');
+                clearSearchButton.classList.add('visible');
             } else {
-                clearSearch.classList.remove('visible');
+                clearSearchButton.classList.remove('visible');
             }
+            // En lugar de submit, ahora llamamos a loadProducts para manejarlo con AJAX
+            // Esto permite ver los resultados en tiempo real mientras el usuario escribe
+            loadProducts(hiddenCategoryInput.value, e.target.value.trim());
         });
 
-        clearSearch.addEventListener('click', () => {
+        clearSearchButton.addEventListener('click', () => {
             searchInput.value = '';
-            clearSearch.classList.remove('visible');
-            document.getElementById('searchForm').submit();
+            clearSearchButton.classList.remove('visible');
             searchInput.focus();
+            // Cargar productos sin término de búsqueda
+            loadProducts(hiddenCategoryInput.value, '');
         });
 
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && searchInput.value.trim()) {
                 searchInput.value = '';
-                clearSearch.classList.remove('visible');
-                document.getElementById('searchForm').submit();
+                clearSearchButton.classList.remove('visible');
+                // Cargar productos sin término de búsqueda
+                loadProducts(hiddenCategoryInput.value, '');
             }
         });
 
         document.querySelectorAll('.filter-item a').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
-                hiddenCategoryInput.value = e.currentTarget.dataset.category;
+                const category = e.currentTarget.dataset.category;
+                hiddenCategoryInput.value = category; // Actualiza el campo oculto
                 document.querySelectorAll('.filter-item').forEach(f => f.classList.remove('active'));
                 e.currentTarget.closest('.filter-item').classList.add('active');
-                document.getElementById('searchForm').submit();
+
+                // Cargar productos con la nueva categoría y el término de búsqueda actual
+                loadProducts(category, searchInput.value);
             });
         });
 
-        // --- Funciones del Carrito ---
+
+        // --- Funciones del Carrito (SIN CAMBIOS, ya que son independientes de la paginación de productos) ---
 
         /**
          * Abre el modal de SweetAlert2 con los detalles del producto y la opción de cantidad.
@@ -617,19 +857,19 @@
                 Swal.fire({
                     title: product.nombre,
                     html: `
-                    <div style="text-align: left; margin: 1rem 0;">
-                        <img src="${product.imagen || 'ruta/a/imagen/por/defecto.jpg'}" alt="${product.nombre}"
-                            style="width: 100%; max-width: 300px; height: 200px; object-fit: cover; border-radius: 10px; margin-bottom: 1rem;">
-                        <p style="color: #666; margin-bottom: 0.5rem;">${product.descripcion || 'Sin descripción.'}</p>
-                        <div style="color: #ffc107; margin-bottom: 0.5rem;">${'⭐'.repeat(product.rating || 0)}</div>
-                        <h4 style="color: #4CAF50; font-size: 1.2rem; margin-bottom: 1rem;">$${parseFloat(product.valor).toFixed(2)}</h4>
-                        <div style="margin-bottom: 1rem;">
-                            <label for="quantity" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Cantidad:</label>
-                            <input type="number" id="quantity" min="1" value="1"
-                                    style="width: 100%; padding: 0.5rem; border: 2px solid #ddd; border-radius: 5px; font-size: 1rem;">
-                        </div>
+                <div style="text-align: left; margin: 1rem 0;">
+                    <img src="${product.imagen}" alt="${product.nombre}"
+                    style="width: 100%; max-width: 300px; height: 200px; object-fit: cover; border-radius: 10px; margin-bottom: 1rem;">
+                    <p style="color: #666; margin-bottom: 0.5rem;">${product.descripcion || 'Sin descripción.'}</p>
+                    <div style="color: #ffc107; margin-bottom: 0.5rem;">${'⭐'.repeat(product.rating || 0)}</div>
+                    <h4 style="color: #4CAF50; font-size: 1.2rem; margin-bottom: 1rem;">$${parseFloat(product.valor.replace('$', '').replace('.', '')).toFixed(0)}</h4>
+                    <div style="margin-bottom: 1rem;">
+                        <label for="quantity" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Cantidad:</label>
+                        <input type="number" id="quantity" min="1" value="1"
+                        style="width: 100%; padding: 0.5rem; border: 2px solid #ddd; border-radius: 5px; font-size: 1rem;">
                     </div>
-                `,
+                </div>
+            `,
                     showCancelButton: true,
                     confirmButtonText: '<i class="fas fa-cart-plus"></i> Añadir al carrito',
                     cancelButtonText: '<i class="fas fa-times"></i> Cancelar',
@@ -702,7 +942,6 @@
                     if (result.isConfirmed) {
                         window.location.href = '{{ route("carrito.index") }}'; // Redirige a la vista del carrito
                     }
-                    // Si el usuario hace clic en "Seguir comprando" o el timer termina, el modal se cierra
                 });
 
             } catch (error) {
@@ -726,8 +965,9 @@
             }
         }
 
-        // Al cargar la página, obtener el conteo actual del carrito para que se muestre correctamente
+        // --- Inicialización al Cargar la Página ---
         document.addEventListener('DOMContentLoaded', async () => {
+            // Inicializar el conteo del carrito
             try {
                 const response = await fetch('{{ route("api.carrito.count") }}');
                 if (response.ok) {
@@ -737,7 +977,28 @@
             } catch (error) {
                 console.error('Error al obtener el conteo del carrito:', error);
             }
+
+            // --- Carga inicial de productos y configuración de paginación ---
+            // Si la página se carga con parámetros iniciales de categoría o búsqueda,
+            // necesitamos que loadProducts los recoja. Si no hay parámetros, cargará la primera página.
+            const initialCategory = hiddenCategoryInput.value || 'all';
+            const initialSearchTerm = searchInput.value || '';
+            loadProducts(initialCategory, initialSearchTerm); // Carga la primera página con los filtros iniciales
+
+            // También adjuntar los eventos de paginación para la paginación inicial del servidor
+            // Esto se ejecutará si la primera carga del servidor ya incluye enlaces de paginación
+            attachPaginationEvents();
+
+            // Lógica de visualización del botón de limpiar búsqueda
+            if (searchInput.value.trim() !== '') {
+                clearSearchButton.classList.add('visible');
+            } else {
+                clearSearchButton.classList.remove('visible');
+            }
         });
+
+        // Haz la función showProductModal global si la estás llamando desde el HTML directamente (onclick)
+        window.showProductModal = showProductModal;
     </script>
     <script src="{{ asset('js/hamburguesa.js') }}"></script>
 

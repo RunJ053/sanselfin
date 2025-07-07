@@ -6,14 +6,8 @@ use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\DatoUsuarioController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\CarritoCompraController;
-
 use App\Http\Controllers\InventarioController;
-use App\Http\Controllers\ProductoController;
-use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\DashboardController;
-use App\Models\DatoUsuario;
-use App\Models\Inventario;
-use App\Models\Usuario;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -21,6 +15,10 @@ use Illuminate\Support\Facades\Auth;
 Route::get("/", function () {
     return view("index");
 });
+
+Route::get('/Ayuda-al-cliente', function () {
+    return view('pages.ayudar_cliente');
+})->name('ayuda_cliente');
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Verificacion de usuario
@@ -30,15 +28,13 @@ Route::get("/incio_sesion", [LoginController::class, "index"])->name("login");
 Route::post('/login', [AuthController::class, 'login'])->name('iniciarSesion');
 Route::post('/register', [AuthController::class, 'register'])->name('registrarUsuario');
 Route::post('/verify-admin-code', [AuthController::class, 'verifyAdminCode'])->name('verifyAdminCode');
-Route::get('/Ayuda-al-cliente', function () {
-    return view('pages.ayudar_cliente');
-})->name('ayuda_cliente');
+
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth'); // Protege el logout
 
 // NUEVAS RUTAS PARA RESTABLECIMIENTO DE CONTRASEÑA
 Route::get('/forgot-password', [AuthController::class, 'showForgotPasswordForm'])->name('password.request'); // Muestra el formulario de email
 Route::post('/forgot-password', [AuthController::class, 'sendResetToken'])->name('password.email'); // Envía el token
-
+//RESTABLECER LAS CONTRSEÑAS DESDE EL USURIO YA LOGUEADO
 Route::get('/reset-password', [AuthController::class, 'showResetPasswordForm'])->name('password.reset.form'); // Muestra el formulario de reset
 Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update'); // Procesa el reset
 
@@ -90,58 +86,29 @@ Route::middleware(['auth'])->group(function () {
     })->name('acerca_de');
 
     Route::middleware(['is_admin'])->group(function () { // Usaremos un middleware para administradores
-        Route::get('/dashboard/admin', function () {
-            return view('admin.factura'); // Vista para administradores
-        })->name('admin.dashboard');
+        Route::get('/dashboard/admin', [InventarioController::class, 'index'])->name('admin.dashboard');
+
+        //Productos
+        // Listado de productos
+        Route::get('/inventario', [ProductoController::class, 'index'])->name('producto.index');
+
+        // Formulario de creación
+        Route::get('/producto/create', [ProductoController::class, 'create'])->name('producto.create');
+
+        // Guardar nuevo producto
+        Route::post('/producto/guardar', [ProductoController::class, 'store'])->name('producto.guardar');
+
+        // Editar producto
+        Route::get('/productos/{producto}/edit', [ProductoController::class, 'edit'])->name('producto.edit');
+
+        // Actualizar producto
+        Route::put('/actualizar_producto/{producto}', [ProductoController::class, 'update'])->name('productos.update');
+
+        // Eliminar producto
+        Route::delete('/productos/{id}', [ProductoController::class, 'destroy'])->name('producto.destroy');
+
+        //reporte dela admin
+
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
     });
 });
-
-
-
-// Puedes definir una ruta para el formulario si lo necesitas aparte, o solo usar la raíz
-// Route::get('/auth', [AuthController::class, 'showAuthForm'])->name('auth.form');
-
-Route::get('/Finca_Al_Dia2', function () {
-    return view('index2');
-});
-
-//inicio de sesion
-Route::get("/incio_sesion", [UsuarioController::class,"index"])->name("login");
-Route::post("/login", [UsuarioController::class, "show"])->name("iniciarSesion");
-Route::get("/logout", [UsuarioController::class, "logout"])->name("logout");
-
-//Creacion de usuarios
-Route::get('crear/usuario', [UsuarioController::class,"create"])->name("crearUsuario");
-Route::post('usuario/registrar', [UsuarioController::class,"store"])->name("storeUsuario");
-
-//Registro de usuario
-Route::get("/usuario/registro", [DatoUsuarioController::class,"index"])->name("registro");
-Route::post("/registrado", [DatoUsuarioController::class,"store"])->name("store");
-
-
-//inventario
-Route::get('/inicio_admin', [InventarioController::class, 'index'])->name('inventario.index');
-
-
-//Productos
-// Listado de productos
-Route::get('/inventario', [ProductoController::class, 'index'])->name('producto.index');
-
-// Formulario de creación
-Route::get('/producto/create', [ProductoController::class, 'create'])->name('producto.create');
-
-// Guardar nuevo producto
-Route::post('/producto/guardar', [ProductoController::class, 'store'])->name('producto.guardar');
-
-// Editar producto
-Route::get('/productos/{producto}/edit', [ProductoController::class, 'edit'])->name('producto.edit');
-
-// Actualizar producto
-Route::put('/actualizar_producto/{producto}', [ProductoController::class, 'update'])->name('productos.update');
-
-// Eliminar producto
-Route::delete('/productos/{id}', [ProductoController::class, 'destroy'])->name('producto.destroy');
-
-//reporte dela admin
-
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');   

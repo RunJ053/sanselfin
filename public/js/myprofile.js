@@ -49,7 +49,6 @@ function updateNavigation(activeModuleId) {
             "cart",
             "orders",
             "profile",
-            "coupons",
             "addresses",
             "notifications",
         ];
@@ -70,7 +69,6 @@ function updateNavigation(activeModuleId) {
             "cart",
             "orders",
             "profile",
-            "coupons",
             "addresses",
             "notifications",
         ];

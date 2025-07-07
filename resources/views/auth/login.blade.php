@@ -80,7 +80,7 @@
                         </div>
 
                         <div class="tab-pane fade" id="pills-register" role="tabpanel" aria-labelledby="tab-register">
-                            <form method="POST" action="{{ route('registrarUsuario') }}">
+                            <form method="POST" action="{{ route('registrarUsuario') }}" id="registerForm">
                                 @csrf
                                 <div class="d-flex align-items-center mb-4 pb-1 fade-in-2">
                                     <img src="{{ asset('img/logo/icon.png') }}" alt="Logo" class="logo-img me-3" style="width: 50px; height: 50px;">

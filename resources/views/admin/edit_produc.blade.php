@@ -81,7 +81,7 @@
         </div>
 
         <button type="submit" class="btn btn-success">Actualizar Producto</button>
-        <a href="{{ route('producto.index') }}" class="btn btn-secondary ms-2">Volver</a>
+        <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary ms-2">Volver</a>
     </form>
 </div>
 
