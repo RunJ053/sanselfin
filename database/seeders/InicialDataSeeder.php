@@ -3,10 +3,12 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use App\Models\User;
 use App\Models\Genero;
 use App\Models\TipoDocumento;
 use App\Models\Localidad;
 use App\Models\TipoCliente;
+use Illuminate\Foundation\Auth\User as AuthUser;
 
 class InicialDataSeeder extends Seeder
 {
@@ -36,6 +38,7 @@ class InicialDataSeeder extends Seeder
         TipoCliente::insert([
             ['role' => 'Usuario', 'created_at' => now(), 'updated_at' => now()],
             ['role' => 'Administrador', 'created_at' => now(), 'updated_at' => now()],
+            ['role' => 'Empleado', 'created_at' => now(), 'updated_at' => now()],
         ]);
 
         // Insertar datos en la tabla seguridad
@@ -64,5 +67,3 @@ class InicialDataSeeder extends Seeder
         ]);
     }
 }
-
-

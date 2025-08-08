@@ -19,7 +19,7 @@ class LoginController extends Controller
             return redirect()->route('user.dashboard');
         }
         
-        $tipo_clientes = TipoCliente::all();
+        $tipo_clientes = TipoCliente::whereIn('id',[1,3])->get();
         return view("auth.login", compact('tipo_clientes'));
     }
 

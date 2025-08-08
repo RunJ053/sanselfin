@@ -1,15 +1,19 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Database\QueryException;
 use App\Mail\AdminVerificationMail;
-use App\Mail\PasswordResetRequestMail; // NUEVO: Importa la clase de correo para restablecimiento
+use App\Mail\PasswordResetRequestMail;
+use App\Mail\UserVerificationMail; // NUEVO: Importa la clase de correo para restablecimiento
 
 use App\Models\DatoUsuario;
 use App\Models\TipoCliente;
 use App\Models\AdminVerificationCode;
+use App\Models\UserVerificationCode; // Importamos el nuevo modelo
+
 
 use Illuminate\Support\Facades\DB; //Para interactuar con la tabla password_resets
 use Illuminate\Support\Facades\Auth;
@@ -19,7 +23,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log; // Asegúrate de que esta línea esté presente
 
 use App\Http\Requests\RegisterUserRequest;
-use App\Http\Requests\RegisterAdminRequest;
+use App\Http\Requests\RegisterEmpleadoRequest;
 
 use Carbon\Carbon;
 
@@ -48,44 +52,51 @@ class AuthController extends Controller
                     'email' => 'Tu cuenta de administrador aún no ha sido verificada. Por favor, revisa tu correo electrónico.',
                 ]);
             }
-            
-            // Si es un administrador y está verificado:
+
             Auth::login($user);
             $request->session()->regenerate();
             session(['usuario_id' => $user->id, 'nombre_usuario' => $user->nombre, 'nombre_img' => $user->user_img]);
-            return redirect()->route('admin.dashboard'); // Ruta para administradores
-
-        } else { 
+            return redirect()->route('admin.dashboard');
+        } elseif ($user->role == TipoCliente::ROLE_EMPLEADO) {
+            if (!$user->is_verified) {
+                Auth::logout();
+                return redirect('/incio_sesion')->withErrors([
+                    'email' => 'Tu cuenta de empleado aún no ha sido verificada. Por favor, revisa tu correo electrónico.',
+                ]);
+            }
             Auth::login($user);
             $request->session()->regenerate();
             session(['usuario_id' => $user->id, 'nombre_usuario' => $user->nombre, 'nombre_img' => $user->user_img]);
-            return redirect()->route('user.dashboard'); // Ruta para usuarios normales
-        }
-    }
-
-    /**
-     * Maneja el registro de usuarios y administradores.
-     */
-    public function register(Request $request)
-    {
-        $selectedTipoUsuarioId = $request->input('tipo_usuario');
-
-        // Validación del tipo de usuario
-        if ($selectedTipoUsuarioId == TipoCliente::ROLE_ADMINISTRADOR || $selectedTipoUsuarioId == TipoCliente::ROLE_SUPER_ADMIN) {
-            $validatedData = app(RegisterAdminRequest::class)->validated();
-            return $this->registerAdmin($validatedData);
+            return redirect()->route('admin.dashboard');
         } else {
-            $validatedData = app(RegisterUserRequest::class)->validated();
-            return $this->registerUser($validatedData);
+            if (!$user->is_verified) {
+                Auth::logout();
+                return redirect('/incio_sesion')->withErrors([
+                    'email' => 'Tu cuenta aún no ha sido verificada. Por favor, revisa tu correo electrónico.',
+                ]);
+            }
+            Auth::login($user);
+            $request->session()->regenerate();
+            session(['usuario_id' => $user->id, 'nombre_usuario' => $user->nombre, 'nombre_img' => $user->user_img]);
+            return redirect()->route('user.dashboard');
         }
     }
 
-    /**
-     * Lógica para registrar un usuario normal.
-     */
-    protected function registerUser($data)
+    protected function registerUser(RegisterUserRequest $request)
     {
+        Log::info('Inicio del proceso de registro de usuario normal.');
+
+        $data = $request->validated();
+        Log::info('Datos de registro validados para el usuario: ' . $data['email']);
+
         try {
+            // Verificamos si el email ya existe para evitar duplicados
+            if (DatoUsuario::where('email', $data['email'])->exists()) {
+                Log::warning('Intento de registro con email duplicado: ' . $data['email']);
+                return back()->withErrors(['email' => 'El correo electrónico ya está registrado.']);
+            }
+
+            // Creamos el usuario con is_verified en false
             $datoUsuario = DatoUsuario::create([
                 'nombre' => $data['nombre'],
                 'apellidos' => $data['apellido'],
@@ -94,39 +105,70 @@ class AuthController extends Controller
                 'edad' => $data['fecha_nac'],
                 'password' => Hash::make($data['password']),
                 'role' => $data['role'],
-                'is_verified' => $data['is_verified'],
-
-                // ¡AÑADE ESTOS CAMPOS CON VALORES!
-                'localidad'=> null,
-                'tipo_docu' => null,
-                'tipo_de_genero' => null,
+                'is_verified' => false, // IMPORTANTE: El usuario no está verificado al inicio
+                'localidad' => 15,
+                'tipo_docu' => 1,
+                'tipo_de_genero' => 4,
                 'documento' => null,
                 'telefono' => null,
                 'nom_imgs' => null,
                 'user_img' => null,
             ]);
 
-            if ($datoUsuario) {
-                Auth::login($datoUsuario);
-                session(['usuario_id' => $datoUsuario->id, 'nombre_usuario' => $datoUsuario->nombre]);
-                return redirect()->route('user.index2')->with('success', '¡Registro exitoso! Bienvenido.');
-            } else {
+            if (!$datoUsuario) {
+                Log::error('Fallo al crear el registro del usuario en la base de datos.');
                 return back()->withInput()->withErrors(['database_error' => 'No se pudo crear el usuario.']);
             }
+
+            Log::info('Usuario registrado exitosamente con ID: ' . $datoUsuario->id . '. Generando token de verificación.');
+            
+            // Generamos un token único de 60 caracteres
+            $token = Str::random(60); 
+            $expiresAt = Carbon::now()->addMinutes(30); // El token expira en 30 minutos
+
+            // Guardamos el token en la base de datos
+            $verificationCodeEntry = UserVerificationCode::create([
+                'user_id' => $datoUsuario->id,
+                'token' => $token,
+                'expires_at' => $expiresAt,
+            ]);
+
+            if (!$verificationCodeEntry) {
+                Log::error('Fallo al guardar el token de verificación para el usuario ID: ' . $datoUsuario->id);
+                // Si falla, eliminamos el usuario para evitar cuentas "zombies"
+                $datoUsuario->delete();
+                return back()->withInput()->withErrors(['database_error' => 'No se pudo guardar el token de verificación.']);
+            }
+            
+            Log::info('Token de verificación guardado. Enviando correo al usuario: ' . $datoUsuario->email);
+            
+            // Enviamos el correo de verificación al email del usuario
+            Mail::to($datoUsuario->email)->send(new UserVerificationMail($token, $datoUsuario->nombre));
+            
+            Log::info('Correo de verificación enviado exitosamente.');
+
+            // Redirigimos al usuario a una página de confirmación
+            return redirect()->route('user.checkEmail')->with([
+                'message' => '¡Registro exitoso! Por favor, revisa tu correo para verificar tu cuenta.',
+            ]);
+
         } catch (QueryException $e) {
+            Log::error('Error de Query al registrar usuario: ' . $e->getMessage());
             return back()->withInput()->withErrors(['database_error' => 'Hubo un error al intentar registrarte. Por favor, inténtalo de nuevo más tarde.']);
-        } catch (\Exception $e) { // Captura cualquier otra excepción
+        } catch (\Exception $e) {
+            Log::error('Error inesperado al registrar usuario: ' . $e->getMessage());
+            // Si el error ocurre después de crear el usuario pero antes de enviar el correo, lo eliminamos.
+            if (isset($datoUsuario) && $datoUsuario->exists) {
+                $datoUsuario->delete();
+            }
             return back()->withInput()->withErrors(['general_error' => 'Hubo un error inesperado al registrarte.']);
         }
     }
 
-    /**
-     * Lógica para registrar un administrador (requiere verificación por correo).
-     */
-    protected function registerAdmin(array $data)
+    protected function registerEmpleado(RegisterEmpleadoRequest $request)
     {
+        $data = $request->validated();
         try {
-            // Verifica si el correo ya está registrado
             if (DatoUsuario::where('email', $data['email'])->exists()) {
                 return back()->withErrors(['email' => 'El correo electrónico ya está registrado.']);
             }
@@ -140,10 +182,9 @@ class AuthController extends Controller
                 'role' => $data['role'],
                 'is_verified' => $data['is_verified'],
                 'password' => null,
-                // ¡AÑADE ESTOS CAMPOS CON VALORES!
-                'localidad' => null,
-                'tipo_docu' => null, 
-                'tipo_de_genero' => null, 
+                'localidad' => 15,
+                'tipo_docu' => 1,
+                'tipo_de_genero' => 4,
                 'documento' => null,
                 'telefono' => null,
                 'nom_imgs' => null,
@@ -151,13 +192,12 @@ class AuthController extends Controller
             ]);
 
             if (!$datoUsuario) {
-                return back()->withInput()->withErrors(['database_error' => 'No se pudo crear el usuario administrador.']);
+                return back()->withInput()->withErrors(['database_error' => 'No se pudo crear el empleado.']);
             }
-            // Genera un código de verificación único
-            $code = Str::random(6);
-            $expiresAt = Carbon::now()->addMinutes(30);
 
-            // Guarda el código en la tabla admin_verification_codes
+            $code = Str::random(6);
+            $expiresAt = Carbon::now()->addMinutes(10);
+
             $verificationCodeEntry = AdminVerificationCode::create([
                 'user_id' => $datoUsuario->id,
                 'code' => $code,
@@ -165,15 +205,13 @@ class AuthController extends Controller
             ]);
 
             if (!$verificationCodeEntry) {
-                // Considera eliminar el DatoUsuario recién creado si falla la creación del código
                 $datoUsuario->delete();
                 return back()->withInput()->withErrors(['database_error' => 'No se pudo guardar el código de verificación.']);
             }
-            // Envía el correo electrónico con el código al admin predefinido
+
             $adminEmailForVerification = 'josezapataaguirre@gmail.com';
             Mail::to($adminEmailForVerification)->send(new AdminVerificationMail($code, $datoUsuario->nombre));
 
-            // Redirige de vuelta al formulario de registro y muestra el modal de verificación
             return redirect()->back()->with([
                 'openAdminVerificationModal' => true,
                 'admin_user_id' => $datoUsuario->id,
@@ -181,14 +219,11 @@ class AuthController extends Controller
             ]);
         } catch (QueryException $e) {
             return back()->withInput()->withErrors(['database_error' => 'Hubo un error al intentar registrarte. Por favor, inténtalo de nuevo más tarde.']);
-        } catch (\Exception $e) { // Captura cualquier otra excepción
+        } catch (\Exception $e) {
             return back()->withInput()->withErrors(['general_error' => 'Hubo un error inesperado al registrarte.']);
         }
     }
 
-    /**
-     * Verifica el código de administrador.
-     */
     public function verifyAdminCode(Request $request)
     {
         $request->validate([
@@ -210,7 +245,6 @@ class AuthController extends Controller
             return back()->withErrors(['verification_code' => 'El código de verificación es inválido o ha expirado.'])->withInput($request->except('password'));
         }
 
-        // Si el código es válido, actualiza el usuario a verificado y establece la contraseña
         $adminUser = DatoUsuario::find($userId);
 
         if (!$adminUser) {
@@ -219,16 +253,15 @@ class AuthController extends Controller
 
         $adminUser->update([
             'is_verified' => true,
-            'password' => Hash::make($password), // Guarda la contraseña
+            'password' => Hash::make($password),
         ]);
-        // Elimina el código de verificación de la base de datos
         $verificationEntry->delete();
 
         Auth::login($adminUser);
 
         return redirect()->route('admin.dashboard')->with('success', '¡Cuenta de administrador verificada y creada exitosamente!');
     }
-    
+
     /**
      * Muestra el formulario para solicitar el restablecimiento de contraseña (paso 1).
      */
@@ -273,7 +306,6 @@ class AuthController extends Controller
                 'status' => 'Se ha enviado un código de restablecimiento a tu correo electrónico. Por favor, revísalo para continuar.',
                 'email' => $user->email // Pasamos el email para el siguiente formulario
             ]);
-
         } catch (QueryException $e) {
             return back()->withInput()->withErrors(['database_error' => 'Hubo un error al intentar enviar el token. Por favor, inténtalo de nuevo más tarde.']);
         } catch (\Exception $e) {
@@ -333,7 +365,6 @@ class AuthController extends Controller
             DB::table('password_resets')->where('email', $request->email)->delete();
 
             return redirect()->route('login')->with('success', '¡Tu contraseña ha sido restablecida exitosamente! Inicia sesión con tu nueva contraseña.');
-
         } catch (QueryException $e) {
             return back()->withInput()->withErrors(['database_error' => 'Hubo un error al intentar restablecer tu contraseña. Por favor, inténtalo de nuevo más tarde.']);
         } catch (\Exception $e) {

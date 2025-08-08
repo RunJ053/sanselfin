@@ -14,9 +14,9 @@ class TipoCliente extends Model
         'role'
     ];
 
-    // Puedes definir constantes para los IDs de roles si quieres
-    const ROLE_USUARIO = 1; // Asumiendo que 'Usuario' tiene ID 1
-    const ROLE_ADMINISTRADOR = 2; // Asumiendo que 'Administrador' tiene ID 2
+    // Definir constantes para los IDs de roles
+    const ROLE_USUARIO = 1;
+    const ROLE_ADMINISTRADOR = 2;
 
-    const ROLE_SUPER_ADMIN = 3;// Agrega más si tienes otros roles, ej: const ROLE_SUPER_ADMIN = 3;
+    const ROLE_EMPLEADO = 3;
 }

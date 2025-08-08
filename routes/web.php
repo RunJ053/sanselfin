@@ -7,7 +7,6 @@ use App\Http\Controllers\DatoUsuarioController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\CarritoCompraController;
 use App\Http\Controllers\InventarioController;
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TareaController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -27,14 +26,22 @@ Route::get('/Ayuda-al-cliente', function () {
 Route::get("/incio_sesion", [LoginController::class, "index"])->name("login");
 
 Route::post('/login', [AuthController::class, 'login'])->name('iniciarSesion');
-Route::post('/register', [AuthController::class, 'register'])->name('registrarUsuario');
+Route::post('/register/user', [AuthController::class, 'registerUser'])->name('register.user');
+Route::post('/register/empleado', [AuthController::class, 'registerEmpleado'])->name('register.empleado');
 Route::post('/verify-admin-code', [AuthController::class, 'verifyAdminCode'])->name('verifyAdminCode');
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth'); // Protege el logout
 
+// Esta es la ruta que tu controlador de registro necesita
+Route::get('/check-email', [VerificationController::class, 'checkEmail'])->name('user.checkEmail');
+
+// Esta es la ruta a la que el usuario hará clic en el correo
+Route::get('/verify/{token}', [VerificationController::class, 'verifyUser'])->name('verification.verify');
+
 // NUEVAS RUTAS PARA RESTABLECIMIENTO DE CONTRASEÑA
 Route::get('/forgot-password', [AuthController::class, 'showForgotPasswordForm'])->name('password.request'); // Muestra el formulario de email
 Route::post('/forgot-password', [AuthController::class, 'sendResetToken'])->name('password.email'); // Envía el token
+
 //RESTABLECER LAS CONTRSEÑAS DESDE EL USURIO YA LOGUEADO
 Route::get('/reset-password', [AuthController::class, 'showResetPasswordForm'])->name('password.reset.form'); // Muestra el formulario de reset
 Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update'); // Procesa el reset
@@ -86,7 +93,7 @@ Route::middleware(['auth'])->group(function () {
         return view('acerca_de');
     })->name('acerca_de');
 
-    Route::middleware(['is_admin'])->group(function () { // Usaremos un middleware para administradores
+    Route::middleware(['is_admin_or_empleado'])->group(function () { // Usaremos un middleware para administradores
         Route::get('/dashboard/admin', [InventarioController::class, 'index'])->name('admin.dashboard');
 
         //Productos

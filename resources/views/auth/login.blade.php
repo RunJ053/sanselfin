@@ -8,13 +8,13 @@
         <div class="row d-flex align-items-center justify-content-center h-100">
             <div class="col-md-8 col-lg-7 col-xl-6 fade-in-1">
 
-            <marquee style="max-width: 100%; font-family:Georgia, 'Times New Roman', Times, serif;" behavior="scroll" direction="left" scrollamount="14">
-                <strong>Si te registras puedes comprar más de lo que esperas ;) </strong>
-                <img style="width: 40px;  height: auto; border-radius: 50%;" src="{{asset('img/es_de_frutas_y_verduras_1.webp')}}" alt="imagen_prueba">
-                <strong>Sabias que las compras online son inseguras, por eso nos preocupamos por tu seguridad</strong> <i class="fas fa-lock me-2"></i>
-                Asegurate de tener una buena contraseña :)
-                <img style="width: 40px;  height: auto; border-radius: 30%;" src="{{asset('img/es_de_frutas_y_verduras_3.png')}}" alt="imagen_prueba">
-            </marquee>
+                <marquee style="max-width: 100%; font-family:Georgia, 'Times New Roman', Times, serif;" behavior="scroll" direction="left" scrollamount="14">
+                    <strong>Si te registras puedes comprar más de lo que esperas ;) </strong>
+                    <img style="width: 40px;  height: auto; border-radius: 50%;" src="{{asset('img/es_de_frutas_y_verduras_1.webp')}}" alt="imagen_prueba">
+                    <strong>Sabias que las compras online son inseguras, por eso nos preocupamos por tu seguridad</strong> <i class="fas fa-lock me-2"></i>
+                    Asegurate de tener una buena contraseña :)
+                    <img style="width: 40px;  height: auto; border-radius: 30%;" src="{{asset('img/es_de_frutas_y_verduras_3.png')}}" alt="imagen_prueba">
+                </marquee>
 
                 <img style="margin-top:15%;" src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.svg" class="img-fluid" alt="Phone image">
             </div>
@@ -35,7 +35,9 @@
                                 @csrf
 
                                 <div class="d-flex align-items-center mb-4 pb-1 fade-in-2">
-                                    <img src="{{ asset('img/logo/icon.png') }}" alt="Logo" class="logo-img me-3" style="width: 50px; height: 50px;">
+                                    <a href="{{ url('/') }}">
+                                        <img src="{{ asset('img/logo/icon.png') }}" alt="Logo" class="logo-img me-3" style="width: 50px; height: 50px;">
+                                    </a>
                                     <span class="h1 fw-bold mb-0 brand-title">Finca Al Día</span>
                                 </div>
 
@@ -64,7 +66,6 @@
                                         <span class="btn-spinner d-none"><i class="fas fa-spinner fa-spin me-2"></i>Iniciando sesión...</span>
                                     </button>
                                 </div>
-                                <!-- En tu vista actual, por ejemplo, resources/views/index.blade.php o incio_sesion.blade.php -->
                                 <div class="text-center mb-4 fade-in-4">
                                     <a class="small text-muted text-decoration-none" href="{{ route('password.request') }}"><i class="fas fa-key me-1"></i>¿Olvidaste tu contraseña?</a>
                                 </div>
@@ -74,13 +75,15 @@
                                 </p>
                                 <div class="text-center fade-in-4">
                                     <a href="{{ route('ayuda_cliente')}}" class="small text-muted text-decoration-none me-3"><i class="fas fa-file-contract me-1"></i>Necesitas Ayuda</a>
-                                    <a href="#!" class="small text-muted text-decoration-none"><i class="fas fa-shield-alt me-1"></i>Política de privacidad</a>
+                                    <a href="#!" class="small text-muted text-decoration-none" data-mdb-toggle="modal" data-mdb-target="#adminVerificationModal">
+                                        <i class="fas fa-shield-alt me-1"></i>Verificar cuenta
+                                    </a>
                                 </div>
                             </form>
                         </div>
-
+                        <!-- Registro de usuario -->
                         <div class="tab-pane fade" id="pills-register" role="tabpanel" aria-labelledby="tab-register">
-                            <form method="POST" action="{{ route('registrarUsuario') }}" id="registerForm">
+                            <form method="POST" action="" id="registerForm">
                                 @csrf
                                 <div class="d-flex align-items-center mb-4 pb-1 fade-in-2">
                                     <img src="{{ asset('img/logo/icon.png') }}" alt="Logo" class="logo-img me-3" style="width: 50px; height: 50px;">
@@ -92,7 +95,7 @@
                                 <div class="row mb-4 fade-in-3">
                                     <div class="col-md-6">
                                         <div class="form-floating">
-                                            <select class="form-select form-select @error('tipo_usuario') is-invalid @enderror" id="tipo_usuario" name="tipo_usuario" required>
+                                            <select class="form-select form-select @error('tipo_usuario') is-invalid @enderror" id="tipo_usuario_select" name="tipo_usuario" required>
                                                 <option value="" disabled selected>Selecciona un tipo de usuario</option>
                                                 @foreach ($tipo_clientes as $tc)
                                                 <option value="{{ $tc->id }}" {{ old('tipo_usuario') == $tc->id ? 'selected' : '' }}>{{ $tc->role }}</option>
@@ -201,13 +204,13 @@
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="adminVerificationModalLabel">Verificación de Administrador</h5>
+                                <h5 class="modal-title" id="adminVerificationModalLabel">Verificación de credenciales</h5>
                                 <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <form id="adminVerificationForm" action="{{ route('verifyAdminCode') }}" method="POST">
                                 @csrf
                                 <div class="modal-body">
-                                    <p>Se ha enviado un código de verificación al correo electrónico predefinido para administradores. Por favor, introduce el código y la contraseña para tu cuenta.</p>
+                                    <p>Se ha enviado un código de verificación al correo electrónico predefinido. Por favor, introduce el código y la contraseña para lograr activar tu cuenta.</p>
 
                                     <input type="hidden" name="admin_user_id" id="modal_admin_user_id">
 

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Auth\Authenticatable as AuthenticatableTrait; // Importa el trait
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class DatoUsuario extends Model implements Authenticatable // Implementa la interfaz
 {
@@ -54,5 +55,14 @@ class DatoUsuario extends Model implements Authenticatable // Implementa la inte
     public function datoslocalidad()
     {
         return $this->belongsTo(Localidad::class, 'localidad');
+    }
+
+    /**
+     * Define la relación con el código de verificación.
+     * Un usuario tiene un código de verificación (o puede tener uno).
+     */
+    public function verificationCode(): HasOne
+    {
+        return $this->hasOne(UserVerificationCode::class, 'user_id');
     }
 }
