@@ -45,9 +45,8 @@
                 Hemos enviado un correo de verificación a tu bandeja de entrada. Por favor, revísalo y haz clic en el enlace para activar tu cuenta.
             </p>
             <div class="mt-4">
-                <p class="text-muted small">
+                <p class="text-muted small fw-bold">
                     ¿No lo ves? Revisa tu carpeta de spam o
-                    <a href="#" class="text-success text-decoration-none fw-bold">envía el correo de nuevo.</a>
                 </p>
             </div>
         </div>

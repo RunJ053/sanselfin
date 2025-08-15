@@ -30,14 +30,11 @@ class VerificationController extends Controller
      */
     public function verifyUser(string $token)
     {
-        Log::info('Inicio de la verificación de usuario con token: ' . $token);
-
         // Busca el token en la base de datos
         $verificationEntry = UserVerificationCode::where('token', $token)->first();
 
         // Si no se encuentra el token o ha expirado...
         if (!$verificationEntry || Carbon::now()->greaterThan($verificationEntry->expires_at)) {
-            Log::warning('Token de verificación inválido o expirado.');
             return redirect('/login')->with('error', 'El enlace de verificación es inválido o ha expirado. Por favor, regístrate de nuevo.');
         }
 
@@ -46,7 +43,6 @@ class VerificationController extends Controller
 
         // Si el usuario ya está verificado, redirige
         if ($user->is_verified) {
-            Log::info('El usuario ID: ' . $user->id . ' ya estaba verificado.');
             // Elimina la entrada del token para evitar reusos
             $verificationEntry->delete();
             return redirect('/login')->with('info', 'Tu cuenta ya está verificada. Por favor, inicia sesión.');
@@ -55,8 +51,6 @@ class VerificationController extends Controller
         // Actualiza el estado de verificación del usuario
         $user->is_verified = true;
         $user->save();
-
-        Log::info('El usuario ID: ' . $user->id . ' ha sido verificado exitosamente.');
 
         // Elimina la entrada del token para evitar reusos
         $verificationEntry->delete();

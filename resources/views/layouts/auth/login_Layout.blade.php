@@ -16,31 +16,11 @@
 
 <body>
     @yield('content')
-
+    
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.js"></script>
     <script src="{{ asset('js/formCrearUsuario.js') }}"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('registerForm');
-            const tipoUsuarioSelect = document.getElementById('tipo_usuario_select');
-            
-            // Función para actualizar la acción del formulario
-            function updateFormAction() {
-                const selectedValue = tipoUsuarioSelect.value;
-                if (selectedValue == 1) {
-                    form.action = "{{ route('register.user') }}";
-                } else if (selectedValue == 3) {
-                    form.action = "{{ route('register.empleado') }}";
-                } else {
-                    form.action = ""; // Acción por defecto si no hay nada seleccionado
-                }
-            }
-            
-            // Actualiza la acción al cargar la página y al cambiar la selección
-            updateFormAction();
-            tipoUsuarioSelect.addEventListener('change', updateFormAction);
-        });
 
         document.addEventListener('DOMContentLoaded', function() {
             // Efecto de focus mejorado

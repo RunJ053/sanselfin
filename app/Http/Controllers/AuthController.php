@@ -92,7 +92,6 @@ class AuthController extends Controller
         try {
             // Verificamos si el email ya existe para evitar duplicados
             if (DatoUsuario::where('email', $data['email'])->exists()) {
-                Log::warning('Intento de registro con email duplicado: ' . $data['email']);
                 return back()->withErrors(['email' => 'El correo electrónico ya está registrado.']);
             }
 
@@ -104,7 +103,7 @@ class AuthController extends Controller
                 'email' => $data['email'],
                 'edad' => $data['fecha_nac'],
                 'password' => Hash::make($data['password']),
-                'role' => $data['role'],
+                'role' => 1, 
                 'is_verified' => false, // IMPORTANTE: El usuario no está verificado al inicio
                 'localidad' => 15,
                 'tipo_docu' => 1,
@@ -116,15 +115,12 @@ class AuthController extends Controller
             ]);
 
             if (!$datoUsuario) {
-                Log::error('Fallo al crear el registro del usuario en la base de datos.');
                 return back()->withInput()->withErrors(['database_error' => 'No se pudo crear el usuario.']);
             }
-
-            Log::info('Usuario registrado exitosamente con ID: ' . $datoUsuario->id . '. Generando token de verificación.');
             
             // Generamos un token único de 60 caracteres
             $token = Str::random(60); 
-            $expiresAt = Carbon::now()->addMinutes(30); // El token expira en 30 minutos
+            $expiresAt = Carbon::now()->addMinutes(10); // El token expira en 30 minutos
 
             // Guardamos el token en la base de datos
             $verificationCodeEntry = UserVerificationCode::create([
@@ -134,18 +130,13 @@ class AuthController extends Controller
             ]);
 
             if (!$verificationCodeEntry) {
-                Log::error('Fallo al guardar el token de verificación para el usuario ID: ' . $datoUsuario->id);
                 // Si falla, eliminamos el usuario para evitar cuentas "zombies"
                 $datoUsuario->delete();
                 return back()->withInput()->withErrors(['database_error' => 'No se pudo guardar el token de verificación.']);
             }
             
-            Log::info('Token de verificación guardado. Enviando correo al usuario: ' . $datoUsuario->email);
-            
             // Enviamos el correo de verificación al email del usuario
             Mail::to($datoUsuario->email)->send(new UserVerificationMail($token, $datoUsuario->nombre));
-            
-            Log::info('Correo de verificación enviado exitosamente.');
 
             // Redirigimos al usuario a una página de confirmación
             return redirect()->route('user.checkEmail')->with([
@@ -153,10 +144,8 @@ class AuthController extends Controller
             ]);
 
         } catch (QueryException $e) {
-            Log::error('Error de Query al registrar usuario: ' . $e->getMessage());
             return back()->withInput()->withErrors(['database_error' => 'Hubo un error al intentar registrarte. Por favor, inténtalo de nuevo más tarde.']);
         } catch (\Exception $e) {
-            Log::error('Error inesperado al registrar usuario: ' . $e->getMessage());
             // Si el error ocurre después de crear el usuario pero antes de enviar el correo, lo eliminamos.
             if (isset($datoUsuario) && $datoUsuario->exists) {
                 $datoUsuario->delete();

@@ -83,7 +83,7 @@
                         </div>
                         <!-- Registro de usuario -->
                         <div class="tab-pane fade" id="pills-register" role="tabpanel" aria-labelledby="tab-register">
-                            <form method="POST" action="" id="registerForm">
+                            <form method="POST" action="{{ route('register.user') }}" id="registerForm">
                                 @csrf
                                 <div class="d-flex align-items-center mb-4 pb-1 fade-in-2">
                                     <img src="{{ asset('img/logo/icon.png') }}" alt="Logo" class="logo-img me-3" style="width: 50px; height: 50px;">
@@ -95,14 +95,10 @@
                                 <div class="row mb-4 fade-in-3">
                                     <div class="col-md-6">
                                         <div class="form-floating">
-                                            <select class="form-select form-select @error('tipo_usuario') is-invalid @enderror" id="tipo_usuario_select" name="tipo_usuario" required>
-                                                <option value="" disabled selected>Selecciona un tipo de usuario</option>
-                                                @foreach ($tipo_clientes as $tc)
-                                                <option value="{{ $tc->id }}" {{ old('tipo_usuario') == $tc->id ? 'selected' : '' }}>{{ $tc->role }}</option>
-                                                @endforeach
-                                            </select>
-                                            <label for="tipo_usuario"><i class="fas fa-user-tag me-2"></i>Tipo de Usuario</label>
-                                            @error('tipo_usuario')
+                                            <input type="hidden" name="tipo_usuario" value="1">
+                                            <input type="text" class="form-control form-control-lg @error('apellido') is-invalid @enderror" id="apellido" name="apellido" value="{{ old('apellido') }}" required>
+                                            <label for="apellido"><i class="fas fa-user me-2"></i>Apellido</label>
+                                            @error('apellido')
                                             <div class="invalid-feedback">
                                                 {{ $message }}
                                             </div>
@@ -120,16 +116,6 @@
                                             @enderror
                                         </div>
                                     </div>
-                                </div>
-
-                                <div class="form-floating mb-4 fade-in-3">
-                                    <input type="text" class="form-control form-control-lg @error('apellido') is-invalid @enderror" id="apellido" name="apellido" value="{{ old('apellido') }}" required>
-                                    <label for="apellido"><i class="fas fa-user me-2"></i>Apellido</label>
-                                    @error('apellido')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                    @enderror
                                 </div>
 
                                 <div class="form-floating mb-4 fade-in-3">
