@@ -1,88 +1,56 @@
-* {
-  box-sizing: border-box;
-}
-
+/* Fondo con degradado */
 body {
-  font-family: 'Roboto', sans-serif;
-  background: #f0f2f5;
-  margin: 0;
-  padding: 40px 10px;
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(to bottom, #c6d9b5, #d9dfc9, #e0e5d2);
+    position: relative;
 }
 
-.container {
-  background: #ffffff;
-  max-width: 600px;
-  margin: auto;
-  padding: 30px 40px;
-  border-radius: 10px;
-  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
+/* Logo como sello en la esquina superior derecha */
+body::before {
+    content: "";
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 100px;
+    height: 100px;
+    background: url("../img/logo/icon.png") no-repeat center;
+    background-size: contain;
+    opacity: 0.2; /* efecto sello */
 }
 
-h2 {
-  text-align: center;
-  color: #333;
-  margin-bottom: 25px;
+/* Contenedor del formulario */
+.form-container {
+    display: flex;
+    gap: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-.form-group {
-  margin-bottom: 20px;
+/* Inputs en horizontal */
+.form-container input, 
+.form-container select, 
+.form-container button {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
 }
 
-label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 500;
-  color: #555;
+/* Botón */
+.form-container button {
+    background: #5a8d4e;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
 }
 
-input[type="text"],
-input[type="number"],
-textarea,
-input[type="file"] {
-  width: 100%;
-  padding: 10px 14px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-  transition: all 0.2s ease;
-}
-
-input:focus,
-textarea:focus {
-  border-color: #4CAF50;
-  outline: none;
-}
-
-button {
-  display: block;
-  width: 100%;
-  padding: 12px;
-  background-color: #4CAF50;
-  color: #fff;
-  font-size: 16px;
-  font-weight: bold;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-button:hover {
-  background-color: #388e3c;
-}
-.btn-ver-productos {
-  display: block;
-  text-align: center;
-  background-color: #2196F3;
-  color: #fff;
-  padding: 12px;
-  border-radius: 6px;
-  text-decoration: none;
-  font-weight: bold;
-  transition: background-color 0.3s ease;
-  margin-top: 10px;
-}
-
-.btn-ver-productos:hover {
-  background-color: #1976D2;
+.form-container button:hover {
+    background: #49773f;
 }

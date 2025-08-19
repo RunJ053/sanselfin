@@ -148,7 +148,7 @@
 
     <!-- Tarjeta Usuarios -->
     <div class="col">
-        <a href="{{ route('usuarios.form') }}" class="text-decoration-none">
+    /*    
             <div class="card bg-primary text-white shadow h-100 card-hover">
                 <div class="card-body">
                     <h5><i class="fas fa-users me-2"></i>Usuarios</h5>
@@ -161,24 +161,24 @@
                     </p>
                 </div>
             </div>
-        </a>
+        
     </div>
 
     <!-- Tarjeta Productos -->
     <div class="col">
-        <a href="{{ route('productos.form') }}" class="text-decoration-none">
+     
             <div class="card bg-success text-white shadow h-100 card-hover">
                 <div class="card-body">
                     <h5><i class="fas fa-carrot me-2"></i>Productos</h5>
                     <p>{{ count($inventarios) }}</p>
                 </div>
             </div>
-        </a>
+        
     </div>
 
     <!-- Tarjeta Stock -->
     <div class="col">
-        <a href="{{ route('producto.index') }}" class="text-decoration-none">
+       
             <div class="card bg-warning text-dark shadow h-100 card-hover">
                 <div class="card-body">
                     <h5><i class="fas fa-warehouse me-2"></i>Stock</h5>
@@ -192,19 +192,19 @@
                     </p>
                 </div>
             </div>
-        </a>
+        
     </div>
 
     <!-- Tarjeta Pedidos -->
     <div class="col">
-        <a href="{{ route('pedidos.form') }}" class="text-decoration-none">
+        
             <div class="card bg-danger text-white shadow h-100 card-hover">
                 <div class="card-body">
                     <h5><i class="fas fa-shopping-cart me-2"></i>Pedidos</h5>
                     <p>12 activos</p>
                 </div>
             </div>
-        </a>
+        
     </div>
 
 </div>
