@@ -71,6 +71,16 @@
       .sidebar { display: none; }
       .main-content { margin-left: 0; padding: 15px; }
     }
+
+    .card-hover {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    cursor: pointer;
+    }
+
   </style>
 </head>
 
@@ -133,54 +143,75 @@
       </div>
     </section>
 
-    <!-- Tarjetas -->
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4 mb-4">
-      <div class="col">
-        <div class="card bg-primary text-white shadow">
-          <div class="card-body">
-            <h5><i class="fas fa-users me-2"></i>Usuarios</h5>
-            <p>
-              @if (isset($numeroUsuarios))
-              Usuarios Registrados: {{ $numeroUsuarios }}
-              @else
-              Información de usuarios no disponible
-              @endif
-            </p>
-          </div>
-        </div>
-      </div>
-      <div class="col">
-        <div class="card bg-success text-white shadow">
-          <div class="card-body">
-            <h5><i class="fas fa-carrot me-2"></i>Productos</h5>
-            <p>{{ count($inventarios) }}</p>
-          </div>
-        </div>
-      </div>
-      <div class="col">
-        <div class="card bg-warning text-dark shadow">
-          <div class="card-body">
-            <h5><i class="fas fa-warehouse me-2"></i>Stock</h5>
-            <p>
-              @if (isset($cantidadMax) && isset($cantidadMin))
-              Máximo: {{ $cantidadMax }} unidades, Mínimo: {{ $cantidadMin }} unidades
-              @else
-              Información de stock no disponible
-              @endif
-            </p>
-          </div>
-        </div>
-      </div>
-      <div class="col">
-        <div class="card bg-danger text-white shadow">
-          <div class="card-body">
-            <h5><i class="fas fa-shopping-cart me-2"></i>Pedidos</h5>
-            <p>12 activos</p>
-          </div>
-        </div>
-      </div>
+@if(auth()->check() && auth()->user()->role == 2)
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4 mb-4">
+
+    <!-- Tarjeta Usuarios -->
+    <div class="col">
+        <a href="{{ route('usuarios.form') }}" class="text-decoration-none">
+            <div class="card bg-primary text-white shadow h-100 card-hover">
+                <div class="card-body">
+                    <h5><i class="fas fa-users me-2"></i>Usuarios</h5>
+                    <p>
+                        @if (isset($numeroUsuarios))
+                            Usuarios Registrados: {{ $numeroUsuarios }}
+                        @else
+                            Información de usuarios no disponible
+                        @endif
+                    </p>
+                </div>
+            </div>
+        </a>
     </div>
+
+    <!-- Tarjeta Productos -->
+    <div class="col">
+        <a href="{{ route('productos.form') }}" class="text-decoration-none">
+            <div class="card bg-success text-white shadow h-100 card-hover">
+                <div class="card-body">
+                    <h5><i class="fas fa-carrot me-2"></i>Productos</h5>
+                    <p>{{ count($inventarios) }}</p>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <!-- Tarjeta Stock -->
+    <div class="col">
+        <a href="{{ route('producto.index') }}" class="text-decoration-none">
+            <div class="card bg-warning text-dark shadow h-100 card-hover">
+                <div class="card-body">
+                    <h5><i class="fas fa-warehouse me-2"></i>Stock</h5>
+                    <p>
+                        @if (isset($cantidadMax) && isset($cantidadMin))
+                            Máximo: {{ $cantidadMax }} unidades, 
+                            Mínimo: {{ $cantidadMin }} unidades
+                        @else
+                            Información de stock no disponible
+                        @endif
+                    </p>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <!-- Tarjeta Pedidos -->
+    <div class="col">
+        <a href="{{ route('pedidos.form') }}" class="text-decoration-none">
+            <div class="card bg-danger text-white shadow h-100 card-hover">
+                <div class="card-body">
+                    <h5><i class="fas fa-shopping-cart me-2"></i>Pedidos</h5>
+                    <p>12 activos</p>
+                </div>
+            </div>
+        </a>
+    </div>
+
+</div>
+@endif
+
     <section>
+
     <h2 class="mb-4"><i class="fas fa-chart-bar me-2"></i>Dashboard General</h2>
 
     <!-- Gráfico productos por categoría -->
