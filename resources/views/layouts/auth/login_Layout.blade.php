@@ -96,23 +96,6 @@
                 });
             }
 
-            // Define una variable JavaScript basada en la lógica de Blade
-            // Solo abre el modal si openAdminVerificationModal está flasheado O si hay errores en el código de verificación
-            var openAdminModalString = "{{ (session('openAdminVerificationModal') || $errors->has('verification_code')) ? 'true' : 'false' }}";
-            var openAdminModal = (openAdminModalString === 'true'); // Convierte la cadena a booleano real
-
-            var adminUserId = "{{ session('admin_user_id') ?? old('admin_user_id') }}";
-
-            if (openAdminModal) {
-                var adminVerificationModal = new mdb.Modal(document.getElementById('adminVerificationModal'));
-                document.getElementById('modal_admin_user_id').value = adminUserId;
-                adminVerificationModal.show();
-
-                // Si se abre el modal, asegurarse de que la pestaña de registro esté activa
-                const mdbTabRegister = new mdb.Tab(registerTab);
-                mdbTabRegister.show();
-            }
-
             // Lógica para mostrar alertas con SweetAlert2 para Login y Registro
             const sessionStatus = "{{ session('status') }}";
             const sessionSuccess = "{{ session('success') }}";

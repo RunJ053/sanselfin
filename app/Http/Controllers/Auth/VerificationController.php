@@ -26,38 +26,46 @@ class VerificationController extends Controller
      * Verifica al usuario usando el token del correo.
      *
      * @param string $token
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
     public function verifyUser(string $token)
     {
-        // Busca el token en la base de datos
         $verificationEntry = UserVerificationCode::where('token', $token)->first();
+        $error_message = '';
+        $redirect_to = '/login';
 
-        // Si no se encuentra el token o ha expirado...
+        // Si el token es inválido o ha expirado
         if (!$verificationEntry || Carbon::now()->greaterThan($verificationEntry->expires_at)) {
-            return redirect('/login')->with('error', 'El enlace de verificación es inválido o ha expirado. Por favor, regístrate de nuevo.');
+            $error_message = 'El enlace de verificación es inválido o ha expirado. Por favor, solicita un nuevo enlace si es necesario.';
+            
+            // Retorna la vista de error
+            return view('errors.verification-error', [
+                'error_message' => $error_message,
+                'redirect_to' => $redirect_to,
+            ]);
         }
 
-        // Busca al usuario asociado
         $user = $verificationEntry->user;
 
-        // Si el usuario ya está verificado, redirige
+        // Si el usuario ya está verificado
         if ($user->is_verified) {
-            // Elimina la entrada del token para evitar reusos
             $verificationEntry->delete();
-            return redirect('/login')->with('info', 'Tu cuenta ya está verificada. Por favor, inicia sesión.');
+            $error_message = 'Tu cuenta ya está verificada. Por favor, inicia sesión para continuar.';
+            
+            // Retorna la vista de error
+            return view('errors.verification-error', [
+                'error_message' => $error_message,
+                'redirect_to' => $redirect_to,
+            ]);
         }
 
-        // Actualiza el estado de verificación del usuario
+        // Si la verificación es exitosa
         $user->is_verified = true;
         $user->save();
-
-        // Elimina la entrada del token para evitar reusos
         $verificationEntry->delete();
-
-        // Inicia sesión con el usuario y redirige al dashboard
         Auth::login($user);
 
+        // Redirige al dashboard del usuario con un mensaje de éxito
         return redirect()->route('user.dashboard')->with('success', '¡Tu correo ha sido verificado exitosamente! Bienvenido.');
     }
 }

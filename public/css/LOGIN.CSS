@@ -179,22 +179,6 @@ body {
     transition: color 0.3s ease;
 }
 
-.modal {
-    backdrop-filter: blur(10px); /* Esto es para el efecto de desenfoque del fondo, ¡muy bien! */
-}
-
-.modal-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    display: block; /* MDBootstrap lo controla con .show/.fade clases, no necesitas ponerlo directamente */
-    opacity: 0.5; /* Usa la opacidad directa o la variable, pero asegúrate de que sea 0.5 */
-    background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente */
-    z-index: 1050 !important; /* Fuerza el backdrop a estar debajo del modal (MDB default es 1050) */
-}
-
 /* Responsive mejoras */
 @media (max-width: 768px) {
     .login-card {
