@@ -21,7 +21,7 @@ body {
     background-size: contain;
     background-position: top left; 
     /*background-position: bottom right;*/
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
 }
 
 /* Mejoras sutiles al contenedor principal */

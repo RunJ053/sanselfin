@@ -19,7 +19,7 @@ class LoginController extends Controller
         return view("auth.login");
     }
 
-    public function myProfile()
+    public function myProfile($section = null)
     {
         if (Auth::check()) {
             $usuario = DatoUsuario::with(['tipoDocumento', 'genero', 'datoslocalidad'])->find(Auth::id());
@@ -29,7 +29,7 @@ class LoginController extends Controller
                 return redirect()->route('login')->withErrors(['login_error' => 'Usuario no encontrado. Por favor, inicie sesión de nuevo.']);
             }
 
-            return view('user.perfil', compact('usuario'));
+            return view('user.perfil', compact('usuario', 'section'));
         } else {
             // Si no hay usuario autenticado, redirigir a la página de inicio de sesión
             return redirect()->route('login')->withErrors(['login_error' => 'Debe iniciar sesión primero']);
