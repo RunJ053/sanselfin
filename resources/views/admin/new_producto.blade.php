@@ -5,77 +5,95 @@
     <meta charset="UTF-8">
     <title>Registrar Producto</title>
     <link rel="stylesheet" href="{{ asset('css/nuevo_producto.css') }}">
+    <link rel="shortcut icon" href="{{asset('img/logo/icon.png')}}" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 </head>
 
 <body>
-    <div class="container">
+    <div class="form-container">
+    <div class="form-header">
+        <h1>🥬 Finca Al Día</h1>
+        <p>Únete a nuestra comunidad de productos frescos y naturales</p>
+    </div>
+
+    <div class="form-content">
         <h2>Registrar Nuevo Producto</h2>
         <form action="{{ route('producto.guardar') }}" method="POST" enctype="multipart/form-data">
             @csrf
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="nombre">Nombre del Producto</label>
-                    <input type="text" name="nombre" required>
-                </div>
 
-                <div class="form-group">
-                    <label for="categoria">Categoría</label>
-                    <select name="Categoria" required>
-                        <option value="">Seleccione la categoría</option>
-                        @foreach ($categorias as $categoria)
-                        <option value="{{ $categoria->id }}">{{ $categoria->nombre}}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div class="form-group wide">
-                    <label for="descripcion">Descripción</label>
-                    <textarea name="descripcion" rows="2" required></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="cantidad">Cantidad</label>
-                    <input type="number" name="cantidad" min="1" max="100" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="valor_unitario">Valor Unitario</label>
-                    <input type="number" name="valor_unitario" step="0.01" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="impuesto">Impuesto</label>
-                    <select name="Impuesto" required>
-                        <option value="">Seleccione el impuesto</option>
-                        @foreach ($impuestos as $impuesto)
-                        <option value="{{ $impuesto->id }}">{{ $impuesto->descripcion }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="promocion">Promoción</label>
-                    <select name="Promocion">
-                        <option value="">Seleccione una promoción</option>
-                        @foreach ($promociones as $promocion)
-                        <option value="{{ $promocion->id }}">{{ $promocion->descuento }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="imagen">Imagen</label>
-                    <input type="file" name="imagen" accept=".jpg,.jpeg,.png" required>
-                </div>
+            <div class="form-group">
+                <label for="nombre" class="form-label">Nombre del Producto *</label>
+                <input type="text" name="nombre" id="nombre" class="form-input" required>
             </div>
 
-            <div class="btn-container">
-                <button type="submit" class="btn-primary">Registrar Producto</button>
-                <a href="{{ route('admin.dashboard') }}" class="btn-secondary">Regresar a ver productos</a>
+            <div class="form-group">
+                <label for="categoria" class="form-label">Categoría *</label>
+                <select name="Categoria" id="categoria" class="form-input form-select" required>
+                    <option value="">Seleccione la categoría</option>
+                    @foreach ($categorias as $categoria)
+                    <option value="{{ $categoria->id }}">{{ $categoria->nombre }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="descripcion" class="form-label">Descripción *</label>
+                <textarea name="descripcion" id="descripcion" class="form-input" rows="3" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="cantidad" class="form-label">Cantidad *</label>
+                <input type="number" name="cantidad" id="cantidad" class="form-input" min="1" max="100" required>
+            </div>
+
+            <div class="form-group">
+                <label for="valor_unitario" class="form-label">Valor Unitario *</label>
+                <input type="number" name="valor_unitario" id="valor_unitario" class="form-input" step="0.01" required>
+            </div>
+
+            <div class="form-group">
+                <label for="impuesto" class="form-label">Impuesto *</label>
+                <select name="Impuesto" id="impuesto" class="form-input form-select" required>
+                    <option value="">Seleccione el Impuesto</option>
+                    @foreach ($impuestos as $impuesto)
+                    <option value="{{ $impuesto->id }}">{{ $impuesto->descripcion }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="promocion" class="form-label">Promoción *</label>
+                <select name="Promocion" id="promocion" class="form-input form-select" required>
+                    <option value="">Selecciona una promoción</option>
+                    @foreach ($promociones as $promocion)
+                    <option value="{{ $promocion->id }}">{{ $promocion->descuento }}</option>
+                    @endforeach
+                </select>
+            </div>
+<div class="form-group">
+                        <label for="imagen" class="form-label">Cargue su Imagen</label>
+                        <div class="file-upload">
+                            <input type="file" name="imagen" id="imagen" class="form-input" accept=".jpg,.jpeg,.png">
+                            <label for="doc" class="file-upload-label">📄 Seleccionar archivo</label>
+                        </div>
+                        <div class="info-box">
+                            💡 <strong>Importante:</strong> Sube una iamgen clara del producto al registrar.
+                        </div>
+                    </div>
+            
+
+            <div class="submit-container">
+                <button type="submit" class="submit-btn">Registrar Producto</button>
+            </div>
+
+            <div class="submit-container">
+                <button class="submit-btnn">
+                    <a href="{{ route('admin.dashboard') }}">Regresar a ver productos</a>
+                </button>
             </div>
         </form>
     </div>
-</body>
+</div>
 
+</body>
 </html>
