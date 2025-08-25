@@ -470,7 +470,7 @@
             <div class="nav-right">
                 <ul class="nav-actions" role="menubar">
                     <li role="none">
-                        <a href="/notificaciones" role="menuitem" aria-label="Notificaciones">
+                        <a href="{{ route('myProfile', ['section' => 'notifications']) }}" role="menuitem" aria-label="Notificaciones">
                             <i class="fas fa-bell"></i>
                             <span class="visually-hidden">Notificaciones</span>
                         </a>
