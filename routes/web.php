@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\VerificationController;
@@ -16,11 +17,16 @@ Route::get("/", function () {
     return view("index");
 });
 
+//Pagina de ayuda al cliente
 Route::get('/Ayuda-al-cliente', function () {
     return view('pages.ayudar_cliente');
 })->name('ayuda_cliente');
 
+//envio de correo
+Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])->name('subscribe');
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 //Verificacion de usuario
 
 Route::get("/incio_sesion", [LoginController::class, "index"])->name("login");

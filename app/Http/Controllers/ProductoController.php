@@ -102,51 +102,107 @@ class ProductoController extends Controller
      */
 
     public function indexUsuarioPro(Request $request)
-{
-    $perPage = 12;
-    \Log::info('Iniciando la carga de productos', ['request' => $request->all()]);
+    {
+        $perPage = 12;
 
-    $query = Producto::with(['categorias', 'promociones']);
+        $query = Producto::with(['categorias', 'promociones']);
 
-    // --- Filtrar por categoría ---
-    if ($request->has('categoria') && $request->categoria !== 'all') {
-        $categoriaNombre = $request->categoria;
-        $categoria = Categoria::where('nombre', $categoriaNombre)->first();
-        \Log::info('Filtrando por categoría', ['categoria' => $categoriaNombre, 'categoria_id' => $categoria->id ?? null]);
-        if ($categoria) {
-            $query->where('categoria_id', $categoria->id);
-        } else {
-            \Log::warning('Categoría no encontrada', ['categoria' => $categoriaNombre]);
+        // --- Filtrar por categoría ---
+        if ($request->has('categoria') && $request->categoria !== 'all') {
+            $categoriaNombre = $request->categoria;
+            $categoria = Categoria::where('nombre', $categoriaNombre)->first();
+            \Log::info('Filtrando por categoría', ['categoria' => $categoriaNombre, 'categoria_id' => $categoria->id ?? null]);
+            if ($categoria) {
+                $query->where('categoria_id', $categoria->id);
+            } else {
+                \Log::warning('Categoría no encontrada', ['categoria' => $categoriaNombre]);
+            }
         }
-    }
 
-    // --- Buscar por nombre o descripción ---
-    if ($request->has('search') && !empty($request->search)) {
-        $searchTerm = $request->search;
-        \Log::info('Buscando productos', ['searchTerm' => $searchTerm]);
-        $query->where(function ($q) use ($searchTerm) {
-            $q->where('nombre_producto', 'like', '%' . $searchTerm . '%')
-                ->orWhere('descripccion', 'like', '%' . $searchTerm . '%');
+        // --- Buscar por nombre o descripción ---
+        if ($request->has('search') && !empty($request->search)) {
+            $searchTerm = $request->search;
+            
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('nombre_producto', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('descripccion', 'like', '%' . $searchTerm . '%');
+            });
+        }
+
+        // --- APLICAR LA PAGINACIÓN AQUÍ ---
+        $productosPaginados = $query->paginate($perPage);
+        
+        $productosMapeados = $productosPaginados->getCollection()->map(function ($producto) {
+            $precioUnitario = $producto->precio_unitario;
+
+            // VERIFICA SIEMPRE QUE LA RELACIÓN EXISTE ANTES DE ACCEDER A SUS PROPIEDADES
+            if ($producto->promociones && $producto->promociones->porcentaje_descuento > 0) {
+                $precioUnitario = $precioUnitario * (1 - ($producto->promociones->porcentaje_descuento / 100));
+            }
+
+            $imagenPath = 'img/product/' . $producto->imagen;
+            $imagenUrl = asset($imagenPath);
+
+            // Agrega una comprobación para la existencia del archivo de imagen
+            if (empty($producto->imagen) || !file_exists(public_path($imagenPath))) {
+                $imagenUrl = asset('img/es_de_frutas_y_verduas_1.webp');
+            }
+
+            return [
+                'id' => $producto->id,
+                'nombre' => $producto->nombre_producto,
+                'descripcion' => $producto->descripccion,
+                'valor' => number_format($precioUnitario, 0, ',', '.'),
+                'precio_base' => $producto->precio_unitario,
+                'imagen' => $imagenUrl,
+                'rating' => rand(3, 5),
+                'descuento' => $producto->promociones && $producto->promociones->porcentaje_descuento > 0,
+                'descuento_porcentaje' => $producto->promociones ? $producto->promociones->porcentaje_descuento : 0,
+            ];
         });
-    }
 
-    // --- APLICAR LA PAGINACIÓN AQUÍ ---
-    $productosPaginados = $query->paginate($perPage);
-    \Log::info('Productos paginados', ['total' => $productosPaginados->total(), 'currentPage' => $productosPaginados->currentPage()]);
+        // Reinsertar la colección mapeada en el paginador
+        $productosPaginados->setCollection($productosMapeados);
 
-    $productosMapeados = $productosPaginados->getCollection()->map(function ($producto) {
-        $precioUnitario = $producto->precio_unitario;
+        $categorias = Categoria::all(); // Asegúrate de cargar todas las categorías para el sidebar
 
-        // VERIFICA SIEMPRE QUE LA RELACIÓN EXISTE ANTES DE ACCEDER A SUS PROPIEDADES
-        if ($producto->promociones && $producto->promociones->porcentaje_descuento > 0) {
-            $precioUnitario = $precioUnitario * (1 - ($producto->promociones->porcentaje_descuento / 100));
+        // Determinar si la solicitud es AJAX (para cargar solo los productos)
+        if ($request->ajax()) {
+            $htmlProductos = view('partials.productos_list', [
+                'productos' => $productosPaginados->items(),
+                'searchTerm' => $request->search,
+                'currentFilter' => $request->categoria
+            ])->render();
+
+            return response()->json([
+                'html' => $htmlProductos,
+                'productCount' => $productosPaginados->total(),
+                'pagination' => (string) $productosPaginados->links()
+            ]);
         }
 
-        $imagenPath = 'img/product/' . $producto->imagen;
-        $imagenUrl = asset($imagenPath);
+        return view('producto', ['productos' => $productosPaginados,'categoriaId' => $categorias,'currentCategory' => $request->categoria ?? 'all','searchTerm' => $request->search ?? '']);
+    }
 
-        // Agrega una comprobación para la existencia del archivo de imagen
-        if (empty($producto->imagen) || !file_exists(public_path($imagenPath))) {
+    public function showProductDetails($id)
+    {
+        $producto = Producto::with(['categorias', 'promociones'])->find($id);
+
+        if (!$producto) {
+            return response()->json(['message' => 'Producto no encontrado'], 404);
+        }
+
+        // Aplicar descuento si existe
+        $precioUnitario = $producto->precio_unitario;
+        if ($producto->descuento && $producto->descuento->porcentaje_descuento > 0) {
+            $precioUnitario = $precioUnitario * (1 - ($producto->descuento->porcentaje_descuento / 100));
+        }
+
+        $imagenPath = 'img/product/' . $producto->imagen; // Ruta esperada en public
+        $imagenUrl = asset($imagenPath); // URL completa
+
+        // Verificar si el archivo realmente existe en el servidor
+        if (!file_exists(public_path($imagenPath))) {
             $imagenUrl = asset('img/es_de_frutas_y_verduas_1.webp');
         }
 
@@ -154,88 +210,15 @@ class ProductoController extends Controller
             'id' => $producto->id,
             'nombre' => $producto->nombre_producto,
             'descripcion' => $producto->descripccion,
-            'valor' => number_format($precioUnitario, 0, ',', '.'),
+            'valor' => '$' . number_format($precioUnitario, 0, ',', '.'),
             'precio_base' => $producto->precio_unitario,
             'imagen' => $imagenUrl,
+            'categoria' => $producto->categoria ? $producto->categoria->nombre : 'Sin Categoría',
             'rating' => rand(3, 5),
-            'descuento' => $producto->promociones && $producto->promociones->porcentaje_descuento > 0,
-            'descuento_porcentaje' => $producto->promociones ? $producto->promociones->porcentaje_descuento : 0,
+            'descuento' => $producto->descuento_id !== null,
+            'descuento_porcentaje' => $producto->descuento ? $producto->descuento->porcentaje_descuento : 0,
         ];
-    });
-
-    // Reinsertar la colección mapeada en el paginador
-    $productosPaginados->setCollection($productosMapeados);
-
-    $categorias = Categoria::all(); // Asegúrate de cargar todas las categorías para el sidebar
-
-    // Determinar si la solicitud es AJAX (para cargar solo los productos)
-    if ($request->ajax()) {
-        $htmlProductos = view('partials.productos_list', [
-            'productos' => $productosPaginados->items(),
-            'searchTerm' => $request->search,
-            'currentFilter' => $request->categoria
-        ])->render();
-
-        \Log::info('Respuesta AJAX enviada', ['productCount' => $productosPaginados->total()]);
-
-        return response()->json([
-            'html' => $htmlProductos,
-            'productCount' => $productosPaginados->total(),
-            'pagination' => (string) $productosPaginados->links()
-        ]);
     }
-
-    \Log::info('Cargando vista de productos', ['totalProductos' => $productosPaginados->total()]);
-
-    return view('producto', [
-        'productos' => $productosPaginados,
-        'categoriaId' => $categorias,
-        'currentCategory' => $request->categoria ?? 'all',
-        'searchTerm' => $request->search ?? ''
-    ]);
-}
-
-
-    public function showProductDetails($id)
-{
-    \Log::info('Cargando detalles del producto', ['id' => $id]);
-    $producto = Producto::with(['categorias', 'promociones'])->find($id);
-
-    if (!$producto) {
-        \Log::warning('Producto no encontrado', ['id' => $id]);
-        return response()->json(['message' => 'Producto no encontrado'], 404);
-    }
-
-    // Aplicar descuento si existe
-    $precioUnitario = $producto->precio_unitario;
-    if ($producto->descuento && $producto->descuento->porcentaje_descuento > 0) {
-        $precioUnitario = $precioUnitario * (1 - ($producto->descuento->porcentaje_descuento / 100));
-    }
-
-    $imagenPath = 'img/product/' . $producto->imagen; // Ruta esperada en public
-    $imagenUrl = asset($imagenPath); // URL completa
-
-    // Verificar si el archivo realmente existe en el servidor
-    if (!file_exists(public_path($imagenPath))) {
-        \Log::warning('Imagen no encontrada', ['imagenPath' => $imagenPath]);
-        $imagenUrl = asset('img/es_de_frutas_y_verduas_1.webp');
-    }
-
-    \Log::info('Detalles del producto cargados', ['producto' => $producto]);
-
-    return [
-        'id' => $producto->id,
-        'nombre' => $producto->nombre_producto,
-        'descripcion' => $producto->descripccion,
-        'valor' => '$' . number_format($precioUnitario, 0, ',', '.'),
-        'precio_base' => $producto->precio_unitario,
-        'imagen' => $imagenUrl,
-        'categoria' => $producto->categoria ? $producto->categoria->nombre : 'Sin Categoría',
-        'rating' => rand(3, 5),
-        'descuento' => $producto->descuento_id !== null,
-        'descuento_porcentaje' => $producto->descuento ? $producto->descuento->porcentaje_descuento : 0,
-    ];
-}
 
 
     /**

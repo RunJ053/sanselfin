@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="{{ asset('css/styleII.css') }}">
     <link rel="stylesheet" href="{{ asset('css/NAV.css') }}">
     <link rel="stylesheet" href="{{ asset('css/footer.css') }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
 <body>

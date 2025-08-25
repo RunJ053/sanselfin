@@ -120,15 +120,9 @@
                 </a>
             </li>
             <li>
-                <a href="/ayuda">
+                <a href="{{ route('ayuda_cliente') }}">
                     <i class="fa-solid fa-circle-exclamation"></i>
                     <span>Necesito Ayuda</span>
-                </a>
-            </li>
-            <li>
-                <a href="/perfil">
-                    <i class="fas fa-user"></i>
-                    <span>Mi Perfil</span>
                 </a>
             </li>
             <li>

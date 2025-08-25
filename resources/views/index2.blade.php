@@ -37,7 +37,7 @@
                 </a>
             </li>
             <li role="none">
-                <a href="/ayuda" role="menuitem" aria-label="Ayuda">
+                <a href="{{ route('ayuda_cliente')}}" role="menuitem" aria-label="Ayuda">
                     <i class="fa-solid fa-circle-exclamation"></i>
                     <span>Ayuda</span>
                 </a>
@@ -148,7 +148,7 @@
             </div>
             <div data-aos="fade-left" data-aos-delay="600" class="hero-info">
                 <p>Descubre más productos</p>
-                <button class="button"><a href="PRODUCTO.html">Explorar Productos</a></button>
+                <button class="button"><a href="{{ route('producto')}}">Explorar Productos</a></button>
             </div>
         </div>
     </section>
@@ -416,11 +416,9 @@
                 <div class="footer-section">
                     <h3>Enlaces Rápidos</h3>
                     <ul class="footer-links">
-                        <li><a href="PRODUCTO.html">Nuestros Productos</a></li>
-                        <li><a href="index2.html">Recetas</a></li>
-                        <li><a href="index2.html">Blog</a></li>
-                        <li><a href="ACERCA_DE.html">Sobre Nosotros</a></li>
-                        <li><a href="SERVICIOS.html">FAQ</a></li>
+                        <li><a href="{{route('producto')}}">Nuestros Productos</a></li>
+                        <li><a href="{{route('servicio')}}">Sobre Nosotros</a></li>
+                        <li><a href="{{route('acerca_de')}}">FAQ</a></li>
                     </ul>
                 </div>
                 <!-- Sección de contacto -->
@@ -428,8 +426,10 @@
                     <h3>Contacto</h3>
                     <div class="contact-info">
                         <p><i class="fas fa-clock"></i> Lunes a Sábados, 8:00 a.m a 6:00 p.m</p>
-                        <p><i class="fas fa-map-marker-alt"></i> [Tu dirección aquí]</p>
-                        <p><i class="fas fa-envelope"></i> informacion@gmail.com</p>
+                        <p><i class="fas fa-map-marker-alt"></i> 
+                            <a href="https://share.google/uCjgbp9lKkg6hyuRB" target="_blank" rel="noopener noreferrer"> Tv. 94 L #88-08, Bogotá</a>
+                        </p>
+                        <p><i class="fas fa-envelope"></i> fincaaldia25@gmail.com</p>
                         <p><i class="fas fa-phone"></i> 300 123 4567</p>
                     </div>
                 </div>
@@ -437,8 +437,9 @@
                 <div class="footer-section">
                     <h3>Boletín Informativo</h3>
                     <p>Suscríbete para recibir ofertas especiales y noticias sobre productos frescos.</p>
-                    <form class="newsletter-form">
-                        <input type="email" placeholder="Tu correo electrónico" required>
+                    <form class="newsletter-form" method="POST" action="{{route('subscribe')}}">
+                        @csrf
+                        <input type="email" name="email" placeholder="Tu correo electrónico" required>
                         <button type="submit">Suscribirse</button>
                     </form>
                 </div>
@@ -450,9 +451,9 @@
         <div class="container">
             <p>&copy; 2024 Finca al Día. Todos los derechos reservados.</p>
             <div class="payment-methods">
-                <img src="img/logo/visa.png" alt="Visa">
-                <img src="img/logo/logo-Mastercard.png" alt="Mastercard">
-                <img src="img/logo/nequi.png" alt="Nequi">
+                <img src="{{asset('img/logo/visa.png')}}" alt="Visa">
+                <img src="{{asset('img/logo/logo-Mastercard.png')}}" alt="Mastercard">
+                <img src="{{asset('img/logo/nequi.png')}}" alt="Nequi">
             </div>
         </div>
     </div>

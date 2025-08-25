@@ -71,9 +71,7 @@ class CarritoCompraController extends Controller
             $subtotal = $precioUnitario * $cantidad;
 
             // Buscar si el producto ya está en el carrito del usuario
-            $itemExistente = CarritoCompra::where('usuario', $userId)
-                                          ->where('producto_id', $productoId)
-                                          ->first();
+            $itemExistente = CarritoCompra::where('usuario', $userId)->where('producto_id', $productoId)->first();
 
             if ($itemExistente) {
                 // Si el producto ya existe, actualiza la cantidad y el subtotal
@@ -102,7 +100,6 @@ class CarritoCompraController extends Controller
 
         } catch (\Exception $e) {
             // Siempre es bueno registrar el error completo en los logs de Laravel
-            \Log::error('Error al añadir producto al carrito: ' . $e->getMessage() . ' - ' . $e->getFile() . ':' . $e->getLine());
             return response()->json(['message' => 'Error al añadir el producto al carrito. Por favor, inténtelo de nuevo más tarde.'], 500);
         }
     }
@@ -124,26 +121,26 @@ class CarritoCompraController extends Controller
     // Puedes añadir métodos para actualizar cantidad 
     
     public function update(Request $request, $itemId)
-{
-    $request->validate(['cantidad' => 'required|integer|min:1']);
+    {
+        $request->validate(['cantidad' => 'required|integer|min:1']);
 
-    $item = CarritoCompra::where('id', $itemId)->where('usuario', Auth::id())->first();
+        $item = CarritoCompra::where('id', $itemId)->where('usuario', Auth::id())->first();
 
-    if (!$item) {
-        return response()->json(['message' => 'Producto en el carrito no encontrado.'], 404);
+        if (!$item) {
+            return response()->json(['message' => 'Producto en el carrito no encontrado.'], 404);
+        }
+
+        $producto = Producto::find($item->producto_id);
+        if (!$producto) {
+            return response()->json(['message' => 'Producto asociado no encontrado.'], 404);
+        }
+
+        $item->cantidad = $request->input('cantidad');
+        $item->subtotal = $producto->valor * $item->cantidad;
+        $item->save();
+
+        return response()->json(['message' => 'Cantidad actualizada exitosamente.']);
     }
-
-    $producto = Producto::find($item->producto_id);
-    if (!$producto) {
-        return response()->json(['message' => 'Producto asociado no encontrado.'], 404);
-    }
-
-    $item->cantidad = $request->input('cantidad');
-    $item->subtotal = $producto->valor * $item->cantidad;
-    $item->save();
-
-    return response()->json(['message' => 'Cantidad actualizada exitosamente.']);
-}
     
     //eliminar
 
@@ -176,7 +173,6 @@ class CarritoCompraController extends Controller
                 'cart_count' => $cartCount // Envía el nuevo conteo del carrito
             ]);
         } catch (\Exception $e) {
-            \Log::error('Error al eliminar producto del carrito: ' . $e->getMessage());
             return response()->json(['message' => 'Error al eliminar el producto del carrito.'], 500);
         }
     }

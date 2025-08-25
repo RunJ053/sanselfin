@@ -17,7 +17,7 @@ body {
 .main-nav {
     /* NUEVAS PROPIEDADES PARA NAVBAR FIXED */
     position: fixed !important; /* Hace que el navbar se mantenga siempre visible */
-    top: 1rem !important; /* Distancia desde la parte superior */
+    top: 0rem !important; /* Distancia desde la parte superior */
     left: 1rem !important; /* Distancia desde el lado izquierdo */
     right: 1rem !important; /* Distancia desde el lado derecho */
     
