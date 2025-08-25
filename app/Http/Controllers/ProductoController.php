@@ -103,7 +103,7 @@ class ProductoController extends Controller
 
     public function indexUsuarioPro(Request $request)
 {
-    $perPage = 6;
+    $perPage = 12;
     \Log::info('Iniciando la carga de productos', ['request' => $request->all()]);
 
     $query = Producto::with(['categorias', 'promociones']);

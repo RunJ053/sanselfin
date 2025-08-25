@@ -7,443 +7,10 @@
     <title>Podructos - La Finca al Día</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.10.1/sweetalert2.all.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-        <link rel="shortcut icon" href={{ asset('img/logo/icon.png') }} type="image/x-icon">
-
+    <link rel="shortcut icon" href={{ asset('img/logo/icon.png') }} type="image/x-icon">
+    <link rel="stylesheet" href="{{ asset('css/PRODUCTO.CSS') }}">
     <link rel="stylesheet" href="{{ asset('css/NAV.CSS') }}">
-
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
-
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(to bottom, #cfe8a9, #f8f4e3);
-            min-height: 100vh;
-            color: #333;
-        }
-
-        main {
-            display: flex;
-            width: 100%;
-            max-width: 1200px;
-            margin: 2rem auto;
-            gap: 2rem;
-            padding: 0 1rem;
-        }
-
-        aside {
-            width: 280px;
-            /* Un poco más de ancho para el sidebar */
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 18px;
-            /* Bordes más suaves */
-            padding: 1.8rem;
-            /* Aumento de padding */
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            /* Sombra más pronunciada */
-            backdrop-filter: blur(8px);
-            /* Efecto blur actualizado */
-            height: fit-content;
-            position: sticky;
-            top: 100px;
-            /* Ajusta esto si tu header tiene una altura diferente */
-            align-self: flex-start;
-            /* Asegura que se alinee al inicio del flex container */
-        }
-
-        .filter-title {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .search-container {
-            margin-bottom: 1.8rem;
-            position: relative;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 0.8rem 1rem 0.8rem 2.5rem;
-            border: 2px solid #e0e0e0;
-            border-radius: 25px;
-            font-size: 1rem;
-            background: #f8f9fa;
-            transition: all 0.3s ease;
-            outline: none;
-        }
-
-        .search-input:focus {
-            border-color: #4CAF50;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #666;
-            pointer-events: none;
-        }
-
-        .clear-search {
-            position: absolute;
-            right: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: #666;
-            cursor: pointer;
-            font-size: 1.2rem;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .clear-search.visible {
-            opacity: 1;
-        }
-
-        .clear-search:hover {
-            color: #ff4757;
-        }
-
-        .search-results-info {
-            font-size: 0.9rem;
-            color: #666;
-            margin-bottom: 1rem;
-            padding: 0.5rem;
-            background: #f8f9fa;
-            border-radius: 8px;
-            text-align: center;
-        }
-
-        .filter-list {
-            list-style: none;
-        }
-
-        .filter-item {
-            padding: 0.8rem 1rem;
-            margin: 0.5rem 0;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: #f8f9fa;
-            border: 2px solid transparent;
-        }
-
-        .filter-item:hover {
-            background: #4CAF50;
-            color: white;
-            transform: translateX(5px);
-        }
-
-        .filter-item.active {
-            background: #4CAF50;
-            color: white;
-            border-color: #45a049;
-        }
-
-        .products-section {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            padding: 2rem;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
-        }
-
-        .section-title {
-            font-size: 1.5rem;
-            color: #333;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .products_co {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(230px, 2fr));
-            gap: 0.5rem;
-        }
-
-        .product {
-            background: white;
-            border-radius: 15px;
-            padding: 1.5rem;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .product::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #4CAF50, #45a049);
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
-        }
-
-        .product:hover::before {
-            transform: scaleX(1);
-        }
-
-        .product:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-        }
-
-        .product-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 10px;
-            margin-bottom: 1rem;
-            transition: transform 0.3s ease;
-        }
-
-        .product:hover .product-image {
-            transform: scale(1.05);
-        }
-
-        .product-info {
-            text-align: center;
-        }
-
-        .product-title {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 0.5rem;
-        }
-
-        .product-rating {
-            color: #ffc107;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-        }
-
-        .product-price {
-            font-size: 1.1rem;
-            font-weight: bold;
-            color: #4CAF50;
-            margin-top: 0.5rem;
-        }
-
-        .discount-badge {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: #ff4757;
-            color: white;
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.05);
-            }
-
-            100% {
-                transform: scale(1);
-            }
-        }
-
-        .loading {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 200px;
-            font-size: 1.2rem;
-            color: #666;
-        }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #4CAF50;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-right: 1rem;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            color: #666;
-        }
-
-        .empty-state i {
-            font-size: 4rem;
-            color: #ddd;
-            margin-bottom: 1rem;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            main {
-                flex-direction: column;
-                margin: 1rem auto;
-                padding: 0 0.5rem;
-            }
-
-            aside {
-                width: 100%;
-                position: static;
-            }
-
-            .header-content {
-                padding: 0 1rem;
-            }
-
-            .products_co {
-                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-                gap: 1rem;
-            }
-
-            .product {
-                padding: 1rem;
-            }
-        }
-
-        /* Centrar y organizar paginador de Laravel 9 */
-        .paginador {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-            margin: 2rem 0;
-        }
-
-        /* Arreglar la estructura del nav de Laravel */
-        .paginador nav {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        /* Centrar el texto de resultados */
-        .paginador nav p {
-            text-align: center;
-            margin: 0;
-            color: #6b7280;
-            font-size: 0.875rem;
-            order: 2;
-            /* Mover el texto abajo */
-        }
-
-        /* Centrar los enlaces de paginación */
-        .paginador nav div {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            order: 1;
-            /* Mover los enlaces arriba */
-        }
-
-        /* Arreglar el espaciado de los enlaces */
-        .paginador nav a,
-        .paginador nav span {
-            margin: 0;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-        }
-
-        /* Arreglar las flechas de navegación */
-        .paginador nav a[rel="prev"],
-        .paginador nav a[rel="next"] {
-            display: inline-flex;
-            align-items: center;
-        }
-
-        /* Responsive - en móvil mantener centrado */
-        @media (max-width: 640px) {
-            .paginador {
-                margin: 1rem 0;
-            }
-
-            .paginador nav p {
-                font-size: 0.75rem;
-            }
-
-            .paginador nav div {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-        }
-
-        /* SweetAlert2 Custom Styles */
-        .swal2-container {
-            /* Este es el contenedor principal de SweetAlert2 */
-            z-index: 10000 !important;
-            /* Asegura que esté por encima de todo */
-        }
-
-        .swal2-popup {
-            border-radius: 15px !important;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
-        }
-
-        .swal2-title {
-            color: #333 !important;
-        }
-
-        .swal2-confirm {
-            background-color: #4CAF50 !important;
-            border-radius: 10px !important;
-            font-weight: bold !important;
-        }
-
-        .swal2-cancel {
-            background-color: #ff4757 !important;
-            border-radius: 10px !important;
-        }
-    </style>
 </head>
 
 <body>
@@ -747,14 +314,95 @@
          * @param {Event} e - El evento de clic.
          */
         function handlePaginationClick(e) {
-    e.preventDefault(); // Evita la navegación normal de la página
-    const pageUrl = e.target.getAttribute('href'); // Obtiene la URL de la página a cargar
-    // Obtenemos los valores actuales de búsqueda y categoría para persistirlos
-    const currentCategory = hiddenCategoryInput.value;
-    const currentSearchTerm = searchInput.value;
-    // Cargar la nueva página con AJAX, manteniendo los filtros actuales
-    loadProducts(currentCategory, currentSearchTerm, pageUrl);
-}
+            e.preventDefault(); // Evita la navegación normal de la página
+            const pageUrl = e.target.getAttribute('href'); // Obtiene la URL de la página a cargar
+            // Obtenemos los valores actuales de búsqueda y categoría para persistirlos
+            const currentCategory = hiddenCategoryInput.value;
+            const currentSearchTerm = searchInput.value;
+            // Cargar la nueva página con AJAX, manteniendo los filtros actuales
+            loadProducts(currentCategory, currentSearchTerm, pageUrl);
+        }
+          // Delegación: un solo listener en el contenedor
+        //arregla el click del paginador y evita re-adjuntar listeners (delegación)   
+        if (paginationContainer) {
+            paginationContainer.addEventListener('click', function (e) {
+                const a = e.target.closest('a[href*="page="]');
+                if (!a) return;
+                e.preventDefault();
+
+                const currentCategory = hiddenCategoryInput.value;
+                const currentSearchTerm = searchInput.value.trim();
+
+                // Mezcla la URL del link con los filtros actuales por si el backend no los trae
+                const u = new URL(a.href, window.location.origin);
+                if (currentCategory && currentCategory !== 'all') u.searchParams.set('categoria', currentCategory);
+                if (currentSearchTerm) u.searchParams.set('search', currentSearchTerm);
+
+                loadProducts(currentCategory, currentSearchTerm, u.toString());
+                // (Opcional) Mantén el scroll cerca del listado, no arriba
+                const top = document.querySelector('.products-section')?.offsetTop ?? 0;
+                window.scrollTo({ top, behavior: 'smooth' });
+                });
+        }
+
+    // Arregla loadProducts para construir bien la URL cuando NO viene de un link
+    async function loadProducts(category = 'all', searchTerm = '', pageUrl = null) {
+        productsContainer.innerHTML = `
+        <div class="loading"><div class="spinner"></div> Cargando productos...</div>
+        `;
+        searchResultsInfo.style.display = 'none';
+
+        let url;
+        if (pageUrl) {
+        url = new URL(pageUrl, window.location.origin);
+        } else {
+        url = new URL("{{ route('producto') }}", window.location.origin);
+        if (category && category !== 'all') url.searchParams.set('categoria', category);
+        if (searchTerm) url.searchParams.set('search', searchTerm);
+        }
+
+        try {
+        const response = await fetch(url.toString(), {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+
+        productsContainer.innerHTML = data.html;
+        updateSearchResultsInfo(data.productCount, searchTerm, category);
+        if (paginationContainer) paginationContainer.innerHTML = data.pagination;
+
+        // (Opcional) Actualiza la barra de direcciones (sin recargar)
+        history.replaceState({}, '', url.toString());
+        } catch (err) {
+        console.error(err);
+        productsContainer.innerHTML = `
+            <div class="empty-state">
+            <i class="fas fa-exclamation-triangle" style="color:#dc3545;"></i>
+            <h3>Error al cargar productos</h3>
+            <p>Por favor, inténtalo de nuevo más tarde.</p>
+            </div>`;
+        searchResultsInfo.style.display = 'none';
+        if (paginationContainer) paginationContainer.innerHTML = '';
+        }
+    }
+
+    const debounce = (fn, ms = 350) => {
+        let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+    };
+
+    searchInput.addEventListener('input', debounce((e) => {
+        const term = e.target.value.trim();
+        term ? clearSearchButton.classList.add('visible') : clearSearchButton.classList.remove('visible');
+        loadProducts(hiddenCategoryInput.value, term);
+    }));
+
+    clearSearchButton.addEventListener('click', () => {
+        searchInput.value = '';
+        clearSearchButton.classList.remove('visible');
+        searchInput.focus();
+        loadProducts(hiddenCategoryInput.value, '');
+    });
 
         /**
          * Actualiza el mensaje de información de resultados de búsqueda.

@@ -23,13 +23,14 @@
     <img src="{{ $product['imagen'] }}" alt="{{ $product['nombre'] }}" width="55%" height="43%" style="object-fit:cover; border-radius:6px;">
 
     <div class="product-info">
-        <h3 class="product-title">
-            @if ($searchTerm)
-            {!! preg_replace("/($searchTerm)/i", '<mark style="background: #ffeb3b; padding: 0 2px; border-radius: 3px;">$1</mark>', $product['nombre']) !!}
-            @else
-            {{ $product['nombre'] }}
-            @endif
-        </h3>
+        @php $quoted = $searchTerm ? preg_quote($searchTerm, '/') : null; @endphp
+            <h3 class="product-title">
+                @if ($searchTerm)
+                    {!! preg_replace("/($quoted)/i", '<mark style="background:#ffeb3b;padding:0 2px;border-radius:3px;">$1</mark>', e($product['nombre'])) !!}
+                @else
+                    {{ $product['nombre'] }}
+                @endif
+            </h3>
         <div class="product-rating">
             {{ str_repeat('⭐', $product['rating']) }}
         </div>
