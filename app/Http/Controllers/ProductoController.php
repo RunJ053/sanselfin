@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Support\Collection;
 use App\Models\Producto;
 use App\Models\Categoria;
@@ -9,6 +10,7 @@ use Illuminate\Support\Str;
 use App\Models\Promocion;
 use App\Models\Inventario;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ProductoController extends Controller
 {
@@ -91,7 +93,7 @@ class ProductoController extends Controller
         $inventario = Inventario::where('producto_id', $producto->id)->first();
         $impuestos = Impuesto::all();
         $promociones = Promocion::all();
-        return view('admin.edit_produc', compact('producto', 'categorias','inventario', 'impuestos', 'promociones'));
+        return view('admin.edit_produc', compact('producto', 'categorias', 'inventario', 'impuestos', 'promociones'));
     }
     /**
      * Display a listing of the resource for users.
@@ -101,7 +103,8 @@ class ProductoController extends Controller
 
     public function indexUsuarioPro(Request $request)
 {
-    $perPage = 2;
+    $perPage = 6;
+    \Log::info('Iniciando la carga de productos', ['request' => $request->all()]);
 
     $query = Producto::with(['categorias', 'promociones']);
 
@@ -109,34 +112,35 @@ class ProductoController extends Controller
     if ($request->has('categoria') && $request->categoria !== 'all') {
         $categoriaNombre = $request->categoria;
         $categoria = Categoria::where('nombre', $categoriaNombre)->first();
+        \Log::info('Filtrando por categoría', ['categoria' => $categoriaNombre, 'categoria_id' => $categoria->id ?? null]);
         if ($categoria) {
             $query->where('categoria_id', $categoria->id);
+        } else {
+            \Log::warning('Categoría no encontrada', ['categoria' => $categoriaNombre]);
         }
     }
 
     // --- Buscar por nombre o descripción ---
     if ($request->has('search') && !empty($request->search)) {
         $searchTerm = $request->search;
+        \Log::info('Buscando productos', ['searchTerm' => $searchTerm]);
         $query->where(function ($q) use ($searchTerm) {
             $q->where('nombre_producto', 'like', '%' . $searchTerm . '%')
-            ->orWhere('descripccion', 'like', '%' . $searchTerm . '%');
+                ->orWhere('descripccion', 'like', '%' . $searchTerm . '%');
         });
     }
 
     // --- APLICAR LA PAGINACIÓN AQUÍ ---
     $productosPaginados = $query->paginate($perPage);
+    \Log::info('Productos paginados', ['total' => $productosPaginados->total(), 'currentPage' => $productosPaginados->currentPage()]);
 
     $productosMapeados = $productosPaginados->getCollection()->map(function ($producto) {
         $precioUnitario = $producto->precio_unitario;
 
         // VERIFICA SIEMPRE QUE LA RELACIÓN EXISTE ANTES DE ACCEDER A SUS PROPIEDADES
-        if ($producto->promociones && $producto->promociones->porcentaje_descuento > 0) { 
+        if ($producto->promociones && $producto->promociones->porcentaje_descuento > 0) {
             $precioUnitario = $precioUnitario * (1 - ($producto->promociones->porcentaje_descuento / 100));
         }
-        // if ($producto->descuento && $producto->descuento->porcentaje_descuento > 0) {
-        //     $precioUnitario = $precioUnitario * (1 - ($producto->descuento->porcentaje_descuento / 100));
-        // }
-
 
         $imagenPath = 'img/product/' . $producto->imagen;
         $imagenUrl = asset($imagenPath);
@@ -172,13 +176,16 @@ class ProductoController extends Controller
             'currentFilter' => $request->categoria
         ])->render();
 
+        \Log::info('Respuesta AJAX enviada', ['productCount' => $productosPaginados->total()]);
+
         return response()->json([
             'html' => $htmlProductos,
-            // total() funcionará correctamente aquí
-            'productCount' => $productosPaginados->total(), // Esto devolverá el conteo total
+            'productCount' => $productosPaginados->total(),
             'pagination' => (string) $productosPaginados->links()
         ]);
     }
+
+    \Log::info('Cargando vista de productos', ['totalProductos' => $productosPaginados->total()]);
 
     return view('producto', [
         'productos' => $productosPaginados,
@@ -188,41 +195,48 @@ class ProductoController extends Controller
     ]);
 }
 
+
     public function showProductDetails($id)
-    {
-        $producto = Producto::with(['categorias', 'promociones'])->find($id);
+{
+    \Log::info('Cargando detalles del producto', ['id' => $id]);
+    $producto = Producto::with(['categorias', 'promociones'])->find($id);
 
-        if (!$producto) {
-            return response()->json(['message' => 'Producto no encontrado'], 404);
-        }
-
-        // Aplicar descuento si existe
-        $precioUnitario = $producto->precio_unitario;
-        if ($producto->descuento && $producto->descuento->porcentaje_descuento > 0) {
-            $precioUnitario = $precioUnitario * (1 - ($producto->descuento->porcentaje_descuento / 100));
-        }
-
-        $imagenPath = 'img/product/' . $producto->imagen; // Ruta esperada en public
-        $imagenUrl = asset($imagenPath); // URL completa
-
-        // Verificar si el archivo realmente existe en el servidor
-        if (!file_exists(public_path($imagenPath))) {
-            $imagenUrl = asset('img/es_de_frutas_y_verduas_1.webp');
-        }
-        
-        return [
-            'id' => $producto->id,
-            'nombre' => $producto->nombre_producto,
-            'descripcion' => $producto->descripccion,
-            'valor' => '$' . number_format($precioUnitario, 0, ',', '.'),
-            'precio_base' => $producto->precio_unitario,
-            'imagen' => $imagenUrl,
-            'categoria' => $producto->categoria ? $producto->categoria->nombre : 'Sin Categoría',
-            'rating' => rand(3, 5),
-            'descuento' => $producto->descuento_id !== null,
-            'descuento_porcentaje' => $producto->descuento ? $producto->descuento->porcentaje_descuento : 0,
-        ];
+    if (!$producto) {
+        \Log::warning('Producto no encontrado', ['id' => $id]);
+        return response()->json(['message' => 'Producto no encontrado'], 404);
     }
+
+    // Aplicar descuento si existe
+    $precioUnitario = $producto->precio_unitario;
+    if ($producto->descuento && $producto->descuento->porcentaje_descuento > 0) {
+        $precioUnitario = $precioUnitario * (1 - ($producto->descuento->porcentaje_descuento / 100));
+    }
+
+    $imagenPath = 'img/product/' . $producto->imagen; // Ruta esperada en public
+    $imagenUrl = asset($imagenPath); // URL completa
+
+    // Verificar si el archivo realmente existe en el servidor
+    if (!file_exists(public_path($imagenPath))) {
+        \Log::warning('Imagen no encontrada', ['imagenPath' => $imagenPath]);
+        $imagenUrl = asset('img/es_de_frutas_y_verduas_1.webp');
+    }
+
+    \Log::info('Detalles del producto cargados', ['producto' => $producto]);
+
+    return [
+        'id' => $producto->id,
+        'nombre' => $producto->nombre_producto,
+        'descripcion' => $producto->descripccion,
+        'valor' => '$' . number_format($precioUnitario, 0, ',', '.'),
+        'precio_base' => $producto->precio_unitario,
+        'imagen' => $imagenUrl,
+        'categoria' => $producto->categoria ? $producto->categoria->nombre : 'Sin Categoría',
+        'rating' => rand(3, 5),
+        'descuento' => $producto->descuento_id !== null,
+        'descuento_porcentaje' => $producto->descuento ? $producto->descuento->porcentaje_descuento : 0,
+    ];
+}
+
 
     /**
      * Obtiene los detalles de un producto específico para el modal.
@@ -230,7 +244,7 @@ class ProductoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\JsonResponse
      */
-   public function update(Request $request, Producto $producto, Inventario $inventario)
+    public function update(Request $request, Producto $producto, Inventario $inventario)
     {
         // Validación de los datos del formulario
         $request->validate([

@@ -747,16 +747,14 @@
          * @param {Event} e - El evento de clic.
          */
         function handlePaginationClick(e) {
-            e.preventDefault(); // Evita la navegación normal de la página
-            const pageUrl = e.target.getAttribute('href'); // Obtiene la URL de la página a cargar
-
-            // Obtenemos los valores actuales de búsqueda y categoría para persistirlos
-            const currentCategory = hiddenCategoryInput.value;
-            const currentSearchTerm = searchInput.value;
-
-            // Cargar la nueva página con AJAX, manteniendo los filtros actuales
-            loadProducts(currentCategory, currentSearchTerm, pageUrl);
-        }
+    e.preventDefault(); // Evita la navegación normal de la página
+    const pageUrl = e.target.getAttribute('href'); // Obtiene la URL de la página a cargar
+    // Obtenemos los valores actuales de búsqueda y categoría para persistirlos
+    const currentCategory = hiddenCategoryInput.value;
+    const currentSearchTerm = searchInput.value;
+    // Cargar la nueva página con AJAX, manteniendo los filtros actuales
+    loadProducts(currentCategory, currentSearchTerm, pageUrl);
+}
 
         /**
          * Actualiza el mensaje de información de resultados de búsqueda.
