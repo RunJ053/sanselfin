@@ -97,9 +97,10 @@
   </div>
   <div class="offcanvas-body">
     <ul class="nav flex-column">
-      <li class="nav-item"><a class="nav-link text-white" href="{{ route('admin.dashboard') }}"><i class="fas fa-home me-2"></i>Inicio</a></li>
-      <li class="nav-item"><a class="nav-link text-white" href="{{ route('producto.index') }}"><i class="fas fa-boxes me-2"></i>Inventario</a></li>
-      <li class="nav-item"><a class="nav-link text-white" href="{{ route('dashboard.index') }}"><i class="fas fa-carrot me-2"></i>Reportes</a></li>
+    <li class="nav-item mb-2"><a class="nav-link text-white" href="{{ route('admin.dashboard') }}"><i class="fas fa-home me-2"></i>Inicio</a></li>
+    <li class="nav-item mb-2"><a class="nav-link text-white" href="{{ route('producto.index') }}"><i class="fas fa-boxes me-2"></i>Inventario</a></li>
+    <li class="nav-item mb-2"><a class="nav-link text-white" href="{{ route('dashboard.index') }}"><i class="fas fa-chart-bar me-2"></i>Reportes</a></li>
+    <li class="nav-item mb-2"><a class="nav-link text-white" href="{{ route('usuario.index') }}"><i class="fas fa-users me-2"></i>Usuarios</a></li>
       <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">@csrf</form>
       <li class="nav-item mt-5"><a class="nav-link text-danger" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="fas fa-sign-out-alt me-2"></i>Salir</a></li>
     </ul>
@@ -113,9 +114,10 @@
     <h5 class="mt-2">Finca al Día</h5>
   </div>
   <ul class="nav flex-column">
-    <li class="nav-item"><a class="nav-link text-white" href="{{ route('admin.dashboard') }}"><i class="fas fa-home me-2"></i>Inicio</a></li>
-    <li class="nav-item"><a class="nav-link text-white" href="{{ route('producto.index') }}"><i class="fas fa-boxes me-2"></i>Inventario</a></li>
-    <li class="nav-item"><a class="nav-link text-white" href="{{ route('dashboard.index') }}"><i class="fas fa-carrot me-2"></i>Reportes</a></li>
+    <li class="nav-item mb-2"><a class="nav-link text-white" href="{{ route('admin.dashboard') }}"><i class="fas fa-home me-2"></i>Inicio</a></li>
+    <li class="nav-item mb-2"><a class="nav-link text-white" href="{{ route('producto.index') }}"><i class="fas fa-boxes me-2"></i>Inventario</a></li>
+    <li class="nav-item mb-2"><a class="nav-link text-white" href="{{ route('dashboard.index') }}"><i class="fas fa-chart-bar me-2"></i>Reportes</a></li>
+    <li class="nav-item mb-2"><a class="nav-link text-white" href="{{ route('usuario.index') }}"><i class="fas fa-users me-2"></i>Usuarios</a></li>
     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">@csrf</form>
     <li class="nav-item mt-5"><a class="nav-link text-danger" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="fas fa-sign-out-alt me-2"></i>Salir</a></li>
   </ul>
@@ -148,17 +150,17 @@
 
     <!-- Tarjeta Usuarios -->
     <div class="col">
-        <a href="{{ route('usuarios.form') }}" class="text-decoration-none">
+        <a href="{{ route('usuario.index') }}" class="text-decoration-none">
             <div class="card bg-primary text-white shadow h-100 card-hover">
                 <div class="card-body">
                     <h5><i class="fas fa-users me-2"></i>Usuarios</h5>
-                    <p>
-                        @if (isset($numeroUsuarios))
-                            Usuarios Registrados: {{ $numeroUsuarios }}
-                        @else
-                            Información de usuarios no disponible
-                        @endif
-                    </p>
+                        <p>
+                            @if (isset($numeroUsuarios))
+                                Usuarios Registrados: {{ $numeroUsuarios }}
+                            @else
+                                Información de usuarios no disponible
+                            @endif
+                        </p>
                 </div>
             </div>
         </a>
@@ -166,7 +168,7 @@
 
     <!-- Tarjeta Productos -->
     <div class="col">
-        <a href="{{ route('productos.form') }}" class="text-decoration-none">
+        <a href="{{ route('tarjeta.Producto') }}" class="text-decoration-none">
             <div class="card bg-success text-white shadow h-100 card-hover">
                 <div class="card-body">
                     <h5><i class="fas fa-carrot me-2"></i>Productos</h5>
@@ -178,7 +180,7 @@
 
     <!-- Tarjeta Stock -->
     <div class="col">
-        <a href="{{ route('producto.index') }}" class="text-decoration-none">
+        <a href="{{ route('tarjeta.Stock') }}" class="text-decoration-none">
             <div class="card bg-warning text-dark shadow h-100 card-hover">
                 <div class="card-body">
                     <h5><i class="fas fa-warehouse me-2"></i>Stock</h5>
@@ -197,7 +199,7 @@
 
     <!-- Tarjeta Pedidos -->
     <div class="col">
-        <a href="{{ route('pedidos.form') }}" class="text-decoration-none">
+        <a href="{{ route('tarjeta.Pedido') }}" class="text-decoration-none">
             <div class="card bg-danger text-white shadow h-100 card-hover">
                 <div class="card-body">
                     <h5><i class="fas fa-shopping-cart me-2"></i>Pedidos</h5>
@@ -209,7 +211,6 @@
 
 </div>
 @endif
-
     <section>
 
     <h2 class="mb-4"><i class="fas fa-chart-bar me-2"></i>Dashboard General</h2>

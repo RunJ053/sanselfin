@@ -11,3 +11,4 @@ class TipoDocumento extends Model
     protected $table = 'tipos_documentos';
     protected $fillable = ['descripcion'];
 }
+

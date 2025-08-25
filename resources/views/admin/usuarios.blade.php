@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gestión de Inventario</title>
+  <title>Gestión de Usuarios</title>
   <link rel="shortcut icon" href="{{ asset('img/logo/icon.png') }}" type="image/x-icon" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
@@ -20,7 +20,7 @@
 <!-- Sidebar Offcanvas -->
 <div class="offcanvas offcanvas-start bg-success text-white" tabindex="-1" id="sidebar">
   <div class="offcanvas-header">
-    <h5 class="offcanvas-title">Inventario</h5>
+    <h5 class="offcanvas-title">Usuarios</h5>
     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
   </div>
   <div class="offcanvas-body">
@@ -29,11 +29,12 @@
       <li class="nav-item mb-2"><a class="nav-link text-white" href="{{ route('producto.index') }}"><i class="fas fa-boxes me-2"></i>Inventario</a></li>
       <li class="nav-item mb-2"><a class="nav-link text-white" href="{{ route('dashboard.index') }}"><i class="fas fa-chart-bar me-2"></i>Reportes</a></li>
       <li class="nav-item mb-2"><a class="nav-link text-white" href="{{ route('usuario.index') }}"><i class="fas fa-users me-2"></i>Usuarios</a></li>
+
       <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
           @csrf
-            <li class="nav-item mt-5"><a class="nav-link text-danger" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="fas fa-sign-out-alt me-2"></i>Salir</a></li>
-        </form>
-      </ul>
+      </form>
+      <li class="nav-item mt-5"><a class="nav-link text-danger" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="fas fa-sign-out-alt me-2"></i>Salir</a></li>
+    </ul>
   </div>
 </div>
 
@@ -41,27 +42,23 @@
 <div class="sidebar bg-success text-white p-3 d-none d-md-block position-fixed" style="width:250px; height:100vh;">
   <div class="text-center mb-4">
     <img src="{{ asset('img/logo/icon.png') }}" alt="Logo" class="img-fluid" width="100" />
-    <h5 class="mt-2">Inventario</h5>
+    <h5 class="mt-2">Usuarios</h5>
   </div>
   <ul class="nav flex-column">
     <li class="nav-item mb-2"><a class="nav-link text-white" href="{{ route('admin.dashboard') }}"><i class="fas fa-home me-2"></i>Inicio</a></li>
     <li class="nav-item mb-2"><a class="nav-link text-white" href="{{ route('producto.index') }}"><i class="fas fa-boxes me-2"></i>Inventario</a></li>
     <li class="nav-item mb-2"><a class="nav-link text-white" href="{{ route('dashboard.index') }}"><i class="fas fa-chart-bar me-2"></i>Reportes</a></li>
     <li class="nav-item mb-2"><a class="nav-link text-white" href="{{ route('usuario.index') }}"><i class="fas fa-users me-2"></i>Usuarios</a></li>
-    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-          @csrf
-        </form>
-
-        <li class="nav-item mt-5"><a class="nav-link text-danger" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="fas fa-sign-out-alt me-2"></i>Salir</a></li>
-      </ul>
+    <li class="nav-item mt-5"><a class="nav-link text-danger" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="fas fa-sign-out-alt me-2"></i>Salir</a></li>
+  </ul>
 </div>
 
 <!-- Contenido principal -->
 <div class="main-content" style="margin-left:250px; padding:20px;">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Gestión de Inventario</h2>
-    <a href="{{ route('producto.create') }}" class="btn btn-primary">
-      <i class="fas fa-plus me-1"></i>Nuevo Producto
+    <h2>Gestión de Usuarios</h2>
+    <a href="{{ route('usuario.create') }}" class="btn btn-primary">
+      <i class="fas fa-plus me-1"></i>Nuevo Usuario
     </a>
   </div>
 
@@ -70,13 +67,8 @@
     <div class="col-md-4">
       <div class="card bg-success text-white shadow">
         <div class="card-body">
-          <h5><i class="fas fa-dollar-sign me-2"></i>Valor Total Inventario</h5>
-          <p class="fs-4">
-            @php
-              $total = $inventarios->sum('precio_unitario');
-              echo number_format($total, 0, ',', '.');
-            @endphp
-          </p>
+          <h5><i class="fas fa-users me-2"></i>Total Usuarios</h5>
+          <p class="fs-4">{{ count($usuarios) }}</p>
         </div>
       </div>
     </div>
@@ -100,40 +92,46 @@
     </div>
   </div>
 
-  <!-- Tabla de productos -->
+  <!-- Tabla de usuarios -->
   <div class="table-responsive">
-    <table class="table table-striped table-hover inventory-table">
+    <table class="table table-striped table-hover">
       <thead class="table-dark">
         <tr>
-          <th>Código</th>
+          <th>ID</th>
           <th>Nombre</th>
-          <th>Categoría</th>
-          <th>Descripción</th>
-          <th>Valor Unitario</th>
-          <th>Impuesto</th>
+          <th>Apellido</th>
+          <th>Dirección</th>
+          <th>Correo</th>
+          <th>Teléfono</th>
           <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
-        @foreach ($inventarios as $item)
+        @foreach ($usuarios as $user)
         <tr>
-          <td>{{ $item->id }}</td>
-          <td>{{ $item->nombre_producto }}</td>
-          <td>{{ $item->categorias->nombre ?? 'Sin categoría' }}</td>
-          <td>{{ $item->promociones->nombre_promocion ?? 'Sin promoción' }}</td>
-          <td>${{ number_format($item->precio_unitario, 0, ',', '.') }}</td>
-          <td>{{ $item->impuestos->nombre_impuesto ?? 'Sin impuesto' }}</td>
+          <td>{{ $user->id }}</td>
+          <td>{{ $user->nombre }}</td>
+          <td>{{ $user->apellidos }}</td>
+          <td>{{ $user->direccion }}</td>
+          <td>{{ $user->email }}</td>
+          <td>{{ $user->telefono }}</td>
           <td>
-            <a href="{{ route('producto.edit', $item->id) }}" class="btn btn-sm btn-warning mb-1">
-              <i class="fas fa-edit"></i>
-            </a>
-            <form action="{{ route('producto.destroy', $item->id) }}" method="POST" style="display:inline;">
-              @csrf
-              @method('DELETE')
-              <button type="submit" class="btn btn-sm btn-danger mb-1" onclick="return confirm('¿Estás seguro de eliminar este producto?');">
-                <i class="fas fa-trash-alt"></i>
-              </button>
-            </form>
+                <!-- Botón Editar -->
+                <a href="{{ route('usuario.edit', $user->id)}}" 
+                class="btn btn-sm btn-warning mb-1">
+                    <i class="fas fa-edit"></i>
+                </a>
+
+                <!-- Botón Eliminar -->
+                <form action="{{ route('usuario.destroy', $user->id) }}" 
+                    method="POST" style="display:inline;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-sm btn-danger mb-1" 
+                            onclick="return confirm('¿Estás seguro de eliminar este usuario?');">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </form>
           </td>
         </tr>
         @endforeach
@@ -192,7 +190,7 @@
       </div>
     </div>
   </footer>
-</main>
+</div>
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
