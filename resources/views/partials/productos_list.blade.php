@@ -20,7 +20,7 @@
     @if ($product['descuento']) {{-- Asegúrate de que la clave 'descuento' existe y es booleana --}}
     <div class="discount-badge">¡Oferta!</div>
     @endif
-    <img src="{{ $product['imagen'] }}" alt="{{ $product['nombre'] }}" width="55%" height="43%" style="object-fit:cover; border-radius:6px;">
+    <img src="{{ $product['imagen'] }}" alt="{{ $product['nombre'] }}" style="display: block; margin: 0 auto 1rem; width: 100%; max-width: 300px; height: 200px; object-fit: cover; border-radius: 10px;">
 
     <div class="product-info">
         @php $quoted = $searchTerm ? preg_quote($searchTerm, '/') : null; @endphp

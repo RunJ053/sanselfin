@@ -81,6 +81,10 @@
             alert('Funcionalidad del carrito disponible después del login');
         }
 
+        function showAlert2(){
+            alert('Funcionalidad disponible después del login');
+        }
+
         // Observador para animaciones en scroll
         const observerOptions = {
             threshold: 0.1,

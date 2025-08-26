@@ -1,12 +1,11 @@
 * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    scroll-behavior: smooth;}
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
-            background: linear-gradient(to bottom, #cfe8a9, #f8f4e3);
             min-height: 100vh;
             color: #333;
         }
@@ -23,7 +22,7 @@
         aside {
             width: 280px;
             /* Un poco más de ancho para el sidebar */
-            background: rgba(255, 255, 255, 0.95);
+            background: linear-gradient(to bottom, #cfe8a9, #f8f4e3);
             border-radius: 18px;
             /* Bordes más suaves */
             padding: 1.8rem;
@@ -330,59 +329,83 @@
             }
         }
 
-        /* Centrar y organizar paginador de Laravel 9 */
-        .paginador {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-            margin: 2rem 0;
-        }
+/* Centrar y organizar paginador de Laravel 9 */
+.paginador {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin: 2rem 0;
+}
 
-        /* Arreglar la estructura del nav de Laravel */
-        .paginador nav {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-        }
+/* Arreglar la estructura del nav de Laravel */
+.paginador nav {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
 
-        /* Centrar el texto de resultados */
-        .paginador nav p {
-            text-align: center;
-            margin: 0;
-            color: #6b7280;
-            font-size: 0.875rem;
-            order: 2;
-            /* Mover el texto abajo */
-        }
+/* Centrar el texto de resultados */
+.paginador nav p {
+    text-align: center;
+    margin: 0;
+    color: #6b7280;
+    font-size: 0.875rem;
+    order: 2; /* Mover el texto abajo */
+}
 
-        /* Centrar los enlaces de paginación */
-        .paginador nav div {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            order: 1;
-            /* Mover los enlaces arriba */
-        }
+/* Centrar los enlaces de paginación */
+.paginador nav div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    order: 1; /* Mover los enlaces arriba */
+}
 
-        /* Arreglar el espaciado de los enlaces */
-        .paginador nav a,
-        .paginador nav span {
-            margin: 0;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-        }
+/* Estilos para los botones de paginación */
+.paginador nav a,
+.paginador nav span {
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    /* Estilos que hacen que parezcan botones */
+    min-width: 2.5rem; /* Ajusta el ancho mínimo */
+    height: 2.5rem; /* Ajusta la altura */
+    padding: 0 0.75rem; /* Relleno horizontal */
+    border-radius: 0.5rem; /* Esquinas redondeadas */
+    font-weight: 500;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    /* Colores por defecto para los botones */
+    background-color: #e5e7eb; /* Fondo gris claro */
+    color: #4b5563; /* Texto gris oscuro */
+}
 
-        /* Arreglar las flechas de navegación */
-        .paginador nav a[rel="prev"],
-        .paginador nav a[rel="next"] {
-            display: inline-flex;
-            align-items: center;
-        }
+/* Estilos para el botón activo */
+.paginador nav span.bg-blue-500 {
+    background-color: #45a049; /* Fondo verde para el botón activo */
+    color: #ffffff; /* Texto blanco */
+    font-weight: bold;
+    pointer-events: none; /* Deshabilita el click en la página actual */
+}
+
+/* Estilos para los botones al pasar el mouse (hover) */
+.paginador nav a:hover {
+    background-color: #45a049; /* Fondo verde oscuro */
+    color: #ffffff;
+}
+
+/* Arreglar las flechas de navegación */
+.paginador nav a[rel="prev"],
+.paginador nav a[rel="next"] {
+    display: inline-flex;
+    align-items: center;
+    color: #4b5563; /* Mantiene el color del texto igual que los demás botones */
+    background-color: #e5e7eb;
+}
 
         /* Responsive - en móvil mantener centrado */
         @media (max-width: 640px) {

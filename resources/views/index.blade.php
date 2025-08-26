@@ -70,7 +70,7 @@
                 </div>
                 <div data-aos="fade-up" data-aos-delay="600" class="hero-info">
                     <p>Descubre más productos</p>
-                    <a href="user/LOGIN.html" class="button">Explorar Productos</a>
+                    <a href="#" class="button" onclick="showAlert2()">Explorar Productos</a>
                 </div>
             </div>
         </section>

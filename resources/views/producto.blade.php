@@ -490,7 +490,7 @@
         });
 
 
-        // --- Funciones del Carrito (SIN CAMBIOS, ya que son independientes de la paginación de productos) ---
+        // --- Funciones del Carrito ---
 
         /**
          * Abre el modal de SweetAlert2 con los detalles del producto y la opción de cantidad.
@@ -508,8 +508,7 @@
                     title: product.nombre,
                     html: `
                 <div style="text-align: left; margin: 1rem 0;">
-                    <img src="${product.imagen}" alt="${product.nombre}"
-                    style="width: 100%; max-width: 300px; height: 200px; object-fit: cover; border-radius: 10px; margin-bottom: 1rem;">
+                    <img src="${product.imagen}" alt="${product.nombre}" style="display: block; margin: 0 auto 1rem; width: 100%; max-width: 300px; height: 200px; object-fit: cover; border-radius: 10px;">
                     <p style="color: #666; margin-bottom: 0.5rem;">${product.descripcion || 'Sin descripción.'}</p>
                     <div style="color: #ffc107; margin-bottom: 0.5rem;">${'⭐'.repeat(product.rating || 0)}</div>
                     <h4 style="color: #4CAF50; font-size: 1.2rem; margin-bottom: 1rem;">$${parseFloat(product.valor.replace('$', '').replace('.', '')).toFixed(0)}</h4>

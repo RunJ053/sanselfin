@@ -26,7 +26,7 @@
                     </article>
                 @endforeach
             </div>
-
+            <br><br>
             <!-- Indicadores (puedes implementar dinámicamente con JS si quieres paginación visual) -->
             <div class="carousel-indicators"></div>
         </div>

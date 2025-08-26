@@ -59,37 +59,36 @@ class CarritoCompraController extends Controller
         $cantidad = $request->input('cantidad');
 
         try {
-            // *** CORRECCIÓN AQUÍ: Usar el nombre de columna correcto para el precio. ***
-            // Asumo que tu campo de precio en la tabla 'productos' se llama 'valor'
             $producto = Producto::find($productoId);
             if (!$producto) {
                 return response()->json(['message' => 'Producto no encontrado.'], 404);
             }
 
-            // Aquí es donde estaba el problema. Cambia `$producto->precio` a `$producto->valor`
-            $precioUnitario = $producto->valor; // <<< --- ¡CAMBIA ESTO!
+            $precioUnitario = $producto->precio_unitario;
+
+            // VERIFICAR si el producto tiene una promoción y aplicar el descuento
+            if ($producto->promociones && $producto->promociones->porcentaje_descuento > 0) {
+                $precioUnitario = $precioUnitario * (1 - ($producto->promociones->porcentaje_descuento / 100));
+            }
+
             $subtotal = $precioUnitario * $cantidad;
 
-            // Buscar si el producto ya está en el carrito del usuario
             $itemExistente = CarritoCompra::where('usuario', $userId)->where('producto_id', $productoId)->first();
 
             if ($itemExistente) {
-                // Si el producto ya existe, actualiza la cantidad y el subtotal
                 $itemExistente->cantidad += $cantidad;
-                $itemExistente->subtotal += $subtotal; // Suma al subtotal existente
+                $itemExistente->subtotal = ($itemExistente->precio_unitario * $itemExistente->cantidad);
                 $itemExistente->save();
             } else {
-                // Si el producto no existe, crea un nuevo registro en el carrito
                 CarritoCompra::create([
                     'usuario' => $userId,
                     'producto_id' => $productoId,
                     'cantidad' => $cantidad,
-                    'precio_unitario' => $precioUnitario, // Aquí se asigna el valor correcto
+                    'precio_unitario' => $precioUnitario,
                     'subtotal' => $subtotal,
                 ]);
             }
 
-            // Obtener el conteo total de items en el carrito para actualizar el icono
             $cartCount = CarritoCompra::where('usuario', $userId)->sum('cantidad');
 
             return response()->json([
@@ -99,7 +98,6 @@ class CarritoCompraController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            // Siempre es bueno registrar el error completo en los logs de Laravel
             return response()->json(['message' => 'Error al añadir el producto al carrito. Por favor, inténtelo de nuevo más tarde.'], 500);
         }
     }
