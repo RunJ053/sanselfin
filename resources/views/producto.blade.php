@@ -316,10 +316,10 @@
             // Cargar la nueva página con AJAX, manteniendo los filtros actuales
             loadProducts(currentCategory, currentSearchTerm, pageUrl);
         }
-          // Delegación: un solo listener en el contenedor
+        // Delegación: un solo listener en el contenedor
         //arregla el click del paginador y evita re-adjuntar listeners (delegación)   
         if (paginationContainer) {
-            paginationContainer.addEventListener('click', function (e) {
+            paginationContainer.addEventListener('click', function(e) {
                 const a = e.target.closest('a[href*="page="]');
                 if (!a) return;
                 e.preventDefault();
@@ -335,68 +335,77 @@
                 loadProducts(currentCategory, currentSearchTerm, u.toString());
                 // (Opcional) Mantén el scroll cerca del listado, no arriba
                 const top = document.querySelector('.products-section')?.offsetTop ?? 0;
-                window.scrollTo({ top, behavior: 'smooth' });
+                window.scrollTo({
+                    top,
+                    behavior: 'smooth'
                 });
+            });
         }
 
-    // Arregla loadProducts para construir bien la URL cuando NO viene de un link
-    async function loadProducts(category = 'all', searchTerm = '', pageUrl = null) {
-        productsContainer.innerHTML = `
+        // Arregla loadProducts para construir bien la URL cuando NO viene de un link
+        async function loadProducts(category = 'all', searchTerm = '', pageUrl = null) {
+            productsContainer.innerHTML = `
         <div class="loading"><div class="spinner"></div> Cargando productos...</div>
         `;
-        searchResultsInfo.style.display = 'none';
+            searchResultsInfo.style.display = 'none';
 
-        let url;
-        if (pageUrl) {
-        url = new URL(pageUrl, window.location.origin);
-        } else {
-        url = new URL("{{ route('producto') }}", window.location.origin);
-        if (category && category !== 'all') url.searchParams.set('categoria', category);
-        if (searchTerm) url.searchParams.set('search', searchTerm);
-        }
+            let url;
+            if (pageUrl) {
+                url = new URL(pageUrl, window.location.origin);
+            } else {
+                url = new URL("{{ route('producto') }}", window.location.origin);
+                if (category && category !== 'all') url.searchParams.set('categoria', category);
+                if (searchTerm) url.searchParams.set('search', searchTerm);
+            }
 
-        try {
-        const response = await fetch(url.toString(), {
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }
-        });
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const data = await response.json();
+            try {
+                const response = await fetch(url.toString(), {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const data = await response.json();
 
-        productsContainer.innerHTML = data.html;
-        updateSearchResultsInfo(data.productCount, searchTerm, category);
-        if (paginationContainer) paginationContainer.innerHTML = data.pagination;
+                productsContainer.innerHTML = data.html;
+                updateSearchResultsInfo(data.productCount, searchTerm, category);
+                if (paginationContainer) paginationContainer.innerHTML = data.pagination;
 
-        // (Opcional) Actualiza la barra de direcciones (sin recargar)
-        history.replaceState({}, '', url.toString());
-        } catch (err) {
-        console.error(err);
-        productsContainer.innerHTML = `
+                // (Opcional) Actualiza la barra de direcciones (sin recargar)
+                history.replaceState({}, '', url.toString());
+            } catch (err) {
+                console.error(err);
+                productsContainer.innerHTML = `
             <div class="empty-state">
             <i class="fas fa-exclamation-triangle" style="color:#dc3545;"></i>
             <h3>Error al cargar productos</h3>
             <p>Por favor, inténtalo de nuevo más tarde.</p>
             </div>`;
-        searchResultsInfo.style.display = 'none';
-        if (paginationContainer) paginationContainer.innerHTML = '';
+                searchResultsInfo.style.display = 'none';
+                if (paginationContainer) paginationContainer.innerHTML = '';
+            }
         }
-    }
 
-    const debounce = (fn, ms = 350) => {
-        let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
-    };
+        const debounce = (fn, ms = 350) => {
+            let t;
+            return (...args) => {
+                clearTimeout(t);
+                t = setTimeout(() => fn(...args), ms);
+            };
+        };
 
-    searchInput.addEventListener('input', debounce((e) => {
-        const term = e.target.value.trim();
-        term ? clearSearchButton.classList.add('visible') : clearSearchButton.classList.remove('visible');
-        loadProducts(hiddenCategoryInput.value, term);
-    }));
+        searchInput.addEventListener('input', debounce((e) => {
+            const term = e.target.value.trim();
+            term ? clearSearchButton.classList.add('visible') : clearSearchButton.classList.remove('visible');
+            loadProducts(hiddenCategoryInput.value, term);
+        }));
 
-    clearSearchButton.addEventListener('click', () => {
-        searchInput.value = '';
-        clearSearchButton.classList.remove('visible');
-        searchInput.focus();
-        loadProducts(hiddenCategoryInput.value, '');
-    });
+        clearSearchButton.addEventListener('click', () => {
+            searchInput.value = '';
+            clearSearchButton.classList.remove('visible');
+            searchInput.focus();
+            loadProducts(hiddenCategoryInput.value, '');
+        });
 
         /**
          * Actualiza el mensaje de información de resultados de búsqueda.
@@ -432,7 +441,7 @@
         }
 
 
-        // --- Lógica Existente para Búsqueda y Filtros (MODIFICADA para usar loadProducts) ---
+        // --- Lógica Existente para Búsqueda y Filtros ---
 
         // Mantiene el botón de limpiar visible si hay término de búsqueda inicial
         if (searchInput.value.trim() !== '') {

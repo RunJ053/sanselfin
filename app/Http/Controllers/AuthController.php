@@ -5,14 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Database\QueryException;
-use App\Mail\AdminVerificationMail;
 use App\Mail\PasswordResetRequestMail;
 use App\Mail\UserVerificationMail; // NUEVO: Importa la clase de correo para restablecimiento
 
 use App\Models\DatoUsuario;
 use App\Models\TipoCliente;
-use App\Models\AdminVerificationCode;
-use App\Models\UserVerificationCode; // Importamos el nuevo modelo
+use App\Models\UserVerificationCode;
+use App\Models\Producto;
 
 
 use Illuminate\Support\Facades\DB; //Para interactuar con la tabla password_resets
@@ -78,7 +77,8 @@ class AuthController extends Controller
             Auth::login($user);
             $request->session()->regenerate();
             session(['usuario_id' => $user->id, 'nombre_usuario' => $user->nombre, 'nombre_img' => $user->user_img]);
-            return redirect()->route('user.dashboard');
+            $productos = Producto::latest()->take(22)->get();
+            return view('index2', compact('productos'));
         }
     }
 

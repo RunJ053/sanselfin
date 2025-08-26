@@ -76,85 +76,7 @@
         </section>
 
         <!-- Sección de Productos -->
-        <section data-aos="fade-up" data-aos-duration="900" class="products" aria-labelledby="products-title">
-            <div class="container">
-                <h2 id="products-title">Nuestra Galería de Productos</h2>
-                <p>Descubre nuestra selección de frutas y verduras frescas directamente del campo a tu mesa.</p>
-                
-                <div class="relative">
-                    <!-- Controles del carrusel -->
-                    <button id="prevBtn" class="carousel-controls prev">
-                        <i class="fas fa-chevron-left text-gray-700"></i>
-                    </button>
-                    <button id="nextBtn" class="carousel-controls next">
-                        <i class="fas fa-chevron-right text-gray-700"></i>
-                    </button>
-                    
-                    <!-- Carrusel -->
-                    <div id="carousel" class="carousel-container overflow-x-auto flex space-x-4 py-4 px-2">
-                        <!-- Producto 1 -->
-                        <article class="product-item animate-fade-in-up">
-                            <img src="img/product/Tomate.png" alt="Tomates frescos" loading="lazy">
-                            <div class="content">
-                                <h3>Tomates Frescos</h3>
-                                <p class="price">$3.000/kg</p>
-                                <button onclick="showAlert()" class="add-to-cart">
-                                    Agregar al carrito <i class="fas fa-cart-plus ml-1"></i>
-                                </button>
-                            </div>
-                        </article>
-
-                        <!-- Producto 2 -->
-                        <article class="product-item animate-fade-in-up">
-                            <img src="img/product/Cebolla larga.png" alt="Cebolla Larga" loading="lazy">
-                            <div class="content">
-                                <h3>Cebolla Larga</h3>
-                                <p class="price">$3.500/Lb</p>
-                                <button onclick="showAlert()" class="add-to-cart">
-                                    Agregar al carrito <i class="fas fa-cart-plus ml-1"></i>
-                                </button>
-                            </div>
-                        </article>
-
-                        <!-- Producto 3 -->
-                        <article class="product-item animate-fade-in-up">
-                            <img src="img/product/Lechuga crespa.png" alt="Lechuga Crespa" loading="lazy">
-                            <div class="content">
-                                <h3>Lechuga Crespa</h3>
-                                <p class="price">$5.000/unidad</p>
-                                <button onclick="showAlert()" class="add-to-cart">
-                                    Agregar al carrito <i class="fas fa-cart-plus ml-1"></i>
-                                </button>
-                            </div>
-                        </article>
-
-                        <!-- Producto 4 -->
-                        <article class="product-item animate-fade-in-up">
-                            <img src="img/product/Curuba.png" alt="Curuba" loading="lazy">
-                            <div class="content">
-                                <h3>Curuba</h3>
-                                <p class="price">$2.800/kg</p>
-                                <button onclick="showAlert()" class="add-to-cart">
-                                    Agregar al carrito <i class="fas fa-cart-plus ml-1"></i>
-                                </button>
-                            </div>
-                        </article>
-
-                        <!-- Producto 5 -->
-                        <article class="product-item animate-fade-in-up">
-                            <img src="img/product/Durazno.png" alt="Durazno" loading="lazy">
-                            <div class="content">
-                                <h3>Durazno</h3>
-                                <p class="price">$6.300/kg</p>
-                                <button onclick="showAlert()" class="add-to-cart">
-                                    Agregar al carrito <i class="fas fa-cart-plus ml-1"></i>
-                                </button>
-                            </div>
-                        </article>
-                    </div>
-                </div>
-            </div>
-        </section>
+        <x-index-carousel />
 
         <!-- Sección "Más para ti" -->
         <section data-aos="fade-up" class="mas_para_ti" aria-labelledby="features-title">
@@ -261,7 +183,7 @@
                 <div class="footer-section">
                     <h3>Boletín Informativo</h3>
                     <p>Suscríbete para recibir ofertas especiales y noticias sobre productos frescos.</p>
-                    <form class="newsletter-form" method="POST" action="{{route('subscribe')}}">
+                    <form class="newsletter-form" id="newsletter-form" method="POST" action="{{route('subscribe')}}">
                         @csrf
                         <input type="email" name="email" placeholder="Tu correo electrónico" required>
                         <button type="submit">Suscribirse</button>
@@ -282,4 +204,4 @@
         </div>
     </div>
 </footer>
-    @endsection
+@endsection

@@ -154,97 +154,7 @@
     </section>
 
     <!-- Sección de Productos con Grid -->
-    <section data-aos="fade-up" class="products" aria-labelledby="products-title">
-        <div class="container">
-            <h2 id="products-title">Nuestra Galería de Productos</h2>
-            <p>Descubre nuestra selección de frutas y verduras frescas directamente del campo a tu mesa.</p>
-            <p>Explora y descubre cada producto con nuestra galería visual que tenemos solo para ti.</p>
-
-            <div class="carousel-container">
-                <!-- Controles del carrusel -->
-                <button class="carousel-controls prev" aria-label="Producto anterior">‹</button>
-                <button class="carousel-controls next" aria-label="Siguiente producto">›</button>
-
-                <!-- Track del carrusel -->
-                <div class="carousel-track">
-                    <!-- Producto 1 -->
-                    <article class="product-item animate-fade-in-up">
-                        <img src="https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=400&h=300&fit=crop" alt="Tomates frescos" loading="lazy">
-                        <div class="content">
-                            <h3>Tomates Frescos</h3>
-                            <p class="price">$3.000/kg</p>
-                        </div>
-                    </article>
-
-                    <!-- Producto 2 -->
-                    <article class="product-item animate-fade-in-up">
-                        <img src="https://images.unsplash.com/photo-1622206151226-18ca2c9ab4a1?w=400&h=300&fit=crop" alt="Lechuga Orgánica" loading="lazy">
-                        <div class="content">
-                            <h3>Lechuga Orgánica</h3>
-                            <p class="price">$8.000/unidad</p>
-                        </div>
-                    </article>
-
-                    <!-- Producto 3 -->
-                    <article class="product-item animate-fade-in-up">
-                        <img src="https://images.unsplash.com/photo-1445282768818-728615cc910a?w=400&h=300&fit=crop" alt="Zanahorias Dulces" loading="lazy">
-                        <div class="content">
-                            <h3>Zanahorias Dulces</h3>
-                            <p class="price">$2.000/kg</p>
-                        </div>
-                    </article>
-
-                    <!-- Producto 4 -->
-                    <article class="product-item animate-fade-in-up">
-                        <img src="https://images.unsplash.com/photo-1557800636-894a64c1696f?w=400&h=300&fit=crop" alt="Naranja" loading="lazy">
-                        <div class="content">
-                            <h3>Naranja</h3>
-                            <p class="price">$7.000/kg</p>
-                        </div>
-                    </article>
-
-                    <!-- Producto 5 -->
-                    <article class="product-item animate-fade-in-up">
-                        <img src="https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=400&h=300&fit=crop" alt="Espinaca" loading="lazy">
-                        <div class="content">
-                            <h3>Espinaca</h3>
-                            <p class="price">$3.400/unidad</p>
-                        </div>
-                    </article>
-
-                    <!-- Producto 6 -->
-                    <article class="product-item animate-fade-in-up">
-                        <img src="https://images.unsplash.com/photo-1590779033100-9f60a05a013d?w=400&h=300&fit=crop" alt="Pimientos" loading="lazy">
-                        <div class="content">
-                            <h3>Pimientos Rojos</h3>
-                            <p class="price">$4.500/kg</p>
-                        </div>
-                    </article>
-
-                    <!-- Producto 7 -->
-                    <article class="product-item animate-fade-in-up">
-                        <img src="https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=400&h=300&fit=crop" alt="Brócoli" loading="lazy">
-                        <div class="content">
-                            <h3>Brócoli Fresco</h3>
-                            <p class="price">$5.200/unidad</p>
-                        </div>
-                    </article>
-
-                    <!-- Producto 8 -->
-                    <article class="product-item animate-fade-in-up">
-                        <img src="https://images.unsplash.com/photo-1506471403773-610dcc4877e2?w=400&h=300&fit=crop" alt="Manzanas" loading="lazy">
-                        <div class="content">
-                            <h3>Manzanas Rojas</h3>
-                            <p class="price">$6.800/kg</p>
-                        </div>
-                    </article>
-                </div>
-
-                <!-- Indicadores -->
-                <div class="carousel-indicators"></div>
-            </div>
-        </div>
-    </section>
+    <x-usuario-carousel :productos="$productos" />
 
     <!-- Sección "Más para ti" -->
     <section data-aos="fade-up" class="mas_para_ti" aria-labelledby="features-title">
@@ -437,7 +347,7 @@
                 <div class="footer-section">
                     <h3>Boletín Informativo</h3>
                     <p>Suscríbete para recibir ofertas especiales y noticias sobre productos frescos.</p>
-                    <form class="newsletter-form" method="POST" action="{{route('subscribe')}}">
+                    <form class="newsletter-form" id="newsletter-form" method="POST" action="{{route('subscribe')}}">
                         @csrf
                         <input type="email" name="email" placeholder="Tu correo electrónico" required>
                         <button type="submit">Suscribirse</button>

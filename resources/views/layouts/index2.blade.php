@@ -26,6 +26,7 @@
 <body>
     @yield('content')
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script src="{{ asset('js/hamburguesa.js') }}"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
@@ -212,6 +213,57 @@
                 el.style.transitionDelay = `${index * 0.1}s`;
                 observer.observe(el);
             });
+        });
+
+        //Motrar alerta de suscripción exitosa o error
+        document.getElementById('newsletter-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const form = e.target;
+            const formData = new FormData(form);
+
+            fetch("{{ route('subscribe') }}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+                    },
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => {
+                            throw err
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Suscripción exitosa!',
+                        text: data.message,
+                        confirmButtonText: 'Aceptar'
+                    });
+
+                    form.reset(); // Limpia el formulario
+                })
+                .catch(error => {
+                    if (error.errors && error.errors.email) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: error.errors.email[0],
+                            confirmButtonText: 'Cerrar'
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error inesperado',
+                            text: 'Ocurrió un problema al procesar tu solicitud.',
+                            confirmButtonText: 'Cerrar'
+                        });
+                    }
+                });
         });
     </script>
 </body>

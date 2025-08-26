@@ -51,11 +51,9 @@ function updateNavigation(activeModuleId) {
     sidebarItems.forEach((item, index) => {
         const moduleIds = [
             "overview",
-            "cart",
             "orders",
             "profile",
             "addresses",
-            "notifications",
         ];
         if (moduleIds[index] === activeModuleId) {
             item.classList.add("active");
@@ -71,11 +69,9 @@ function updateNavigation(activeModuleId) {
     mobileItems.forEach((item, index) => {
         const moduleIds = [
             "overview",
-            "cart",
             "orders",
             "profile",
             "addresses",
-            "notifications",
         ];
         if (moduleIds[index] === activeModuleId) {
             item.classList.add("active");
@@ -125,23 +121,3 @@ window.onclick = function (event) {
         }
     }
 };
-
-// Llamar a la función al cargar la página
-document.addEventListener('DOMContentLoaded', function() {
-    // Obtener la sección desde la URL si está presente
-    const urlParams = new URLSearchParams(window.location.search);
-    const sectionFromUrl = urlParams.get('section');
-    
-    // Usar el parámetro de la URL o el de Laravel
-    const section = sectionFromUrl || '{{ $section ?? "" }}';
-    
-    console.log("Sección detectada:", section);
-    
-    if (section && section.trim() !== '') {
-        showModule(section);
-    } else {
-        // Mostrar módulo por defecto si no hay sección específica
-        showModule('overview');
-    }
-});
-

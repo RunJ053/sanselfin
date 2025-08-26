@@ -13,8 +13,8 @@ class WelcomeNewsletter extends Mailable
     public function build()
     {
         return $this->subject('¡Bienvenido a nuestro Ecommerce!')
-            ->view('emails.welcome_newsletter')
-                ->attach(public_path('pdfs/catalogo.pdf')); // tu PDF en public/pdfs/
+            ->view('emails.welcome_newsletter');
+              //  ->attach(public_path('pdfs/catalogo.pdf')); // tu PDF en public/pdfs/
     }
 }
 

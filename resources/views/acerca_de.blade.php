@@ -135,7 +135,7 @@
         </ul>
     </div>
 
-     <!-- Hero Section -->
+    <!-- Hero Section -->
     <section class="hero-section">
         <div class="container">
             <div class="hero-content">
@@ -225,7 +225,7 @@
         <div class="contact-section">
             <h3 class="contact-title">¡Conversemos!</h3>
             <p class="contact-subtitle">¿Tienes preguntas, sugerencias o quieres ser parte de nuestra comunidad? Nos encantaría escucharte</p>
-            
+
             <form>
                 <div class="form-row">
                     <div class="form-group">
@@ -253,68 +253,58 @@
         </div>
     </div>
 
-<footer data-aos="fade-up"
-    data-aos-duration="100"
-    class="footer">
-    <div class="footer-top">
-        <div class="container">
-            <div class="footer-grid">
-                <!-- Sección de información de la empresa -->
-                <div class="footer-section">
-                    <img src="{{asset('img/logo/icon.png')}}" alt="Logo Finca al Día" class="footer-logo">
-                    <p class="company-description">Llevamos los productos más frescos del campo a tu mesa, garantizando calidad y frescura en cada entrega.</p>
-                    <div class="social-links">
-                        <a href="" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
-                        <a href="" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                        <a href="" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+    <footer data-aos="fade-up"
+        data-aos-duration="100"
+        class="footer">
+        <div class="footer-top">
+            <div class="container">
+                <div class="footer-grid">
+                    <!-- Sección de información de la empresa -->
+                    <div class="footer-section">
+                        <img src="{{asset('img/logo/icon.png')}}" alt="Logo Finca al Día" class="footer-logo">
+                        <p class="company-description">Llevamos los productos más frescos del campo a tu mesa, garantizando calidad y frescura en cada entrega.</p>
+                        <div class="social-links">
+                            <a href="" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                            <a href="" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                            <a href="" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                        </div>
                     </div>
-                </div>
-                <!-- Sección de enlaces rápidos -->
-                <div class="footer-section">
-                    <h3>Enlaces Rápidos</h3>
-                    <ul class="footer-links">
-                        <li><a href="{{route('producto')}}">Nuestros Productos</a></li>
-                        <li><a href="{{route('servicio')}}">Sobre Nosotros</a></li>
-                        <li><a href="{{route('acerca_de')}}">FAQ</a></li>
-                    </ul>
-                </div>
-                <!-- Sección de contacto -->
-                <div class="footer-section">
-                    <h3>Contacto</h3>
-                    <div class="contact-info">
-                        <p><i class="fas fa-clock"></i> Lunes a Sábados, 8:00 a.m a 6:00 p.m</p>
-                        <p><i class="fas fa-map-marker-alt"></i> 
-                            <a href="https://share.google/uCjgbp9lKkg6hyuRB" target="_blank" rel="noopener noreferrer"> Tv. 94 L #88-08, Bogotá</a>
-                        </p>
-                        <p><i class="fas fa-envelope"></i> fincaaldia25@gmail.com</p>
-                        <p><i class="fas fa-phone"></i> 300 123 4567</p>
+                    <!-- Sección de enlaces rápidos -->
+                    <div class="footer-section">
+                        <h3>Enlaces Rápidos</h3>
+                        <ul class="footer-links">
+                            <li><a href="{{route('producto')}}">Nuestros Productos</a></li>
+                            <li><a href="{{route('servicio')}}">Sobre Nosotros</a></li>
+                            <li><a href="{{route('acerca_de')}}">FAQ</a></li>
+                        </ul>
                     </div>
-                </div>
-                <!-- Sección de newsletter -->
-                <div class="footer-section">
-                    <h3>Boletín Informativo</h3>
-                    <p>Suscríbete para recibir ofertas especiales y noticias sobre productos frescos.</p>
-                    <form class="newsletter-form" method="POST" action="{{route('subscribe')}}">
-                        @csrf
-                        <input type="email" name="email" placeholder="Tu correo electrónico" required>
-                        <button type="submit">Suscribirse</button>
-                    </form>
+                    <!-- Sección de contacto -->
+                    <div class="footer-section">
+                        <h3>Contacto</h3>
+                        <div class="contact-info">
+                            <p><i class="fas fa-clock"></i> Lunes a Sábados, 8:00 a.m a 6:00 p.m</p>
+                            <p><i class="fas fa-map-marker-alt"></i>
+                                <a href="https://share.google/uCjgbp9lKkg6hyuRB" target="_blank" rel="noopener noreferrer"> Tv. 94 L #88-08, Bogotá</a>
+                            </p>
+                            <p><i class="fas fa-envelope"></i> fincaaldia25@gmail.com</p>
+                            <p><i class="fas fa-phone"></i> 300 123 4567</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <!-- Footer Bottom -->
-    <div class="footer-bottom">
-        <div class="container">
-            <p>&copy; 2024 Finca al Día. Todos los derechos reservados.</p>
-            <div class="payment-methods">
-                <img src="{{asset('img/logo/visa.png')}}" alt="Visa">
-                <img src="{{asset('img/logo/logo-Mastercard.png')}}" alt="Mastercard">
-                <img src="{{asset('img/logo/nequi.png')}}" alt="Nequi">
+        <!-- Footer Bottom -->
+        <div class="footer-bottom">
+            <div class="container">
+                <p>&copy; 2024 Finca al Día. Todos los derechos reservados.</p>
+                <div class="payment-methods">
+                    <img src="{{asset('img/logo/visa.png')}}" alt="Visa">
+                    <img src="{{asset('img/logo/logo-Mastercard.png')}}" alt="Mastercard">
+                    <img src="{{asset('img/logo/nequi.png')}}" alt="Nequi">
+                </div>
             </div>
         </div>
-    </div>
-</footer>
+    </footer>
     <script src="{{ asset('js/hamburguesa.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -343,10 +333,10 @@
         // Form validation (basic)
         document.querySelector('form').addEventListener('submit', function(e) {
             e.preventDefault();
-            
+
             const inputs = this.querySelectorAll('input, textarea');
             let isValid = true;
-            
+
             inputs.forEach(input => {
                 if (input.hasAttribute('required') && !input.value.trim()) {
                     isValid = false;
@@ -355,7 +345,7 @@
                     input.style.borderColor = 'var(--border-light)';
                 }
             });
-            
+
             if (isValid) {
                 // Here you would normally send the form data
                 alert('¡Gracias por tu mensaje! Te contactaremos pronto.');

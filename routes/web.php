@@ -10,6 +10,7 @@ use App\Http\Controllers\CarritoCompraController;
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\TareaController;
 use Illuminate\Support\Facades\Route;
+use App\Models\Producto;
 use Illuminate\Support\Facades\Auth;
 
 //inicio de paginas
@@ -56,11 +57,12 @@ Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('
 Route::middleware(['auth'])->group(function () {
 
     Route::get('/dashboard/user', function () {
-        return view('index2');
+        $productos = Producto::latest()->take(22)->get();
+        return view('index2', compact('productos'));
     })->name('user.dashboard');
 
     //Rutas de perfil de usuario
-    Route::get('/my-profile/{section?}', [LoginController::class, 'myProfile'])->name('myProfile');
+    Route::get('/my-profile', [LoginController::class, 'myProfile'])->name('myProfile');
     Route::get('/user/edit/{id}', [DatoUsuarioController::class, 'edit'])->name('user.edit');
     Route::put('/user/update/{id}', [DatoUsuarioController::class, 'update'])->name('user.update');
     Route::get('/user/change-password', [DatoUsuarioController::class, 'changePasswordForm'])->name('user.changePasswordForm');
