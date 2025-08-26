@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Usuario; 
 use App\Models\TipoDocumento;
 use App\Models\Genero;
+use App\Models\Localidad;
 use App\Models\Inventario;
 use App\Models\Categoria;
 use Illuminate\Http\Request;
@@ -32,8 +33,9 @@ public function index()
         {
             $tiposDocumentos = TipoDocumento::all();
             $generos = Genero::all();
+            $localidades = Localidad::all();
 
-            return view('usuarios.create', compact('tiposDocumentos', 'generos'));
+            return view('usuarios.create', compact('tiposDocumentos', 'generos', 'localidades'));
         }
 
     // Guardar nuevo usuario
@@ -73,9 +75,10 @@ public function index()
         {
             $usuario = Usuario::findOrFail($id);
             $tiposDocumentos = TipoDocumento::all(); 
-            $generos = Genero::all(); // 👈 aquí traes todos los géneros
+            $generos = Genero::all();
+            $localidades = Localidad::all();
 
-            return view('admin.usuarios_edit', compact('usuario', 'tiposDocumentos', 'generos'));
+            return view('admin.usuarios_edit', compact('usuario', 'tiposDocumentos', 'generos', 'localidades'));
         }
     // Actualizar usuario
     public function update(Request $request, $id)
