@@ -163,7 +163,7 @@
                         </p>
                 </div>
             </div>
-        </a>
+        
     </div>
 
     <!-- Tarjeta Productos -->
@@ -175,7 +175,7 @@
                     <p>{{ count($inventarios) }}</p>
                 </div>
             </div>
-        </a>
+        
     </div>
 
     <!-- Tarjeta Stock -->
@@ -194,7 +194,7 @@
                     </p>
                 </div>
             </div>
-        </a>
+        
     </div>
 
     <!-- Tarjeta Pedidos -->
@@ -206,7 +206,7 @@
                     <p>12 activos</p>
                 </div>
             </div>
-        </a>
+        
     </div>
 
 </div>
