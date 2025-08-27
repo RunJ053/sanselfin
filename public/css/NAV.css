@@ -9,7 +9,6 @@ body {
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%) !important;
     min-height: 100vh !important;
     padding: 1rem !important;
-    /* IMPORTANTE: Agrega padding-top para compensar el navbar fixed */
     padding-top: 100px !important; /* Ajusta según la altura de tu navbar */
 }
 
@@ -23,7 +22,7 @@ body {
     
     /* Mantiene las propiedades existentes */
     z-index: 2000 !important;
-    max-width: calc(100% - 2rem) !important; /* Compensa los márgenes laterales */
+    /*max-width: calc(100% - 2rem) !important; /* Compensa los márgenes laterales */
     margin: 0 auto !important;
     display: flex !important;
     justify-content: space-between !important;
