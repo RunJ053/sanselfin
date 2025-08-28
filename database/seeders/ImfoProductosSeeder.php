@@ -6,6 +6,7 @@ use App\Models\Categoria;
 use App\Models\Impuesto;
 use App\Models\Promocion;
 use App\Models\Estado;
+use App\Models\FormaPago;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -37,10 +38,42 @@ class ImfoProductosSeeder extends Seeder
 
         Estado::insert([
             ['id' => 1, 'desc_estado' => 'Activo', 'created_at' => now(), 'updated_at' => now()],
-            ['id' => 2, 'desc_estado' => 'Inactivo', 'created_at' => now(), 'updated_at' => now()]
+            ['id' => 2, 'desc_estado' => 'Inactivo', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 3, 'desc_estado' => 'Pendiente', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 4, 'desc_estado' => 'En Proceso', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 5, 'desc_estado' => 'Completado', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 6, 'desc_estado' => 'Enviado', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 7, 'desc_estado' => 'Entregado', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 8, 'desc_estado' => 'Devuelto', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 9, 'desc_estado' => 'Cancelado', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 10, 'desc_estado' => 'Rechazado', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 11, 'desc_estado' => 'Aprobado', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 12, 'desc_estado' => 'Pendiente de Pago', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 13, 'desc_estado' => 'Fallido', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 14, 'desc_estado' => 'Reembolsado', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 15, 'desc_estado' => 'En Espera', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 16, 'desc_estado' => 'Finalizado', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 17, 'desc_estado' => 'Suspendido', 'created_at' => now(), 'updated_at' => now()],
         ]);
 
-
+        FormaPago::insert([
+            [
+                'id' => 1101,
+                'estado_id' => 1,
+                'nombre_forma_pago' => 'Efectivo',
+                'descripcion' => 'Pago mediante efectivo',
+                'created_at' => now(),
+                'updated_at' => now()
+            ],
+            [
+                'id' => 1201,
+                'estado_id' => 2,
+                'nombre_forma_pago' => 'PayU',
+                'descripcion' => 'Pago mediante PayU',
+                'created_at' => now(),
+                'updated_at' => now()
+            ],
+        ]);
 
         Promocion::insert([
             [

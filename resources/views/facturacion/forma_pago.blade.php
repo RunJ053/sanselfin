@@ -1,253 +1,188 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pagos</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link rel="shortcut icon" href="../img/logo/icon.png" type="image/x-icon">
-    <link rel="stylesheet" href="../css/footer.css">
-    <link rel="stylesheet" href="../css/NAV.css">
-    <link rel="stylesheet" href="../css/FORMA_PAGO.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-</head>
-<body>
-    <nav class="main-nav" aria-label="Navegación principal">
-        <div class="nav-left">
-            <a href="../index2.html" class="logo-link">
-                <img src="../img/logo/icon.png" alt="Logo de La Finca al Día" width="150" height="50">
-            </a>
-        </div>
-        <div class="nav-center">
-            <ul class="nav-links" role="menubar">
-                <li role="none"><a href="../index2.html" role="menuitem">Inicio</a></li>
-                <li role="none"><a href="../PRODUCTO.html" role="menuitem">Productos</a></li>
-                <li role="none"><a href="../SERVICIOS.html" role="menuitem">Servicios</a></li>
-                <li role="none"><a href="../ACERCA_DE.html" role="menuitem">Acerca de</a></li>
-            </ul>
-        </div>
-        <div class="nav-right">
-            <ul class="nav-actions" role="menubar">
-                <li role="none">
-                    <a href="../pages/NOTIFICACION.html" role="menuitem" aria-label="Notificaciones">
-                        <i class="fas fa-bell"></i>
-                        <span class="visually-hidden">Notificaciones</span>
-                    </a>
-                </li>
-                <li role="none">
-                    <a href="../productos/CARRITO_DE_COMPRAS.html" role="menuitem" aria-label="Carrito de Compras">
-                        <i class="fas fa-shopping-cart"></i>
-                        <span class="visually-hidden">Carrito de Compras</span>
-                    </a>
-                </li>
-                <li role="none">
-                    <a href="../index.html" class="logout-button" role="menuitem">Cerrar Sesión</a>
-                </li>
-            </ul>
-            <button class="menu-toggle" onclick="toggleMenu()" aria-expanded="false" aria-label="Menú">
-                <i class="fas fa-bars"></i>
-            </button>
-        </div>
-    </nav>    
-    <main class="container my-5">
-        <div class="payment-container">
-            <!-- Resumen de compra -->
-            <div class="total-amount mb-4">
-                <div class="row align-items-center">
-                    <div class="col-md-8">
-                        <h5 class="mb-1">Total a pagar</h5>
-                        <p class="text-muted mb-0">Resumen de tu compra</p>
+@extends('layouts.facturacion.formaPago')
+
+@section('content')
+<main class="container mx-auto py-12 px-4 max-w-6xl">
+
+    <!-- Resumen con diseño mejorado -->
+    <div class="relative mb-12">
+        <div class="absolute inset-0 bg-gradient-to-r from-green-400 to-blue-500 rounded-2xl blur-xl opacity-20"></div>
+        <div class="relative glass-effect backdrop-blur-sm bg-white/90 shadow-2xl rounded-2xl p-8 border border-white/20">
+            <div class="flex flex-col lg:flex-row justify-between items-center space-y-6 lg:space-y-0">
+                <div class="text-center lg:text-left">
+                    <div class="flex items-center justify-center lg:justify-start mb-3">
+                        <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse mr-3"></div>
+                        <h5 class="text-xl font-bold text-gray-800">Total a pagar</h5>
                     </div>
-                    <div class="col-md-4 text-md-end">
-                        <h3 class="mb-0 text-primary">$120.000 COP</h3>
-                    </div>
+                    <p class="text-gray-600 text-lg">Resumen de tu compra</p>
+                    <div class="w-20 h-1 bg-gradient-to-r from-green-500 to-blue-500 rounded-full mt-3 mx-auto lg:mx-0"></div>
                 </div>
-            </div>
-            
-            <!-- Encabezado -->
-            <div class="payment-header text-center">
-                <h2 class="fw-bold">Selecciona tu método de pago</h2>
-                <p class="text-muted">Elige entre nuestras opciones de pago seguro</p>
-            </div>
-            
-            <!-- Opciones de pago -->
-            <div class="row g-4">
-                <!-- Efectivo -->
-                <div class="col-6 col-md-4 col-lg-3">
-                    <a href="../pages/NOTIFICACION.html" class="text-decoration-none">
-                        <div class="card payment-option position-relative">
-                            <div class="payment-badge">Popular</div>
-                            <div class="payment-logo-container">
-                                <img src="../img/logo/money.jpg" alt="Efectivo" class="payment-logo">
-                            </div>
-                            <div class="card-body p-0">
-                                <p class="payment-name">Pago en Efectivo</p>
-                            </div>
+                <div class="text-center">
+                    <div class="relative">
+                        <div class="absolute inset-0 bg-green-500 rounded-full blur-md opacity-30 animate-pulse-slow"></div>
+                        <div class="relative bg-gradient-to-r from-green-500 to-emerald-600 text-white px-8 py-4 rounded-full shadow-lg">
+                            <h3 class="text-3xl font-bold">${{ number_format($total, 0, ',', '.') }} COP</h3>
                         </div>
-                    </a>
-                </div>
-                
-                <!-- Visa -->
-                <div class="col-6 col-md-4 col-lg-3">
-                    <a href="https://www.visa.com.co/" class="text-decoration-none">
-                        <div class="card payment-option">
-                            <div class="payment-logo-container">
-                                <img src="../img/logo/visa.png" alt="Visa" class="payment-logo">
-                            </div>
-                            <div class="card-body p-0">
-                                <p class="payment-name">Tarjeta Visa</p>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                
-                <!-- Mastercard -->
-                <div class="col-6 col-md-4 col-lg-3">
-                    <a href="https://www.mastercard.com.co/es-co.html" class="text-decoration-none">
-                        <div class="card payment-option">
-                            <div class="payment-logo-container">
-                                <img src="../img/logo/logo-Mastercard.png" alt="Mastercard" class="payment-logo">
-                            </div>
-                            <div class="card-body p-0">
-                                <p class="payment-name">Tarjeta Mastercard</p>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                
-                <!-- Efecty -->
-                <div class="col-6 col-md-4 col-lg-3">
-                    <a href="https://www.efecty.com.co/web/" class="text-decoration-none">
-                        <div class="card payment-option">
-                            <div class="payment-logo-container">
-                                <img src="../img/logo/efecty.png" alt="Efecty" class="payment-logo">
-                            </div>
-                            <div class="card-body p-0">
-                                <p class="payment-name">Efecty</p>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                
-                <!-- Bancolombia -->
-                <div class="col-6 col-md-4 col-lg-3">
-                    <a href="https://www.bancolombia.com/pagos" class="text-decoration-none">
-                        <div class="card payment-option">
-                            <div class="payment-logo-container">
-                                <img src="../img/logo/bancolo.jpg" alt="Bancolombia" class="payment-logo">
-                            </div>
-                            <div class="card-body p-0">
-                                <p class="payment-name">Bancolombia</p>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                
-                <!-- Nequi -->
-                <div class="col-6 col-md-4 col-lg-3">
-                    <a href="https://www.nequi.com.co/personas/paga-con-nequi" class="text-decoration-none">
-                        <div class="card payment-option position-relative">
-                            <div class="payment-badge">Rápido</div>
-                            <div class="payment-logo-container">
-                                <img src="../img/logo/nequi.png" alt="Nequi" class="payment-logo">
-                            </div>
-                            <div class="card-body p-0">
-                                <p class="payment-name">Nequi</p>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                
-                <!-- Daviplata -->
-                <div class="col-6 col-md-4 col-lg-3">
-                    <a href="https://www.daviplata.com/" class="text-decoration-none">
-                        <div class="card payment-option">
-                            <div class="payment-logo-container">
-                                <img src="../img/logo/davi.png" alt="Daviplata" class="payment-logo">
-                            </div>
-                            <div class="card-body p-0">
-                                <p class="payment-name">Daviplata</p>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                
-                <!-- PSE -->
-                <div class="col-6 col-md-4 col-lg-3">
-                    <a href="#" class="text-decoration-none">
-                        <div class="card payment-option">
-                            <div class="payment-logo-container">
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/PSE_logo.svg/1280px-PSE_logo.svg.png" alt="PSE" class="payment-logo">
-                            </div>
-                            <div class="card-body p-0">
-                                <p class="payment-name">PSE</p>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </main>
-    <footer class="footer">
-        <div class="footer-top">
-            <div class="container">
-                <div class="footer-grid">
-                    <!-- Sección de información de la empresa -->
-                    <div class="footer-section">
-                        <img src="../img/logo/icon.png" alt="Logo Finca al Día" class="footer-logo">
-                        <p class="company-description">Llevamos los productos más frescos del campo a tu mesa, garantizando calidad y frescura en cada entrega.</p>
-                        <div class="social-links">
-                            <a href="" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
-                            <a href="" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                            <a href="" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-                        </div>
-                    </div>
-                    <!-- Sección de enlaces rápidos -->
-                    <div class="footer-section">
-                        <h3>Enlaces Rápidos</h3>
-                        <ul class="footer-links">
-                            <li><a href="../PRODUCTO.html">Nuestros Productos</a></li>
-                            <li><a href="../index2.html">Recetas</a></li>
-                            <li><a href="../index2.html">Blog</a></li>
-                            <li><a href="../ACERCA_DE.html">Sobre Nosotros</a></li>
-                            <li><a href="../SERVICIOS.html">FAQ</a></li>
-                        </ul>
-                    </div>
-                    <!-- Sección de contacto -->
-                    <div class="footer-section">
-                        <h3>Contacto</h3>
-                        <div class="contact-info">
-                            <p><i class="fas fa-clock"></i> Lunes a Sábados, 8:00 a.m a 6:00 p.m</p>
-                            <p><i class="fas fa-map-marker-alt"></i> [Tu dirección aquí]</p>
-                            <p><i class="fas fa-envelope"></i> informacion@gmail.com</p>
-                            <p><i class="fas fa-phone"></i> 300 123 4567</p>
-                        </div>
-                    </div>
-                    <!-- Sección de newsletter -->
-                    <div class="footer-section">
-                        <h3>Boletín Informativo</h3>
-                        <p>Suscríbete para recibir ofertas especiales y noticias sobre productos frescos.</p>
-                        <form class="newsletter-form">
-                            <input type="email" placeholder="Tu correo electrónico" required>
-                            <button type="submit">Suscribirse</button>
-                        </form>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Footer Bottom -->
-        <div class="footer-bottom">
-            <div class="container">
-                <p>&copy; 2024 Finca al Día. Todos los derechos reservados.</p>
-                <div class="payment-methods">
-                    <img src="../img/logo/visa.png" alt="Visa">
-                    <img src="../img/logo/logo-Mastercard.png" alt="Mastercard">
-                    <img src="../img/logo/nequi.png" alt="Nequi">
-                </div>
+    </div>
+
+    <!-- Encabezado mejorado -->
+    <div class="text-center mb-12 relative">
+        <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-32 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full blur-3xl opacity-20 animate-float"></div>
+        <h2 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-600 via-blue-600 to-green-600 bg-clip-text text-transparent mb-4">
+            Selecciona tu método de pago
+        </h2>
+        <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+            Elige entre nuestras opciones de pago
+            <span class="font-semibold text-green-600">100% seguro</span>
+            y confiable
+        </p>
+        <div class="flex justify-center mt-6">
+            <div class="flex space-x-2">
+                <div class="w-2 h-2 bg-purple-500 rounded-full animate-bounce"></div>
+                <div class="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                <div class="w-2 h-2 bg-green-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
             </div>
         </div>
-    </footer>
-    <script src="../js/hamburguesa.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+    </div>
+
+    <!-- Opciones de pago mejoradas -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
+
+        <!-- Pago en Efectivo -->
+        <a href="{{ route('checkout.efectivo') }}"
+            class="group relative overflow-hidden bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100">
+
+            <!-- Efecto de brillo -->
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-400 via-blue-500 to-purple-500"></div>
+
+            <!-- Contenido -->
+            <div class="p-8 text-center relative">
+                <!-- Icono de fondo -->
+                <div class="absolute top-4 right-4 opacity-10">
+                    <svg class="w-24 h-24 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4zM18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" />
+                    </svg>
+                </div>
+
+                <!-- Icono principal -->
+                <div class="relative">
+                    <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-green-400 to-emerald-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                        <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                        </svg>
+                    </div>
+                    <div class="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center animate-bounce-subtle">
+                        <span class="text-xs font-bold text-white">💰</span>
+                    </div>
+                </div>
+
+                <h3 class="text-2xl font-bold text-gray-800 mb-3 group-hover:text-green-600 transition-colors">
+                    Pago en Efectivo
+                </h3>
+                <p class="text-gray-600 mb-6 leading-relaxed">
+                    Paga directamente en nuestros puntos autorizados de manera rápida y segura
+                </p>
+
+                <!-- Características -->
+                <div class="space-y-2 mb-6">
+                    <div class="flex items-center justify-center text-sm text-green-600">
+                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" />
+                        </svg>
+                        Sin comisiones adicionales
+                    </div>
+                    <div class="flex items-center justify-center text-sm text-green-600">
+                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" />
+                        </svg>
+                        Pago inmediato
+                    </div>
+                </div>
+
+                <!-- Botón -->
+                <form action="" method="post">
+                    <div class="bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 px-6 rounded-full font-semibold group-hover:from-emerald-600 group-hover:to-green-700 transition-all duration-300 shadow-lg">
+                        Seleccionar
+                        <svg class="w-5 h-5 ml-2 inline-block group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                        </svg>
+                    </div>
+                </form>
+            </div>
+        </a>
+
+        <!-- PayU -->
+        <form method="POST" action="{{ route('checkout.payu') }}" class="group relative overflow-hidden bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100">
+
+            <!-- Efecto de brillo -->
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500"></div>
+
+            <!-- Contenido -->
+            <div class="p-8 text-center relative">
+                <!-- Icono de fondo -->
+                <div class="absolute top-4 right-4 opacity-10">
+                    <svg class="w-24 h-24 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4zM18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" />
+                    </svg>
+                </div>
+
+                <!-- Icono principal -->
+                <div class="relative">
+                    <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                        <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                        </svg>
+                    </div>
+                    <div class="absolute -top-2 -right-2 w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center animate-bounce-subtle">
+                        <span class="text-xs font-bold text-white">🔒</span>
+                    </div>
+                </div>
+
+                <h3 class="text-2xl font-bold text-gray-800 mb-3 group-hover:text-blue-600 transition-colors">
+                    Pagar con PayU
+                </h3>
+                <p class="text-gray-600 mb-6 leading-relaxed">
+                    Utiliza tu tarjeta de crédito, débito o transferencia bancaria de forma segura
+                </p>
+
+                <!-- Características -->
+                <div class="space-y-2 mb-6">
+                    <div class="flex items-center justify-center text-sm text-blue-600">
+                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" />
+                        </svg>
+                        Encriptación SSL 256-bit
+                    </div>
+                    <div class="flex items-center justify-center text-sm text-blue-600">
+                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" />
+                        </svg>
+                        Múltiples medios de pago
+                    </div>
+                </div>
+
+                <!-- Botón -->
+                <button type="submit" class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-6 rounded-full font-semibold group-hover:from-purple-600 group-hover:to-blue-700 transition-all duration-300 shadow-lg">
+                    Continuar
+                    <svg class="w-5 h-5 ml-2 inline-block group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    </svg>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Sección de seguridad -->
+    <div class="mt-16 text-center">
+        <div class="inline-flex items-center bg-white rounded-full px-6 py-3 shadow-lg">
+            <svg class="w-6 h-6 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" />
+            </svg>
+            <span class="text-gray-700 font-medium">Pagos 100% seguros y protegidos</span>
+        </div>
+    </div>
+</main>
+@endsection

@@ -1,365 +1,165 @@
-<!DOCTYPE html>
-<html lang="es">
+@extends('layouts.productos.carritoCompras_Layout') {{-- o tu layout principal --}}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}"> {{-- Es CRUCIAL para peticiones AJAX --}}
-    <title>Tu Carrito de Compras</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link rel="shortcut icon" href="{{asset('img/logo/icon.png')}}" type="image/x-icon">
-    <link rel="stylesheet" href="{{asset('css/CARRITO.css')}}">
-    <link rel="stylesheet" href="{{asset('css/NAV.css')}}">
-</head>
+@section('content')
+<!-- Contenedor principal -->
+<div class="bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
 
-<body>
-    <nav class="main-nav" aria-label="Navegación principal">
-        <!-- Logo -->
-        <div class="nav-left">
-            <a href="{{ route('user.dashboard') }}" class="logo-link">
-                <img src="{{asset ('img/logo/icon.png')}}" alt="Logo de La Finca al Día" width="120" height="40">
-            </a>
+        <!-- Título mejorado -->
+        <div class="text-center mb-12 animate-fade-in">
+            <div class="inline-flex items-center justify-center mb-4">
+                <div class="w-16 h-16 bg-gradient-to-r from-green-300 to-yellow-100 rounded-full flex items-center justify-center shadow-lg animate-bounce-soft">
+                    <span class="text-2xl">🛒</span>
+                </div>
+            </div>
+            <h1 class="text-5xl font-bold bg-gradient-to-r from-green-400 to-gray-100 to-indigo-600 bg-clip-text text-transparent mb-4">
+                Mi Carrito
+            </h1>
+            <p class="text-gray-600 text-lg">Revisa y confirma tus productos antes de proceder al pago</p>
+            <div class="w-74 h-1 bg-gradient-to-r from-green-300 to-yellow-100 rounded-full mx-auto mt-4"></div>
         </div>
 
-        <!-- Enlaces de navegación centrales -->
-        <div class="nav-center">
-            <ul class="nav-links" role="menubar">
-                <li role="none"><a href="{{ route('user.dashboard') }}" role="menuitem">Inicio</a></li>
-                <li role="none"><a href="{{ route('producto') }}" role="menuitem">Productos</a></li>
-                <li role="none"><a href="{{ route('servicio')}}" role="menuitem">Servicios</a></li>
-                <li role="none"><a href="{{ route('acerca_de')}}" role="menuitem">Acerca de</a></li>
-            </ul>
-        </div>
+        <!-- Grid principal -->
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
 
-        <!-- Acciones de la derecha -->
-        <div class="nav-right">
-            <ul class="nav-actions" role="menubar">
-                <li role="none">
-                    <a href="/notificaciones" role="menuitem" aria-label="Notificaciones">
-                        <i class="fas fa-bell"></i>
-                        <span class="visually-hidden">Notificaciones</span>
-                    </a>
-                </li>
-                <li role="none">
-                    <a href="/carrito" role="menuitem" aria-label="Carrito de Compras">
-                        <i class="fas fa-shopping-cart"></i>
-                        <span class="visually-hidden">Carrito</span>
-                    </a>
-                </li>
-                <li role="none">
-                    <a href="/ayuda" role="menuitem" aria-label="Ayuda">
-                        <i class="fa-solid fa-circle-exclamation"></i>
-                        <span>Ayuda</span>
-                    </a>
-                </li>
-            </ul>
+            <!-- Lista de productos -->
+            <div class="xl:col-span-2 animate-slide-up">
+                <div class="glass-effect shadow-2xl rounded-3xl p-6 border border-white/20">
 
-            <!-- Avatar de usuario -->
-            <div class="user-avatar" onclick="toggleDropdown()" role="button" aria-haspopup="true" aria-expanded="false">
-                @auth <!-- Verificamos que el usuario esté autenticado -->
-                @if (Auth::user()->user_img)
-                <img src="{{ asset('img/usuario_img/' . Auth::user()->user_img) }}"
-                    alt="Avatar de {{ Auth::user()->nombre }}"
-                    class="avatar-image">
-                @else
-                <i class="fas fa-user"></i>
-                @endif
-                @endauth
+                    <!-- Header -->
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 bg-gradient-to-r from-green-500 to-yellow-500 rounded-full mr-3 animate-pulse-slow"></div>
+                            <h2 class="text-2xl font-bold text-gray-800">Productos en tu carrito</h2>
+                        </div>
+                        <div class="bg-gradient-to-r from-purple-100 to-blue-100 px-4 py-2 rounded-full">
+                            <span class="text-sm font-semibold text-gray-900" id="contadorCarrito">
+                                {{ $itemsCarrito->sum('cantidad') }} items
+                            </span>
+                        </div>
+                    </div>
 
-                <div class="dropdown-menu" id="dropdownMenu">
-                    <a href="{{ route('myProfile') }}" class="dropdown-item">Mi Perfil</a>
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                        @csrf
-                    </form>
-                    <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                        Cerrar Sesión
-                    </a>
+                    <!-- Iterar productos -->
+                    @forelse($itemsCarrito as $item)
+                    <div class="group bg-white rounded-2xl p-6 mb-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-purple-200">
+                        <div class="flex flex-col lg:flex-row items-center justify-between space-y-4 lg:space-y-0">
 
+                            <!-- Imagen -->
+                            <div class="w-28 h-28 flex-shrink-0 relative">
+                                <img src="{{ asset('img/product/' . $item->producto->imagen) }}"
+                                    alt="{{ $item->producto->nombre_producto }}"
+                                    class="w-full h-full object-cover rounded-xl shadow-md group-hover:scale-105 transition-transform duration-300">
+                            </div>
+
+                            <!-- Info -->
+                            <div class="flex-1 lg:ml-6 text-center lg:text-left">
+                                <h3 class="text-xl font-bold text-gray-800 mb-2 group-hover:text-purple-600 transition-colors">
+                                    {{ $item->producto->nombre_producto }}
+                                </h3>
+
+                                <div class="space-y-1">
+                                    <p class="flex items-center justify-center lg:justify-start text-gray-600">
+                                        💲 Precio:
+                                        <span class="font-semibold text-green-600 ml-1">
+                                            ${{ number_format($item->precio_unitario, 0, ',', '.') }}
+                                        </span>
+                                    </p>
+                                    <p class="flex items-center justify-center lg:justify-start text-gray-600">
+                                        📦 Cantidad:
+                                        <span class="font-semibold text-blue-700 ml-1">{{ $item->cantidad }}</span>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Controles -->
+                            <!-- Input cantidad -->
+                            <input type="number" value="{{ $item->cantidad }}" min="1" max="{{ $item->producto->stock }}"
+                                class="cantidad-input w-16 text-center border-3 border-gray-800 rounded-lg" data-id="{{ $item->id }}"> 
+                            <!-- Botón actualizar -->
+                            <button type="button"
+                                class="btn-update bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-md"
+                                data-id="{{ $item->id }}">
+                                Actualizar
+                            </button>
+
+                            <!-- Botón eliminar -->
+                            <button type="button"
+                                class="btn-remove bg-gradient-to-r from-red-500 to-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-md flex items-center"
+                                data-id="{{ $item->id }}">
+                                🗑️ Eliminar
+                            </button>
+
+                        </div>
+                    </div>
+                    @empty
+                    <!-- Carrito vacío -->
+                    <div class="text-center py-16">
+                        <h3 class="text-xl font-semibold text-gray-600 mb-2">Tu carrito está vacío</h3>
+                        <p class="text-gray-500 mb-6">¡Agrega algunos productos para comenzar tu compra!</p>
+                        <a href="{{ route('producto') }}"
+                            class="bg-gradient-to-r from-green-600 to-yellow-200 text-white px-6 py-3 rounded-full font-medium shadow-lg">
+                            Explorar Productos
+                        </a>
+                    </div>
+                    @endforelse
                 </div>
             </div>
 
-            <!-- Botón hamburguesa -->
-            <button class="menu-toggle" onclick="toggleMobileMenu()" aria-expanded="false" aria-label="Menú">
-                <i class="fas fa-bars"></i>
-            </button>
-        </div>
-    </nav>
 
-    <!-- Overlay para móvil -->
-    <div class="mobile-overlay" id="mobileOverlay" onclick="closeMobileMenu()"></div>
+            <!-- Resumen de compra -->
+            <div class="animate-slide-up" style="animation-delay: 0.2s;">
+                <div class="gradient-border sticky top-8 rounded-3xl p-1">
+                    <div class="gradient-border-content p-8">
 
-    <!-- Menú móvil -->
-    <div class="mobile-menu" id="mobileMenu">
-        <div class="mobile-menu-header">
-            <button class="mobile-menu-close" onclick="closeMobileMenu()">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
+                        <!-- Subtotal -->
+                        <div class="flex justify-between items-center p-4 bg-gray-50 rounded-xl">
+                            <span class="text-gray-700 font-medium">Subtotal:</span>
+                            <span class="font-bold text-gray-800">
+                                ${{ number_format($subtotal, 0, ',', '.') }}
+                            </span>
+                        </div>
 
-        <!-- Enlaces de navegación móvil -->
-        <ul class="mobile-nav-links">
-            <li><a href="{{ route('user.dashboard') }}">Inicio</a></li>
-            <li><a href="{{ route('producto') }}">Productos</a></li>
-            <li><a href="{{ route('servicio')}}">Servicios</a></li>
-            <li><a href="{{ route('acerca_de')}}">Acerca de</a></li>
-        </ul>
+                        <!-- IVA -->
+                        <div class="flex justify-between items-center p-4 bg-yellow-50 rounded-xl">
+                            <span class="text-gray-700 font-medium">IVA (*):</span>
+                            <span class="font-bold text-gray-800">
+                                ${{ number_format($impuestoCalculado, 0, ',', '.') }}
+                            </span>
+                        </div>
 
-        <!-- Acciones móvil -->
-        <ul class="mobile-nav-actions">
-            <li>
-                <a href="/notificaciones">
-                    <i class="fas fa-bell"></i>
-                    <span>Notificaciones</span>
-                </a>
-            </li>
-            <li>
-                <a href="/carrito">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span>Carrito de Compras</span>
-                </a>
-            </li>
-            <li>
-                <a href="{{ route('ayuda_cliente') }}">
-                    <i class="fa-solid fa-circle-exclamation"></i>
-                    <span>Necesito Ayuda</span>
-                </a>
-            </li>
-            <li>
-                <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Cerrar Sesión</span>
-                </a>
-            </li>
-        </ul>
-    </div>
-    <section data-aos="zoom-in-down" class="hero">
-        <div class="container">
-            <div class="hero-text">
-                <h2>La Finca al Día te Da La Bienvenida a</h2>
-                <h1 style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif">Tu Carrito Unico y Exclusivo</h1>
-            </div>
-        </div>
-    </section>
-    <div class="carrito-contenedor">
-        <h1>🌿 Tu Mercado Verde de la Finca 🥕</h1>
-        <div class="productos" id="lista-productos">
-            {{-- Aquí se cargarán los productos del carrito dinámicamente --}}
-            <p id="carrito-vacio-mensaje" style="text-align: center; color: #777; font-style: italic; display: none;">
-                Tu carrito está vacío. ¡Explora nuestros productos y añade algo delicioso!
-            </p>
-        </div>
-
-        <div class="resumen-carrito">
-            <h2>Resumen de Compra</h2>
-            <div class="lista-items" id="items-carrito">
-                {{-- Aquí se cargarán los subtotales de cada producto y el total --}}
-            </div>
-
-            <div class="descuentos">
-                <input type="text" id="codigo-descuento" placeholder="Código de descuento">
-                <button class="boton-descuento" onclick="aplicarDescuento()">Aplicar Cupón</button>
-            </div>
-
-            <div class="total-seccion">
-                <span>Total:</span>
-                <div class="input-group">
-                    <span class="input-group-text">$</span>
-                    <span id="total-compra" class="input-group-text">0.00</span>
+                        <!-- Total -->
+                        <div class="bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl p-4 text-white shadow-lg">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xl font-bold">Total:</span>
+                                <span class="text-2xl font-bold">
+                                    ${{ number_format($total, 0, ',', '.') }}
+                                </span>
+                            </div>
+                        </div>
+                        <hr class="my-6 border-gray-300">
+                        <!-- Botón de pago -->
+                        @if ($itemsCarrito->count() > 0)
+                        <div class="space-y-4">
+                            <form action="{{ route('forma_de_pago') }}" method="POST">
+                                @csrf
+                                <button type="submit" class="w-full bg-gradient-to-r from-green-300 to-green-600 text-white py-4 px-6 rounded-2xl text-lg font-bold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center space-x-3">
+                                    <span>Proceder al Pago</span>
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                    </svg>
+                                </button>
+                            </form>
+                            <!-- Información adicional -->
+                            <div class="text-center text-sm text-gray-600">
+                                <p class="flex items-center justify-center"> <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" />
+                                    </svg> Pago 100% seguro y protegido </p>
+                            </div>
+                        </div>
+                        @endif
+                    </div>
                 </div>
             </div>
-            <div class="total-seccion">
-                <span>¡Ya está tu carrito Listo!</span>
-                <button class="boton-descuento"><a style="text-decoration: none; color: beige;" href="../facturacion/FORMA_PAGO.html">Ir al pago</a></button>
-            </div>
         </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-        const listaProductosDiv = document.getElementById('lista-productos');
-        const itemsCarritoDiv = document.getElementById('items-carrito');
-        const totalCompraSpan = document.getElementById('total-compra');
-        const carritoVacioMensaje = document.getElementById('carrito-vacio-mensaje');
-
-        document.addEventListener('DOMContentLoaded', () => {
-            loadCartItems();
-        });
-
-        /**
-         * Carga los ítems del carrito desde el servidor y los muestra en la vista.
-         */
-        async function loadCartItems() {
-            try {
-                const response = await fetch('{{ route("api.carrito.index") }}', {
-                    method: 'GET',
-                    headers: {
-                        'X-CSRF-TOKEN': CSRF_TOKEN,
-                        'Accept': 'application/json'
-                    }
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.message || 'Error al cargar el carrito.');
-                }
-
-                renderCart(data.items, data.total);
-
-            } catch (error) {
-                console.error('Error al cargar el carrito:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error al cargar carrito',
-                    text: error.message || 'No se pudieron cargar los productos de tu carrito.',
-                });
-                renderCart([], 0); // Muestra un carrito vacío en caso de error
-            }
-        }
-
-        /**
-         * Renderiza los productos y el resumen del carrito en la interfaz.
-         * @param {Array} items - Array de objetos de productos en el carrito.
-         * @param {number} total - El total de la compra.
-         */
-        function renderCart(items, total) {
-            listaProductosDiv.innerHTML = ''; // Limpia el contenedor de productos
-            itemsCarritoDiv.innerHTML = ''; // Limpia el resumen del carrito
-
-            if (items.length === 0) {
-                carritoVacioMensaje.style.display = 'block'; // Muestra el mensaje de carrito vacío
-            } else {
-                carritoVacioMensaje.style.display = 'none'; // Oculta el mensaje
-                items.forEach(item => {
-                    const productoHtml = `
-                        <div class="producto-item">
-                            <img src="${item.producto.imagen || 'ruta/a/imagen/por/defecto.jpg'}" alt="${item.producto.nombre}">
-                            <div class="producto-details">
-                                <h3>${item.producto.nombre}</h3>
-                                <p>Categoría: ${item.producto.categoria?.nombre || 'Sin categoría'}</p>
-                            </div>
-                            <div class="producto-quantity">
-                                <button onclick="updateQuantity(${item.id}, ${item.cantidad - 1})">-</button>
-                                <input type="number" value="${item.cantidad}" min="1"
-                                    onchange="updateQuantity(${item.id}, this.value)">
-                                <button onclick="updateQuantity(${item.id}, ${item.cantidad + 1})">+</button>
-                            </div>
-                            <span class="producto-price">$${parseFloat(item.subtotal).toFixed(2)}</span>
-                            <button class="remove-item-button" onclick="removeItem(${item.id})">x</button>
-                        </div>
-                    `;
-                    listaProductosDiv.innerHTML += productoHtml;
-
-                    const resumenItemHtml = `
-                        <div>
-                            <span>${item.cantidad} x ${item.producto.nombre}</span>
-                            <span>$${parseFloat(item.subtotal).toFixed(2)}</span>
-                        </div>
-                    `;
-                    itemsCarritoDiv.innerHTML += resumenItemHtml;
-                });
-            }
-
-            totalCompraSpan.textContent = parseFloat(total).toFixed(2);
-        }
-
-        /**
-         * Actualiza la cantidad de un producto en el carrito.
-         * @param {number} itemId - El ID del ítem en el carrito (registro de la tabla carrito_compras).
-         * @param {number} newQuantity - La nueva cantidad deseada.
-         */
-        async function updateQuantity(itemId, newQuantity) {
-            newQuantity = parseInt(newQuantity);
-            if (isNaN(newQuantity) || newQuantity < 1) {
-                Swal.fire('Cantidad inválida', 'La cantidad debe ser al menos 1.', 'warning');
-                loadCartItems(); // Recargar para restaurar la cantidad anterior
-                return;
-            }
-
-            try {
-                const response = await fetch(`/api/carrito/update/${itemId}`, { // Necesitarás crear esta ruta
-                    method: 'POST', // O PUT/PATCH si tu API REST lo prefiere
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': CSRF_TOKEN
-                    },
-                    body: JSON.stringify({
-                        cantidad: newQuantity
-                    })
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.message || 'Error al actualizar la cantidad.');
-                }
-
-                Swal.fire('¡Actualizado!', data.message, 'success');
-                loadCartItems(); // Recargar el carrito para ver los cambios
-
-            } catch (error) {
-                console.error('Error al actualizar cantidad:', error);
-                Swal.fire('Error', error.message || 'No se pudo actualizar la cantidad.', 'error');
-                loadCartItems(); // Recargar para restaurar la cantidad
-            }
-        }
-
-        /**
-         * Elimina un producto del carrito.
-         * @param {number} itemId - El ID del ítem en el carrito (registro de la tabla carrito_compras).
-         */
-        async function removeItem(itemId) {
-            Swal.fire({
-                // ... (tu código de confirmación de SweetAlert) ...
-            }).then(async (result) => {
-                if (result.isConfirmed) {
-                    try {
-                        // *** ¡ASEGÚRATE DE USAR LA FUNCIÓN route() DE BLADE AQUÍ! ***
-                        const response = await fetch(`{{ route("api.carrito.remove", ["itemId" => "ITEM_ID_PLACEHOLDER"]) }}`.replace('ITEM_ID_PLACEHOLDER', itemId), {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': CSRF_TOKEN,
-                                'Content-Type': 'application/json' // Es buena práctica si no envías formData
-                            }
-                            // No necesitas body si solo envías el ID en la URL
-                        });
-
-                        const data = await response.json();
-
-                        if (!response.ok) {
-                            throw new Error(data.message || 'Error al eliminar el producto.');
-                        }
-
-                        Swal.fire('¡Eliminado!', data.message, 'success');
-                        loadCartItems(); // Recargar el carrito para ver los cambios
-                        // Opcional: Actualizar el conteo del carrito en el nav si la API lo devuelve
-                        if (data.cart_count !== undefined) {
-                            // Esta función `updateCartCount` debe ser global o accesible aquí
-                            // Si no la tienes, simplemente omite esta línea o implementa una simple aquí
-                            // const cartCountElement = document.querySelector('.nav-actions a[href="/carrito"] .cart-count');
-                            // if (cartCountElement) { cartCountElement.textContent = data.cart_count; }
-                        }
-
-                    } catch (error) {
-                        console.error('Error al eliminar producto:', error);
-                        Swal.fire('Error', error.message || 'No se pudo eliminar el producto.', 'error');
-                    }
-                }
-            });
-        }
-
-
-        // Función dummy para aplicar descuento (requeriría lógica de backend)
-        function aplicarDescuento() {
-            const codigo = document.getElementById('codigo-descuento').value;
-            Swal.fire('Función no implementada', `Aplicar descuento para "${codigo}" (requiere lógica de backend)`, 'info');
-        }
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-    <script src="../js/carrito.js"></script>
-    <script src="{{ asset('js/hamburguesa.js') }}"></script>
-</body>
-
-</html>
+    @endsection

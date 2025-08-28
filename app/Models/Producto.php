@@ -20,7 +20,9 @@ class Producto extends Model
         'impuesto_id',
         'descuento_id',
         'categoria_id',
+        'estado_id',
         'nombre_producto',
+        'stock',
         'descripccion',
         'precio_unitario',
     ];
@@ -39,5 +41,9 @@ class Producto extends Model
     public function categorias()
     {
         return $this->belongsTo(Categoria::class, 'categoria_id');
+    }
+
+    public function estados(){
+        return $this->belongsTo(Estado::class, 'estado_id');
     }
 }

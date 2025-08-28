@@ -9,7 +9,7 @@
     --shadow-light: 0 2px 4px rgba(0, 0, 0, 0.1);
     --shadow-medium: 0 4px 6px rgba(0, 0, 0, 0.1);
     --shadow-heavy: 0 8px 12px rgba(0, 0, 0, 0.2);
-    --transition-fast: 0.3s ease;
+    --transition-fast: 0.1s ease;
 }
 
 /* Reset y configuración base */

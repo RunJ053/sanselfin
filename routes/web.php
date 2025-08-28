@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\DatoUsuarioController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\CarritoCompraController;
+use App\Http\Controllers\FormaPagoController;
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\TareaController;
 use Illuminate\Support\Facades\Route;
@@ -76,20 +77,21 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/productos/{id}/details', [ProductoController::class, 'showProductDetails'])->name('productos.details');
 
     // Ruta para mostrar la vista del carrito (no es una API, es una vista)
-    Route::get('/carrito', function () {
-        return view('productos.carrito_de_comprar'); // Asegúrate de que 'pages.carrito_compra' sea la ruta correcta a tu vista del carrito
-    })->name('carrito.index');
+    Route::get('/carrito', [CarritoCompraController::class, 'index'])->name('carrito.index');
+    Route::patch('/update/{itemId}', [CarritoCompraController::class, 'update'])->name('carrito.update');
+    Route::delete('/remove/{itemId}', [CarritoCompraController::class, 'remove'])->name('carrito.remove');
+
 
     // Rutas de la API del carrito (para JS)
     Route::prefix('api/carrito')->group(function () {
-        Route::get('/', [CarritoCompraController::class, 'index'])->name('api.carrito.index'); // Obtener todos los ítems
         Route::post('/add', [CarritoCompraController::class, 'add'])->name('api.carrito.add'); // Añadir producto
         Route::get('/count', [CarritoCompraController::class, 'getCartCount'])->name('api.carrito.count'); // Obtener conteo
-        Route::post('/update/{itemId}', [CarritoCompraController::class, 'update'])->name('api.carrito.update'); // ¡Asegúrate de tener el método update en el controlador!
-        // Nueva ruta para eliminar un ítem
-        Route::post('/remove/{itemId}', [CarritoCompraController::class, 'remove'])->name('api.carrito.remove'); // <<< --- ¡PEGA ESTA LÍNEA AQUÍ!
-        // Añade aquí rutas para actualizar cantidad, eliminar, etc. si las implementas.
     });
+
+    //Ruta para el metodo de pago
+    Route::POST('/metodo_de_pago', [FormaPagoController::class, 'index'])->name('forma_de_pago');
+    Route::get('/checkout/efectivo', [FormaPagoController::class, 'pagarEfectivo'])->name('checkout.efectivo');
+    Route::post('/checkout/payu', [FormaPagoController::class, 'pagarPayU'])->name('checkout.payu');
 
     //Ruta para mostrar los servicios
     Route::get('/Servicios', function () {

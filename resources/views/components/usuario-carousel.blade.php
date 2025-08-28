@@ -1,5 +1,5 @@
 <div>
-    <section data-aos="fade-up" class="products" aria-labelledby="products-title">
+    <section class="products" aria-labelledby="products-title">
     <div class="container">
         <h2 id="products-title">Nuestra Galería de Productos</h2>
         <p>Descubre nuestra selección de frutas y verduras frescas directamente del campo a tu mesa.</p>
@@ -13,7 +13,7 @@
             <!-- Track del carrusel -->
             <div class="carousel-track">
                 @foreach ($productos as $producto)
-                    <article class="product-item animate-fade-in-up">
+                    <article class="product-item" data-aos="fade-up" data-aos-delay="200">
                         <img 
                             src="{{ filter_var($producto->imagen, FILTER_VALIDATE_URL) ? $producto->imagen : asset('img/product/' . $producto->imagen) }}" 
                             alt="{{ $producto->nombre_producto }}" 
@@ -27,7 +27,7 @@
                 @endforeach
             </div>
             <br><br>
-            <!-- Indicadores (puedes implementar dinámicamente con JS si quieres paginación visual) -->
+            <!-- Indicadores -->
             <div class="carousel-indicators"></div>
         </div>
     </div>

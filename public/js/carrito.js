@@ -1,111 +1,138 @@
-class Producto {
-    constructor(id, nombre, precio, imagen, descripcion) {
-        this.id = id;
-        this.nombre = nombre;
-        this.precio = precio;
-        this.imagen = imagen;
-        this.descripcion = descripcion;
-        this.cantidad = 0;
-    }
-}
+document.addEventListener("DOMContentLoaded", () => {
+    const token = document
+        .querySelector('meta[name="csrf-token"]')
+        .getAttribute("content");
 
-class Carrito {
-    constructor() {
-        this.productos = [];
-        this.descuentos = {
-            'VERANO2024': 0.1,
-            'FRESH': 0.15,
-            'VERDE10': 0.10
-        };
-        this.descuentoAplicado = 0;
-    }
+    document.querySelectorAll(".btn-update").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+            let itemId = btn.dataset.id;
+            let cantidad = document.querySelector(
+                `.cantidad-input[data-id="${itemId}"]`
+            ).value;
 
-    agregarProducto(producto) {
-        const existe = this.productos.find(p => p.id === producto.id);
-        if (existe) {
-            existe.cantidad++;
-        } else {
-            producto.cantidad = 1;
-            this.productos.push(producto);
-        }
-        this.actualizarCarrito();
-    }
+            try {
+                let response = await fetch(`/update/${itemId}`, {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": token,
+                    },
+                    body: JSON.stringify({
+                        cantidad,
+                    }),
+                });
 
-    eliminarProducto(id) {
-        const index = this.productos.findIndex(p => p.id === id);
-        if (index !== -1) {
-            this.productos[index].cantidad--;
-            if (this.productos[index].cantidad === 0) {
-                this.productos.splice(index, 1);
+                let data = await response.json();
+
+                if (response.ok) {
+                    Swal.fire({
+                        icon: "success",
+                        title: "Cantidad actualizada",
+                        text: data.message,
+                        timer: 1500,
+                        showConfirmButton: false,
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else if (response.status === 422) {
+                    // ❌ Cuando sobrepasa stock o cantidad inválida
+                    Swal.fire({
+                        icon: "warning",
+                        title: "Cantidad inválida",
+                        text: data.message,
+                    });
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: data.message || "Ocurrió un error inesperado",
+                    });
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "Ocurrió un error inesperado",
+                });
             }
+        });
+    });
+
+    // 🔹 Eliminar producto
+    document.querySelectorAll(".btn-remove").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+            let itemId = btn.dataset.id;
+
+            Swal.fire({
+                title: "¿Estás seguro?",
+                text: "El producto se eliminará del carrito.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Sí, eliminar",
+                cancelButtonText: "Cancelar",
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        let response = await fetch(`/remove/${itemId}`, {
+                            method: "DELETE",
+                            headers: {
+                                "X-CSRF-TOKEN": token,
+                            },
+                        });
+
+                        let data = await response.json();
+                        if (response.ok) {
+                            Swal.fire({
+                                icon: "success",
+                                title: "Eliminado",
+                                text: data.message,
+                                timer: 1500,
+                                showConfirmButton: false,
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Error",
+                                text: data.message,
+                            });
+                        }
+                    } catch (error) {
+                        console.error("Error:", error);
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error",
+                            text: "Ocurrió un error inesperado",
+                        });
+                    }
+                }
+            });
+        });
+    });
+});
+
+// Animaciones adicionales
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: "0px 0px -100px 0px",
+};
+
+const observer = new IntersectionObserver(function (entries) {
+    entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = "1";
+            entry.target.style.transform = "translateY(0)";
         }
-        this.actualizarCarrito();
-    }
+    });
+}, observerOptions);
 
-    calcularTotal() {
-        const subtotal = this.productos.reduce((total, p) => total + (p.precio * p.cantidad), 0);
-        return subtotal * (1 - this.descuentoAplicado);
-    }
-
-    aplicarDescuento(codigo) {
-        if (this.descuentos[codigo]) {
-            this.descuentoAplicado = this.descuentos[codigo];
-            this.actualizarCarrito();
-            return true;
-        }
-        return false;
-    }
-
-    actualizarCarrito() {
-        const listaItems = document.getElementById('items-carrito');
-        const totalElemento = document.getElementById('total-compra');
-        
-        listaItems.innerHTML = this.productos.map(p => 
-            `<div class="item-carrito">
-                <img src="${p.imagen}" alt="${p.nombre}" style="width: 50px; height: 50px; object-fit: cover; margin-right: 10px;">
-                <div style="flex-grow: 1;">
-                    <strong>${p.nombre}</strong>
-                    <div>COP ${p.precio.toFixed(2)} x ${p.cantidad}</div>
-                </div>
-                <div>
-                    <button onclick="carrito.eliminarProducto(${p.id})">-</button>
-                </div>
-            </div>`
-        ).join('');
-
-        totalElemento.textContent = `COP ${this.calcularTotal().toFixed(2)}`;
-    }
-}
-
-const carrito = new Carrito();
-
-const productos = [
-    new Producto(1, 'Tomates', 2.50, '../img/product/Tomate.png', 'Tomates orgánicos frescos'),
-    new Producto(2, 'Zanahorias', 1.80, '../img/product/zha.jfif', 'Zanahorias de agricultura local'),
-    new Producto(3, 'Espinacas', 3.20, '../img/product/Espinaca (2).png', 'Espinacas de cultivo ecológico'),
-    new Producto(4, 'Manzanas', 2.75, '../img/product/Manzana roja.png', 'Manzanas rojas deliciosas')
-];
-
-function renderizarProductos() {
-    const contenedor = document.getElementById('lista-productos');
-    contenedor.innerHTML = productos.map(p => 
-        `<div class="producto">
-            <img src="${p.imagen}" alt="${p.nombre}">
-            <h3>${p.nombre}</h3>
-            <p>${p.descripcion}</p>
-            <p>COP ${p.precio.toFixed(2)}</p>
-            <button onclick="carrito.agregarProducto(productos[${p.id-1}])">Añadir</button>
-        </div>`
-    ).join('');
-}
-
-function aplicarDescuento() {
-    const codigo = document.getElementById('codigo-descuento').value;
-    if (carrito.aplicarDescuento(codigo)) {
-        alert('¡Descuento aplicado con éxito!');
-    } else {
-        alert('Código de descuento inválido');
-    }
-}
-
-renderizarProductos();
+document.querySelectorAll(".group").forEach((el) => {
+    el.style.opacity = "0";
+    el.style.transform = "translateY(20px)";
+    el.style.transition = "all 0.6s ease-out";
+    observer.observe(el);
+});

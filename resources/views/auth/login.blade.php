@@ -80,7 +80,9 @@
                             <form method="POST" action="{{ route('register.user') }}" id="registerForm">
                                 @csrf
                                 <div class="d-flex align-items-center mb-4 pb-1 fade-in-2">
-                                    <img src="{{ asset('img/logo/icon.png') }}" alt="Logo" class="logo-img me-3" style="width: 50px; height: 50px;">
+                                    <a href="{{ url('/') }}">
+                                        <img src="{{ asset('img/logo/icon.png') }}" alt="Logo" class="logo-img me-3" style="width: 50px; height: 50px;">
+                                    </a>
                                     <span class="h1 fw-bold mb-0 brand-title">Finca Al Día</span>
                                 </div>
 

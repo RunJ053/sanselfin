@@ -1,7 +1,7 @@
 let currentModule = "overview";
 let isMobileMenuOpen = false;
 
-function toggleMobileMenu() {
+function toggleMobileMenu2() {
     const mobileMenu = document.getElementById("mobile-menu");
     const menuIcon = document.getElementById("menu-icon");
 

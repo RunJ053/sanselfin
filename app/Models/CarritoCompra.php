@@ -15,19 +15,20 @@ class CarritoCompra extends Model
         'cantidad',
         'precio_unitario',
         'subtotal',
-        'usuario', // Asumo que este es el ID del usuario
+        'impuesto_calculado',
+        'total_item',
+        'usuario',
         'producto_id',
     ];
 
     // Relaciones
     public function producto()
     {
-        return $this->belongsTo(Producto::class); // Asegúrate de que 'Producto' sea el nombre de tu modelo de producto
+        return $this->belongsTo(Producto::class);
     }
 
     public function user()
     {
-        // Asegúrate de que 'App\Models\DatoUsuario' sea la ruta correcta a tu modelo de usuario
         return $this->belongsTo(DatoUsuario::class, 'usuario', 'id'); // 'usuario' es la FK en carrito_compras, 'id' es la PK en DatoUsuario
     }
 }

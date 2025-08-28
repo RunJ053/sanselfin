@@ -1,30 +1,92 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('tittle','Mi Perfil')</title>
-
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Tu Carrito de Compras</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="{{ asset('img/logo/icon.png')}}" type="image/x-icon">
+    <link rel="stylesheet" href="{{ asset('css/NAV.css')}}">
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        'bounce-soft': 'bounce 2s infinite',
+                        'pulse-slow': 'pulse 3s infinite',
+                        'fade-in': 'fadeIn 0.6s ease-in-out',
+                        'slide-up': 'slideUp 0.5s ease-out',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': {
+                                opacity: '0',
+                                transform: 'translateY(20px)'
+                            },
+                            '100%': {
+                                opacity: '1',
+                                transform: 'translateY(0)'
+                            },
+                        },
+                        slideUp: {
+                            '0%': {
+                                opacity: '0',
+                                transform: 'translateY(30px)'
+                            },
+                            '100%': {
+                                opacity: '1',
+                                transform: 'translateY(0)'
+                            },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+        }
 
-    <link rel="shortcut icon" href="{{ asset('img/logo/icon.png') }}" type="image/x-icon">
-    <link rel="stylesheet" href="{{ asset('css/PERFIL.CSS') }}">
-    <link rel="stylesheet" href="{{ asset('css/NAV.css') }}">
+        .gradient-border {
+            background: linear-gradient(to bottom, #cfe8a9, #f8f4e3);
+            padding: 2px;
+            border-radius: 1rem;
+        }
+
+        .gradient-border-content {
+            background: white;
+            border-radius: calc(1rem - 2px);
+        }
+    </style>
 </head>
 
 <body>
-    @yield('nav')
-    <!-- Header -->
-    <header>
-        <nav class="main-nav" aria-label="Navegación principal">
+    @yield('content')
+    <nav class="main-nav" aria-label="Navegación principal">
         <!-- Logo -->
         <div class="nav-left">
             <a href="{{ route('user.dashboard') }}" class="logo-link">
                 <img src="{{asset ('img/logo/icon.png')}}" alt="Logo de La Finca al Día" width="120" height="40">
             </a>
         </div>
+
+        <!-- Enlaces de navegación centrales -->
+        <div class="nav-center">
+            <ul class="nav-links" role="menubar">
+                <li role="none"><a href="{{ route('user.dashboard') }}" role="menuitem">Inicio</a></li>
+                <li role="none"><a href="{{ route('producto') }}" role="menuitem">Productos</a></li>
+                <li role="none"><a href="{{ route('servicio')}}" role="menuitem">Servicios</a></li>
+                <li role="none"><a href="{{ route('acerca_de')}}" role="menuitem">Acerca de</a></li>
+            </ul>
+        </div>
+
         <!-- Acciones de la derecha -->
         <div class="nav-right">
             <ul class="nav-actions" role="menubar">
@@ -79,9 +141,6 @@
     <!-- Menú móvil -->
     <div class="mobile-menu" id="mobileMenu">
         <div class="mobile-menu-header">
-            <button class="menu-toggle" onclick="toggleMobileMenu2()">
-                    <i class="fas fa-bars" id="menu-icon"></i>
-                </button>
             <button class="mobile-menu-close" onclick="closeMobileMenu()">
                 <i class="fas fa-times"></i>
             </button>
@@ -104,7 +163,7 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('carrito.index') }}">
+                <a href="/carrito">
                     <i class="fas fa-shopping-cart"></i>
                     <span>Carrito de Compras</span>
                 </a>
@@ -116,32 +175,8 @@
                 </a>
             </li>
         </ul>
-    </header>
-    @yield('content')
-    
-    @if(session('success'))
-        <script>
-            Swal.fire({
-                icon: 'success',
-                title: '¡Actualización Exitosa! 🎉',
-                text: "{{ session('success') }}",
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                    toast.addEventListener('mouseenter', Swal.stopTimer)
-                    toast.addEventListener('mouseleave', Swal.resumeTimer)
-                }
-            });
-        </script>
-    @endif
-
-    <!-- scripts -->
-     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-    <script src="{{ asset('js/myprofile.js') }}"></script>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ asset('js/hamburguesa.js') }}"></script>
-    <!-- Footer -->
-
+    <script src="{{ asset('js/carrito.js') }}"></script>
 </body>
-
-</html>
