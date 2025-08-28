@@ -11,23 +11,41 @@ class Usuario extends Model
 
     protected $table = 'datos_usuario';  
     protected $primaryKey = 'id';         
-    public $timestamps = false;   
+    public $timestamps = true;   // porque tu migración tiene created_at y updated_at
 
     protected $fillable = [
-        'identif_us',
+        'nombre',
+        'apellidos',
+        'direccion',
         'tipo_docu',
-        'nomb_usu',
-        'ape_usu',
-        'telf_usu',
-        'pass_us',
-        'direc_us',
-        'correo_us',
-        'pass_us1'
+        'tipo_de_genero',
+        'documento',
+        'edad',
+        'telefono',
+        'email',
+        'localidad',
+        'password',
+        'user_img',
+        'role',
+        'is_verified',
+        'nom_imgs'
     ];
 
-    // Relación con la tabla tipo_docu
+    // Relación con tipo de documento
     public function tipoDocumento()
     {
-        return $this->belongsTo(TipoDocu::class, 'tipo_docu', 'id');
+        return $this->belongsTo(TipoDocumento::class, 'tipo_docu', 'id');
+    }
+
+    // Relación con genero
+    public function genero()
+    {
+        return $this->belongsTo(Genero::class, 'tipo_de_genero', 'id');
+    }
+
+    // Relación con localidad
+    public function localidad()
+    {
+        return $this->belongsTo(Localidad::class, 'localidad', 'id');
     }
 }
