@@ -8,8 +8,10 @@ use App\Http\Controllers\DatoUsuarioController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\CarritoCompraController;
 use App\Http\Controllers\FormaPagoController;
+use App\Http\Controllers\OpcionEntregaController;
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\TareaController;
+use App\Models\OpcionEntrega;
 use Illuminate\Support\Facades\Route;
 use App\Models\Producto;
 use Illuminate\Support\Facades\Auth;
@@ -87,6 +89,10 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/add', [CarritoCompraController::class, 'add'])->name('api.carrito.add'); // Añadir producto
         Route::get('/count', [CarritoCompraController::class, 'getCartCount'])->name('api.carrito.count'); // Obtener conteo
     });
+
+    //Rutas para la seleccion del destino de envio
+    Route::POST('/seleccionar_destino', [OpcionEntregaController::class, 'index'])->name('seleccionar_destino');
+    Route::post('/guardar_destino', [OpcionEntregaController::class, 'store'])->name('procesar.entrega');
 
     //Ruta para el metodo de pago
     Route::POST('/metodo_de_pago', [FormaPagoController::class, 'index'])->name('forma_de_pago');

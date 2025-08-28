@@ -14,13 +14,21 @@ class FormaPagoController extends Controller
         if (!Auth::check()) {
             return redirect()->route('login')->with('error', 'Debes iniciar sesión para ver tu carrito.');
         }
-
+        
         $userId = Auth::id();
         $itemsCarrito = CarritoCompra::with('producto')->where('usuario', $userId)->get();
-        $total = $itemsCarrito->sum('total_item');
-        $formasPago = FormaPago::all();
 
-        return view('facturacion.forma_pago', compact('formasPago', 'itemsCarrito','total'));
+        $subtotal = $itemsCarrito->sum(function($item){
+            return $item->cantidad * $item->precio_unitario;
+        });
+
+        // Recuperar costo de envío guardado en sesión
+        $opcionEntrega = session('opcion_entrega');
+        $costoEnvio = $opcionEntrega['costo'] ?? 0;
+
+        $total = $subtotal + $costoEnvio;
+
+        return view('facturacion.forma_pago', compact('formasPago','total'));
     }
 
     public function pagarEfectivo()

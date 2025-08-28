@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\OpcionEntrega;
+use App\Models\CarritoCompra;
+use App\Models\Estado;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class OpcionEntregaController extends Controller
 {
@@ -14,29 +17,42 @@ class OpcionEntregaController extends Controller
      */
     public function index()
     {
-        //
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'Debes iniciar sesión para ver tu carrito.');
+        }
+        $userId = Auth::id();
+        $itemsCarrito = CarritoCompra::with('producto')->where('usuario', $userId)->get();
+
+        //bucar las opciones de envio
+        $destino= OpcionEntrega::all();
+        //Estados
+        $estado= Estado::where('nombre_estado')->first();
+        return view('facturacion.opcionEnvio', compact('itemsCarrito','destino', 'estado'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'destino_envio' => 'required|exists:opciones_entrega,id',
+        ]);
+
+        $opcion = OpcionEntrega::findOrFail($request->destino_envio);
+
+        // Guardar en sesión la opción seleccionada
+        session([
+            'opcion_entrega' => [
+                'id' => $opcion->id,
+                'ciudad' => $opcion->ciudad,
+                'departamento' => $opcion->departamento,
+                'tiempo' => $opcion->tiempo_entrega,
+                'costo' => $opcion->costo ?? 0,
+            ]
+        ]);
+
+        return redirect()->route('forma_de_pago')
+            ->with('success', 'Opción de envío seleccionada correctamente.');
     }
+
 
     /**
      * Display the specified resource.

@@ -4,11 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\CarritoCompra;
 use App\Models\Producto;
-use App\Models\Promocion;
-use App\Models\Impuesto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class CarritoCompraController extends Controller
 {
