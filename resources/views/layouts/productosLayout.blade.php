@@ -38,7 +38,7 @@
             <div class="nav-right">
                 <ul class="nav-actions" role="menubar">
                     <li role="none">
-                        <a href="{{ route('myProfile') }}" role="menuitem" aria-label="Notificaciones">
+                        <a href="{{ route('notificaciones.index') }}" role="menuitem" aria-label="Notificaciones">
                             <i class="fas fa-bell"></i>
                             <span class="visually-hidden">Notificaciones</span>
                         </a>
@@ -104,7 +104,7 @@
             <!-- Acciones móvil -->
             <ul class="mobile-nav-actions">
                 <li>
-                    <a href="/notificaciones">
+                    <a href="{{ route('notificaciones.index') }}">
                         <i class="fas fa-bell"></i>
                         <span>Notificaciones</span>
                     </a>

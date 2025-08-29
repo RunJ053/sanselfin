@@ -4,30 +4,38 @@ namespace App\Http\Controllers;
 
 use App\Models\OpcionEntrega;
 use App\Models\CarritoCompra;
-use App\Models\Estado;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class OpcionEntregaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
         if (!Auth::check()) {
             return redirect()->route('login')->with('error', 'Debes iniciar sesión para ver tu carrito.');
         }
+
         $userId = Auth::id();
+
+        // Carrito del usuario
         $itemsCarrito = CarritoCompra::with('producto')->where('usuario', $userId)->get();
 
-        //bucar las opciones de envio
-        $destino= OpcionEntrega::all();
-        //Estados
-        $estado= Estado::where('nombre_estado')->first();
-        return view('facturacion.opcionEnvio', compact('itemsCarrito','destino', 'estado'));
+        // Opciones de envío con su estado
+        $destino = OpcionEntrega::where('estado_id', 1)->with('estado')->get();
+
+        // Dirección del usuario logueado
+        $direccionUsuario = Auth::user()->direccion;
+
+        // Calculamos subtotal en base a los ítems 
+        $subtotal = $itemsCarrito->sum('subtotal');
+        //calcular impuestos 
+        $impuestoCalculado = $itemsCarrito->sum('impuesto_calculado');
+        // Calcular el total
+        $total = $subtotal + $impuestoCalculado;
+
+        return view('facturacion.opcionEnvio', compact('itemsCarrito', 'destino', 'direccionUsuario', 'subtotal', 'impuestoCalculado', 'total'));
     }
 
     public function store(Request $request)
@@ -36,66 +44,25 @@ class OpcionEntregaController extends Controller
             'destino_envio' => 'required|exists:opciones_entrega,id',
         ]);
 
-        $opcion = OpcionEntrega::findOrFail($request->destino_envio);
+        $destino = OpcionEntrega::find($request->destino_envio);
 
-        // Guardar en sesión la opción seleccionada
+        // Total de productos calculado desde el carrito
+        $totalProductos = CarritoCompra::where('usuario', auth()->id())->sum(DB::raw('cantidad * precio_unitario'));
+
+        $total = $totalProductos + $destino->costo;
+
+        // Guardar en sesión
         session([
             'opcion_entrega' => [
-                'id' => $opcion->id,
-                'ciudad' => $opcion->ciudad,
-                'departamento' => $opcion->departamento,
-                'tiempo' => $opcion->tiempo_entrega,
-                'costo' => $opcion->costo ?? 0,
-            ]
+                'id' => $destino->id,
+                'nombre' => $destino->nombre_opcion,
+                'costo' => $destino->costo,
+                'descripcion' => $destino->descripcion,
+            ],
+            'total_final' => $total
         ]);
 
-        return redirect()->route('forma_de_pago')
-            ->with('success', 'Opción de envío seleccionada correctamente.');
-    }
 
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\OpcionEntrega  $opcionEntrega
-     * @return \Illuminate\Http\Response
-     */
-    public function show(OpcionEntrega $opcionEntrega)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\OpcionEntrega  $opcionEntrega
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(OpcionEntrega $opcionEntrega)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\OpcionEntrega  $opcionEntrega
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, OpcionEntrega $opcionEntrega)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\OpcionEntrega  $opcionEntrega
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(OpcionEntrega $opcionEntrega)
-    {
-        //
+        return redirect()->route('forma_de_pago')->with('success', 'Opción de envío seleccionada correctamente.');
     }
 }

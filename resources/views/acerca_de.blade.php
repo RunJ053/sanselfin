@@ -38,11 +38,21 @@
             <div class="nav-right">
                 <ul class="nav-actions" role="menubar">
                     <li role="none">
-                        <a href="{{ route('myProfile') }}" role="menuitem" aria-label="Notificaciones">
-                            <i class="fas fa-bell"></i>
+                        <a href="{{ route('notificaciones.index') }}" role="menuitem" aria-label="Notificaciones">
+                            <div class="notification-container">
+                                <i class="fas fa-bell"></i>
+                                @if(isset($notificaciones) && $notificaciones->where('leida', false)->count() > 0)
+                                @if($notificaciones->where('leida', false)->count() <= 99)
+                                    <span class="notification-badge">{{ $notificaciones->where('leida', false)->count() }}</span>
+                                    @else
+                                    <span class="notification-badge large-number">99+</span>
+                                    @endif
+                                    @endif
+                            </div>
                             <span class="visually-hidden">Notificaciones</span>
                         </a>
                     </li>
+
                     <li role="none">
                         <a href="{{ route('carrito.index') }}" role="menuitem" aria-label="Carrito de Compras">
                             <i class="fas fa-shopping-cart"></i>
@@ -103,10 +113,19 @@
 
             <!-- Acciones móvil -->
             <ul class="mobile-nav-actions">
-                <li>
-                    <a href="/notificaciones">
-                        <i class="fas fa-bell"></i>
-                        <span>Notificaciones</span>
+                <li role="none">
+                    <a href="{{ route('notificaciones.index') }}" role="menuitem" aria-label="Notificaciones">
+                        <div class="notification-container">
+                            <i class="fas fa-bell"></i>
+                            @if(isset($notificaciones) && $notificaciones->where('leida', false)->count() > 0)
+                            @if($notificaciones->where('leida', false)->count() <= 99)
+                                <span class="notification-badge">{{ $notificaciones->where('leida', false)->count() }}</span>
+                                @else
+                                <span class="notification-badge large-number">99+</span>
+                                @endif
+                                @endif
+                        </div>
+                        <span class="visually-hidden">Notificaciones</span>
                     </a>
                 </li>
                 <li>

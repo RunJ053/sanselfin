@@ -126,7 +126,7 @@
                         <div class="content">
                             <h3>Encuentra una variedad de vegetales frescos en un solo lugar</h3>
                             <p>Navega por nuestra amplia sección de vegetales frescos y encuentra todo lo que necesitas para tus comidas saludables.</p>
-                            <button><a href="user/LOGIN.html">¡Me interesa!</a></button>
+                            <button><a href="{{ route('login') }}">¡Me interesa!</a></button>
                         </div>
                     </div>
                     
@@ -135,7 +135,7 @@
                         <div class="content">
                             <h3>Recibe tus vegetales directamente en tu puerta</h3>
                             <p>Te ofrecemos entregas rápidas y confiables para que disfrutes de vegetales frescos sin salir de tu hogar.</p>
-                            <button><a href="user/LOGIN.html">¡Comprar ahora!</a></button>
+                            <button><a href="{{ route('login') }}">¡Comprar ahora!</a></button>
                         </div>
                     </div>
                 </div>

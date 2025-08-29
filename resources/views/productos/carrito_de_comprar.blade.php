@@ -140,7 +140,7 @@
                         <!-- Botón de pago -->
                         @if ($itemsCarrito->count() > 0)
                         <div class="space-y-4">
-                            <form action="{{ route('seleccionar_destino') }}" method="POST">
+                            <form action="{{ route('seleccionar_destino') }}" method="GET">
                                 @csrf
                                 <button type="submit" class="w-full bg-gradient-to-r from-green-300 to-green-600 text-white py-4 px-6 rounded-2xl text-lg font-bold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center space-x-3">
                                     <span>Proceder al Pago</span>

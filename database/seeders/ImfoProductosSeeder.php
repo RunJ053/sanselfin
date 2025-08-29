@@ -7,7 +7,7 @@ use App\Models\Impuesto;
 use App\Models\Promocion;
 use App\Models\Estado;
 use App\Models\FormaPago;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\OpcionEntrega;
 use Illuminate\Database\Seeder;
 
 class ImfoProductosSeeder extends Seeder
@@ -166,6 +166,13 @@ class ImfoProductosSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now()
             ]
+        ]);
+
+        // Insertar datos en la tabla opciones_entrega
+        OpcionEntrega::insert([
+            ['nombre_opcion' => 'Envío Estándar', 'costo' => 10000, 'descripcion' => 'Entrega en 2-3 días hábiles', 'estado_id' => 1, 'created_at' => now(), 'updated_at' => now()],
+            ['nombre_opcion' => 'Envío Adomicilio', 'costo' => 15000, 'descripcion' => 'Entrega directo a tu casa', 'estado_id' => 1, 'created_at' => now(), 'updated_at' => now()],
+            ['nombre_opcion' => 'Recogida en Tienda', 'costo' => 0, 'descripcion' => 'Recoge tu pedido en nuestra tienda física', 'estado_id' => 1, 'created_at' => now(), 'updated_at' => now()],
         ]);
     }
 }

@@ -3,12 +3,10 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\User;
 use App\Models\Genero;
 use App\Models\TipoDocumento;
 use App\Models\Localidad;
 use App\Models\TipoCliente;
-use Illuminate\Foundation\Auth\User as AuthUser;
 
 class InicialDataSeeder extends Seeder
 {

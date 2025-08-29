@@ -156,6 +156,72 @@ body {
     color: #fff !important;
 }
 
+/* NUEVOS ESTILOS PARA EL BADGE DE NOTIFICACIONES */
+.notification-container {
+    position: relative !important;
+    display: inline-block !important;
+}
+
+.notification-badge {
+    position: absolute !important;
+    top: -8px !important;
+    right: -8px !important;
+    background: linear-gradient(135deg, #ff4757, #ff3838) !important;
+    color: white !important;
+    border-radius: 50% !important;
+    width: 20px !important;
+    height: 20px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 11px !important;
+    font-weight: bold !important;
+    border: 2px solid white !important;
+    box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4) !important;
+    animation: pulse-notification 2s infinite !important;
+    z-index: 10 !important;
+}
+
+/* Animación sutil para el badge */
+@keyframes pulse-notification {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
+    }
+    50% {
+        transform: scale(1.1);
+        box-shadow: 0 3px 12px rgba(255, 71, 87, 0.6);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
+    }
+}
+
+/* Para números más grandes (opcional) */
+.notification-badge.large-number {
+    width: 24px !important;
+    height: 20px !important;
+    border-radius: 10px !important;
+    font-size: 10px !important;
+    right: -12px !important;
+}
+
+/* Variante solo punto rojo (sin número) */
+.notification-dot {
+    position: absolute !important;
+    top: -4px !important;
+    right: -4px !important;
+    background: linear-gradient(135deg, #ff4757, #ff3838) !important;
+    width: 12px !important;
+    height: 12px !important;
+    border-radius: 50% !important;
+    border: 2px solid white !important;
+    box-shadow: 0 2px 6px rgba(255, 71, 87, 0.5) !important;
+    animation: pulse-notification 2s infinite !important;
+    z-index: 10 !important;
+}
+
 /* Avatar de usuario */
 .user-avatar {
     position: relative !important;

@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Collection;
 use App\Models\Producto;
 use App\Models\Categoria;
 use App\Models\Impuesto;
 use App\Models\Estado;
+use App\Models\Notificacion;
 use Illuminate\Support\Str;
 use App\Models\Promocion;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class ProductoController extends Controller
 {

@@ -20,20 +20,15 @@
                     <div class="relative">
                         <div class="absolute inset-0 bg-green-500 rounded-full blur-md opacity-30 animate-pulse-slow"></div>
                         <div class="relative bg-gradient-to-r from-green-500 to-emerald-600 text-white px-8 py-4 rounded-full shadow-lg">
-                            <h3 class="text-3xl font-bold">${{ number_format($total, 0, ',', '.') }} COP</h3>
+                            <h3 class="text-3xl font-bold">${{ number_format($totalEnvio, 0, ',', '.') }} COP</h3>
                         </div>
                         <div class="p-4 rounded-lg shadow bg-white">
                             <h2 class="text-lg font-bold">Resumen de la compra</h2>
-                            <p>Subtotal: ${{ number_format($subtotal, 0, ',', '.') }}</p>
-                            <p>Envío: 
-                                @if($costoEnvio > 0)
-                                    ${{ number_format($costoEnvio, 0, ',', '.') }}
-                                @else
-                                    Gratis
-                                @endif
-                            </p>
+                            <p>Subtotal + IVA*: ${{ number_format($total, 0, ',', '.') }}</p>
+                            <p>Envío: ${{ number_format($costoEnvio, 0, ',', '.') }}</p>
+                            <hr>
                             <hr class="my-2">
-                            <p class="font-bold text-xl">Total: ${{ number_format($total, 0, ',', '.') }}</p>
+                            <p class="font-bold text-xl">Total a pagar: ${{ number_format($totalEnvio, 0, ',', '.') }}</p>
                         </div>
                     </div>
                 </div>
