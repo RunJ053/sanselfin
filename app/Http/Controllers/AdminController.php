@@ -7,6 +7,7 @@ use App\Models\TipoDocumento;
 use App\Models\Genero;
 use App\Models\Localidad;
 use App\Models\Producto;
+use App\Models\Categoria;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -14,11 +15,15 @@ class AdminController extends Controller
     /**
      * Mostrar listado de usuarios
      */
-    public function index()
-    {
-        $usuarios = Usuario::with(['tipoDocumento', 'genero', 'localidad'])->get();
-        return view('admin.usuarios', compact('usuarios'));
-    }
+        public function index()
+        {
+            $usuarios = Usuario::with(['tipoDocumento', 'genero', 'localidad'])->get();
+            $inventarios = Producto::all(); 
+            $categorias = Categoria::all();
+
+            return view('admin.usuarios', compact('usuarios', 'inventarios', 'categorias'));
+        }
+
 
     /**
      * Mostrar formulario de crear usuario
