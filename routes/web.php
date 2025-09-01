@@ -54,7 +54,7 @@ Route::middleware(['auth'])->group(function () {
     })->name('user.dashboard');
 
     //Rutas de perfil de usuario
-    Route::get('/my-profile', [LoginController::class, 'myProfile'])->name('myProfile');
+    Route::get('/my-profile/{section?}', [LoginController::class, 'myProfile'])->name('myProfile');
     Route::get('/user/edit/{id}', [DatoUsuarioController::class, 'edit'])->name('user.edit');
     Route::put('/user/update/{id}', [DatoUsuarioController::class, 'update'])->name('user.update');
     Route::get('/user/change-password', [DatoUsuarioController::class, 'changePasswordForm'])->name('user.changePasswordForm');

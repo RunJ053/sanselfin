@@ -300,12 +300,18 @@
                 </div>
             </div>
 
-            <div id="notifications-content" class="module-content hidden">
-                <div class="content-section">
-                    <h2 class="section-title">Notificaciones</h2>
-                    <p>Revisa todas tus notificaciones...</p>
-                </div>
+           <div>
+    @if($section === 'notifications')
+        <div id="notifications-content" class="module-content">
+            <div class="content-section">
+                <h2 class="section-title">Notificaciones</h2>
+                <p>Revisa todas tus notificaciones...</p>
             </div>
+        </div>
+    @else
+        <!-- Otras secciones -->
+    @endif
+</div>
 
             <div id="settings-content" class="module-content hidden">
                 <div class="content-section">

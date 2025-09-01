@@ -3,7 +3,7 @@
     margin-top: 10%;
     background-color: #f8f9fa;
     padding-top: 4rem;
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
 }
 
 .container {

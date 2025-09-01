@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- Selectores de Elementos del DOM ---
     const form = document.getElementById('registerForm');
-    const tipoUsuarioSelect = document.getElementById('tipo_usuario_select');
     const nombreInput = document.getElementById('registerNombre');
     const apellidoInput = document.getElementById('apellido');
     const direccionInput = document.getElementById('direccion');
@@ -13,7 +12,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Mapeo de IDs a sus nombres de campo para mensajes de error
     const fieldNames = {
-        'tipo_usuario_select': 'Tipo de Usuario',
         'registerNombre': 'Nombre',
         'apellido': 'Apellido',
         'direccion': 'Dirección',
@@ -44,44 +42,41 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // --- Funciones de Validación Individuales ---
-
-    function validateTipoUsuario() {
-        const isValid = tipoUsuarioSelect.value !== "";
-        showValidationFeedback(tipoUsuarioSelect, isValid, 'Por favor, selecciona un tipo de usuario.');
-        return isValid;
-    }
+    // --- Funciones de Validación Individuales (Mejoradas) ---
 
     function validateNombre() {
         const value = nombreInput.value.trim();
-        // Permite letras, espacios y caracteres acentuados.
         const regex = /^[A-Za-záéíóúÁÉÍÓÚüÜñÑ\s´]{3,35}$/;
         const isValid = regex.test(value);
-        showValidationFeedback(nombreInput, isValid, 'El nombre debe tener entre 3 y 35 caracteres y solo contener letras.');
-        return isValid;
+        const message = 'El nombre debe tener entre 3 y 35 caracteres y solo contener letras.';
+        showValidationFeedback(nombreInput, isValid, message);
+        return isValid ? '' : message;
     }
 
     function validateApellido() {
         const value = apellidoInput.value.trim();
-        const regex = /^[A-Za-záéíóúÁÉÍÓÚüÜñÑ\s´]{6,35}$/;
+        const regex = /^[A-Za-záéíóúÁÉÍÓÚüÜñÑ\s´]{3,35}$/;
         const isValid = regex.test(value);
-        showValidationFeedback(apellidoInput, isValid, 'El apellido debe tener entre 3 y 35 caracteres y solo contener letras.');
-        return isValid;
+        const message = 'El apellido debe tener entre 3 y 35 caracteres y solo contener letras.';
+        showValidationFeedback(apellidoInput, isValid, message);
+        return isValid ? '' : message;
     }
 
     function validateDireccion() {
         const value = direccionInput.value.trim();
         const isValid = value.length >= 7 && value.length <= 50;
-        showValidationFeedback(direccionInput, isValid, 'La dirección debe tener entre 7 y 50 caracteres.');
-        return isValid;
+        const message = 'La dirección debe tener entre 7 y 50 caracteres.';
+        showValidationFeedback(direccionInput, isValid, message);
+        return isValid ? '' : message;
     }
 
     function validateEmail() {
         const value = emailInput.value.trim();
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const isValid = regex.test(value);
-        showValidationFeedback(emailInput, isValid, 'Por favor, ingresa un correo electrónico válido.');
-        return isValid;
+        const message = 'Por favor, ingresa un correo electrónico válido.';
+        showValidationFeedback(emailInput, isValid, message);
+        return isValid ? '' : message;
     }
 
     function validatePassword() {
@@ -98,18 +93,18 @@ document.addEventListener('DOMContentLoaded', function() {
             message = 'La contraseña debe tener al menos 8 caracteres, incluyendo una mayúscula, una minúscula, un número y un símbolo.';
         }
         showValidationFeedback(passwordInput, isValid, message);
-        return isValid;
+        return isValid ? '' : message;
     }
 
     function validatePasswordConfirmation() {
         const isValid = passwordConfirmInput.value === passwordInput.value;
-        showValidationFeedback(passwordConfirmInput, isValid, 'Las contraseñas no coinciden.');
-        return isValid;
+        const message = 'Las contraseñas no coinciden.';
+        showValidationFeedback(passwordConfirmInput, isValid, message);
+        return isValid ? '' : message;
     }
 
 
     // --- Event Listeners para Validación en Tiempo Real ---
-    tipoUsuarioSelect.addEventListener('change', validateTipoUsuario);
     nombreInput.addEventListener('input', validateNombre);
     apellidoInput.addEventListener('input', validateApellido);
     direccionInput.addEventListener('input', validateDireccion);
@@ -123,33 +118,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- Manejo del Envío del Formulario ---
     form.addEventListener('submit', function(event) {
-        // Ejecutamos todas las validaciones
-        const isTipoUsuarioValid = validateTipoUsuario();
-        const isNombreValid = validateNombre();
-        const isApellidoValid = validateApellido();
-        const isDireccionValid = validateDireccion();
-        const isEmailValid = validateEmail();
-        const isFechaNacValid = validateFechaNac();
-        const isPasswordValid = validatePassword();
-        const isPasswordConfirmValid = validatePasswordConfirmation();
+        // Ejecutamos todas las validaciones y recogemos los errores
+        const errors = [
+            validateNombre(),
+            validateApellido(),
+            validateDireccion(),
+            validateEmail(),
+            validateFechaNac(),
+            validatePassword(),
+            validatePasswordConfirmation()
+        ].filter(error => error !== ''); // Filtra los mensajes vacíos (campos válidos)
 
-        // Si alguna validación falla, prevenimos el envío y mostramos SweetAlert2
-        if (!(isTipoUsuarioValid && isNombreValid && isApellidoValid && isDireccionValid && isEmailValid && isFechaNacValid && isPasswordValid && isPasswordConfirmValid)) {
+        // Si hay errores, prevenimos el envío y mostramos SweetAlert2
+        if (errors.length > 0) {
             event.preventDefault();
 
-            let errors = [];
-            // Recorremos los campos y agregamos sus errores al array
-            if (!isTipoUsuarioValid) errors.push(showValidationFeedback(tipoUsuarioSelect, false, 'Por favor, selecciona un tipo de usuario.'));
-            if (!isNombreValid) errors.push(showValidationFeedback(nombreInput, false, 'El nombre debe tener entre 3 y 35 caracteres y solo contener letras.'));
-            if (!isApellidoValid) errors.push(showValidationFeedback(apellidoInput, false, 'El apellido debe tener entre 3 y 35 caracteres y solo contener letras.'));
-            if (!isDireccionValid) errors.push(showValidationFeedback(direccionInput, false, 'La dirección debe tener entre 7 y 50 caracteres.'));
-            if (!isEmailValid) errors.push(showValidationFeedback(emailInput, false, 'Por favor, ingresa un correo electrónico válido.'));
-            if (!isFechaNacValid) errors.push(showValidationFeedback(fechaNacInput, false, 'Debes ser mayor de 18 años para registrarte.'));
-            if (!isPasswordValid) errors.push(showValidationFeedback(passwordInput, false, 'La contraseña debe tener al menos 8 caracteres, incluyendo una mayúscula, una minúscula, un número y un símbolo.'));
-            if (!isPasswordConfirmValid) errors.push(showValidationFeedback(passwordConfirmInput, false, 'Las contraseñas no coinciden.'));
-
             // Construir el HTML de la lista de errores
-            const errorsHtml = '<ul>' + errors.map(msg => `<li>${msg}</li>`).join('') + '</ul>';
+            const errorsHtml = '<ul style="text-align: left; list-style-position: inside;">' + 
+                               errors.map(msg => `<li>${msg}</li>`).join('') + 
+                               '</ul>';
 
             // Mostrar el SweetAlert2
             Swal.fire({

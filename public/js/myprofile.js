@@ -17,6 +17,8 @@ function toggleMobileMenu() {
 }
 
 function showModule(moduleId) {
+    console.log("Mostrando módulo:", moduleId);
+    
     // Hide all module contents
     const moduleContents = document.querySelectorAll(".module-content");
     moduleContents.forEach((content) => {
@@ -27,6 +29,9 @@ function showModule(moduleId) {
     const selectedContent = document.getElementById(moduleId + "-content");
     if (selectedContent) {
         selectedContent.classList.remove("hidden");
+        console.log("Contenido mostrado:", moduleId + "-content");
+    } else {
+        console.log("No se encontró el contenido para:", moduleId + "-content");
     }
 
     // Update navigation active states
@@ -101,14 +106,14 @@ window.addEventListener("resize", function () {
     }
 });
 
-//#1234
+// Dropdown toggle
 function toggleDropdown() {
     const dropdown = document.getElementById("dropdownMenu");
     dropdown.style.display =
         dropdown.style.display === "block" ? "none" : "block";
 }
 
-// Cerrar el menú si se hace clic fuera de él
+// Close dropdown if clicked outside
 window.onclick = function (event) {
     if (!event.target.matches(".user-avatar")) {
         const dropdowns = document.getElementsByClassName("dropdown-menu");
@@ -120,3 +125,23 @@ window.onclick = function (event) {
         }
     }
 };
+
+// Llamar a la función al cargar la página
+document.addEventListener('DOMContentLoaded', function() {
+    // Obtener la sección desde la URL si está presente
+    const urlParams = new URLSearchParams(window.location.search);
+    const sectionFromUrl = urlParams.get('section');
+    
+    // Usar el parámetro de la URL o el de Laravel
+    const section = sectionFromUrl || '{{ $section ?? "" }}';
+    
+    console.log("Sección detectada:", section);
+    
+    if (section && section.trim() !== '') {
+        showModule(section);
+    } else {
+        // Mostrar módulo por defecto si no hay sección específica
+        showModule('overview');
+    }
+});
+

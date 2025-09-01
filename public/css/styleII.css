@@ -21,7 +21,7 @@
 
 body {
     background: linear-gradient(to bottom, #cfe8a9, #f8f4e3);
-    font-family: Georgia, "Times New Roman", Times, serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
     line-height: 1.6;
     color: var(--text-dark);
 }

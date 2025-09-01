@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verificación de Correo</title>
+    <link rel="shortcut icon" href={{ asset('img/logo/icon.png') }} type="image/x-icon">
+
     <!-- CSS de Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <!-- Estilos personalizados -->
@@ -41,13 +43,14 @@
                 </svg>
             </div>
             <h1 class="card-title fw-bold text-dark mb-3">¡Casi listo!</h1>
-            <p class="card-text text-secondary mb-4">
+            <p class="card-text text-secondary mb-4" style="font-size: 1.1rem; width: 72%; margin: 0 auto;">
                 Hemos enviado un correo de verificación a tu bandeja de entrada. Por favor, revísalo y haz clic en el enlace para activar tu cuenta.
+                <br><br>
+                <a href="{{ route('login') }}" class="btn btn-success">Ir a Iniciar Sesión</a>
             </p>
             <div class="mt-4">
-                <p class="text-muted small">
-                    ¿No lo ves? Revisa tu carpeta de spam o
-                    <a href="#" class="text-success text-decoration-none fw-bold">envía el correo de nuevo.</a>
+                <p class="text-muted small fw-bold">
+                    ¿No lo ves? Revisa tu carpeta de spam
                 </p>
             </div>
         </div>

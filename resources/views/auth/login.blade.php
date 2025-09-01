@@ -73,17 +73,11 @@
                                     ¿No tienes una cuenta?
                                     <a href="#!" class="text-decoration-none" style="color: #393f81;" id="showRegisterTab"><strong>Regístrate aquí</strong></a>
                                 </p>
-                                <div class="text-center fade-in-4">
-                                    <a href="{{ route('ayuda_cliente')}}" class="small text-muted text-decoration-none me-3"><i class="fas fa-file-contract me-1"></i>Necesitas Ayuda</a>
-                                    <a href="#!" class="small text-muted text-decoration-none" data-mdb-toggle="modal" data-mdb-target="#adminVerificationModal">
-                                        <i class="fas fa-shield-alt me-1"></i>Verificar cuenta
-                                    </a>
-                                </div>
                             </form>
                         </div>
                         <!-- Registro de usuario -->
                         <div class="tab-pane fade" id="pills-register" role="tabpanel" aria-labelledby="tab-register">
-                            <form method="POST" action="" id="registerForm">
+                            <form method="POST" action="{{ route('register.user') }}" id="registerForm">
                                 @csrf
                                 <div class="d-flex align-items-center mb-4 pb-1 fade-in-2">
                                     <img src="{{ asset('img/logo/icon.png') }}" alt="Logo" class="logo-img me-3" style="width: 50px; height: 50px;">
@@ -92,17 +86,13 @@
 
                                 <h5 class="fw-normal mb-4 pb-3 fade-in-2" style="letter-spacing: 1px; color: #495057;">Crea una cuenta nueva</h5>
 
-                                <div class="row mb-4 fade-in-3">
+                                <div class="row mb-4 fade-in-4">
                                     <div class="col-md-6">
                                         <div class="form-floating">
-                                            <select class="form-select form-select @error('tipo_usuario') is-invalid @enderror" id="tipo_usuario_select" name="tipo_usuario" required>
-                                                <option value="" disabled selected>Selecciona un tipo de usuario</option>
-                                                @foreach ($tipo_clientes as $tc)
-                                                <option value="{{ $tc->id }}" {{ old('tipo_usuario') == $tc->id ? 'selected' : '' }}>{{ $tc->role }}</option>
-                                                @endforeach
-                                            </select>
-                                            <label for="tipo_usuario"><i class="fas fa-user-tag me-2"></i>Tipo de Usuario</label>
-                                            @error('tipo_usuario')
+                                            <input type="hidden" name="tipo_usuario" value="1">
+                                            <input type="text" class="form-control form-control-lg @error('apellido') is-invalid @enderror" id="apellido" name="apellido" value="{{ old('apellido') }}" required>
+                                            <label for="apellido"><i class="fas fa-user me-2"></i>Apellido</label>
+                                            @error('apellido')
                                             <div class="invalid-feedback">
                                                 {{ $message }}
                                             </div>
@@ -122,17 +112,7 @@
                                     </div>
                                 </div>
 
-                                <div class="form-floating mb-4 fade-in-3">
-                                    <input type="text" class="form-control form-control-lg @error('apellido') is-invalid @enderror" id="apellido" name="apellido" value="{{ old('apellido') }}" required>
-                                    <label for="apellido"><i class="fas fa-user me-2"></i>Apellido</label>
-                                    @error('apellido')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                    @enderror
-                                </div>
-
-                                <div class="form-floating mb-4 fade-in-3">
+                                <div class="form-floating mb-4 fade-in-4">
                                     <input type="text" class="form-control form-control-lg @error('direccion') is-invalid @enderror" id="direccion" name="direccion" value="{{ old('direccion') }}" required>
                                     <label for="direccion"><i class="fas fa-location-dot me-2"></i>Dirección</label> @error('direccion')
                                     <div class="invalid-feedback">
@@ -141,7 +121,7 @@
                                     @enderror
                                 </div>
 
-                                <div class="row mb-4 fade-in-3">
+                                <div class="row mb-4 fade-in-4">
                                     <div class="col-md-6">
                                         <div class="form-floating">
                                             <input type="email" class="form-control form-control-lg @error('email') is-invalid @enderror" id="registerEmail" name="email" placeholder="correo@ejemplo.com" value="{{ old('email') }}" required>
@@ -165,7 +145,7 @@
                                     </div>
                                 </div>
 
-                                <div class="row mb-4 fade-in-3">
+                                <div class="row mb-4 fade-in-4">
                                     <div class="col-md-6">
                                         <div class="form-floating">
                                             <input type="password" class="form-control form-control-lg @error('password') is-invalid @enderror" id="registerPassword" name="password" placeholder="Contraseña" required>
@@ -200,59 +180,7 @@
 
                     </div>
                 </div>
-                <div class="modal fade" id="adminVerificationModal" tabindex="-1" aria-labelledby="adminVerificationModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="adminVerificationModalLabel">Verificación de credenciales</h5>
-                                <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <form id="adminVerificationForm" action="{{ route('verifyAdminCode') }}" method="POST">
-                                @csrf
-                                <div class="modal-body">
-                                    <p>Se ha enviado un código de verificación al correo electrónico predefinido. Por favor, introduce el código y la contraseña para lograr activar tu cuenta.</p>
-
-                                    <input type="hidden" name="admin_user_id" id="modal_admin_user_id">
-
-                                    <div class="form-floating mb-3">
-                                        <input type="text" class="form-control @error('verification_code') is-invalid @enderror" id="verification_code" name="verification_code" placeholder="Código de Verificación" required>
-                                        <label for="verification_code">Código de Verificación</label>
-                                        @error('verification_code')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
-                                        </div>
-                                        @enderror
-                                    </div>
-
-                                    <div class="form-floating mb-3">
-                                        <input type="password" class="form-control @error('password') is-invalid @enderror" id="modal_password" name="password" placeholder="Contraseña" required>
-                                        <label for="modal_password">Contraseña</label>
-                                        @error('password')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
-                                        </div>
-                                        @enderror
-                                    </div>
-
-                                    <div class="form-floating mb-3">
-                                        <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror" id="modal_password_confirmation" name="password_confirmation" placeholder="Confirmar Contraseña" required>
-                                        <label for="modal_password_confirmation">Confirmar Contraseña</label>
-                                        @error('password_confirmation')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
-                                        </div>
-                                        @enderror
-                                    </div>
-
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Cerrar</button>
-                                    <button type="submit" class="btn btn-primary">Verificar y Registrar</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+                
             </div>
         </div>
     </div>

@@ -5,11 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\TipoCliente;
-use App\Models\Localidad;
 use App\Models\DatoUsuario; // ¡Importa el modelo DatoUsuario!
-use App\Models\Genero; // ¡Importa el modelo Genero!
-use App\Models\TipoDocumento; // ¡Importa el modelo TipoDocumento!
+
 
 class LoginController extends Controller
 {
@@ -19,11 +16,10 @@ class LoginController extends Controller
             return redirect()->route('user.dashboard');
         }
         
-        $tipo_clientes = TipoCliente::whereIn('id',[1,3])->get();
-        return view("auth.login", compact('tipo_clientes'));
+        return view("auth.login");
     }
 
-    public function myProfile()
+    public function myProfile($section = null)
     {
         if (Auth::check()) {
             $usuario = DatoUsuario::with(['tipoDocumento', 'genero', 'datoslocalidad'])->find(Auth::id());
@@ -33,7 +29,7 @@ class LoginController extends Controller
                 return redirect()->route('login')->withErrors(['login_error' => 'Usuario no encontrado. Por favor, inicie sesión de nuevo.']);
             }
 
-            return view('user.perfil', compact('usuario'));
+            return view('user.perfil', compact('usuario', 'section'));
         } else {
             // Si no hay usuario autenticado, redirigir a la página de inicio de sesión
             return redirect()->route('login')->withErrors(['login_error' => 'Debe iniciar sesión primero']);

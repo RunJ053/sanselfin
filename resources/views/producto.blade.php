@@ -7,6 +7,7 @@
     <title>Podructos - La Finca al Día</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.10.1/sweetalert2.all.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <link rel="shortcut icon" href={{ asset('img/logo/icon.png') }} type="image/x-icon">
 
     <link rel="stylesheet" href="{{ asset('css/NAV.CSS') }}">
 
@@ -469,7 +470,7 @@
             <div class="nav-right">
                 <ul class="nav-actions" role="menubar">
                     <li role="none">
-                        <a href="/notificaciones" role="menuitem" aria-label="Notificaciones">
+                        <a href="{{ route('myProfile', ['section' => 'notifications']) }}" role="menuitem" aria-label="Notificaciones">
                             <i class="fas fa-bell"></i>
                             <span class="visually-hidden">Notificaciones</span>
                         </a>
