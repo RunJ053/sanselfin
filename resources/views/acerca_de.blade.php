@@ -15,135 +15,7 @@
 </head>
 
 <body>
-    <header class="header">
-        <nav class="main-nav" aria-label="Navegación principal">
-            <!-- Logo -->
-            <div class="nav-left">
-                <a href="{{ route('user.dashboard') }}" class="logo-link">
-                    <img src="{{asset ('img/logo/icon.png')}}" alt="Logo de La Finca al Día" width="120" height="40">
-                </a>
-            </div>
-
-            <!-- Enlaces de navegación centrales -->
-            <div class="nav-center">
-                <ul class="nav-links" role="menubar">
-                    <li role="none"><a href="{{ route('user.dashboard') }}" role="menuitem">Inicio</a></li>
-                    <li role="none"><a href="{{ route('producto') }}" role="menuitem">Productos</a></li>
-                    <li role="none"><a href="{{ route('servicio')}}" role="menuitem">Servicios</a></li>
-                    <li role="none"><a href="{{ route('acerca_de')}}" role="menuitem">Acerca de</a></li>
-                </ul>
-            </div>
-
-            <!-- Acciones de la derecha -->
-            <div class="nav-right">
-                <ul class="nav-actions" role="menubar">
-                    <li role="none">
-                        <a href="{{ route('notificaciones.index') }}" role="menuitem" aria-label="Notificaciones">
-                            <div class="notification-container">
-                                <i class="fas fa-bell"></i>
-                                @if(isset($notificaciones) && $notificaciones->where('leida', false)->count() > 0)
-                                @if($notificaciones->where('leida', false)->count() <= 99)
-                                    <span class="notification-badge">{{ $notificaciones->where('leida', false)->count() }}</span>
-                                    @else
-                                    <span class="notification-badge large-number">99+</span>
-                                    @endif
-                                    @endif
-                            </div>
-                            <span class="visually-hidden">Notificaciones</span>
-                        </a>
-                    </li>
-
-                    <li role="none">
-                        <a href="{{ route('carrito.index') }}" role="menuitem" aria-label="Carrito de Compras">
-                            <i class="fas fa-shopping-cart"></i>
-                            <span class="visually-hidden">Carrito</span>
-                        </a>
-                    </li>
-                </ul>
-
-                <!-- Avatar de usuario -->
-                <div class="user-avatar" onclick="toggleDropdown()" role="button" aria-haspopup="true" aria-expanded="false">
-                    @auth <!-- Verificamos que el usuario esté autenticado -->
-                    @if (Auth::user()->user_img)
-                    <img src="{{ asset('img/usuario_img/' . Auth::user()->user_img) }}"
-                        alt="Avatar de {{ Auth::user()->nombre }}"
-                        class="avatar-image">
-                    @else
-                    <i class="fas fa-user"></i>
-                    @endif
-                    @endauth
-
-                    <div class="dropdown-menu" id="dropdownMenu">
-                        <a href="{{ route('myProfile') }}" class="dropdown-item">Mi Perfil</a>
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                            @csrf
-                        </form>
-                        <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                            Cerrar Sesión
-                        </a>
-
-                    </div>
-                </div>
-
-                <!-- Botón hamburguesa -->
-                <button class="menu-toggle" onclick="toggleMobileMenu()" aria-expanded="false" aria-label="Menú">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </div>
-        </nav>
-
-        <!-- Overlay para móvil -->
-        <div class="mobile-overlay" id="mobileOverlay" onclick="closeMobileMenu()"></div>
-
-        <!-- Menú móvil -->
-        <div class="mobile-menu" id="mobileMenu">
-            <div class="mobile-menu-header">
-                <button class="mobile-menu-close" onclick="closeMobileMenu()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-
-            <!-- Enlaces de navegación móvil -->
-            <ul class="mobile-nav-links">
-                <li><a href="{{ route('user.dashboard') }}">Inicio</a></li>
-                <li><a href="{{ route('producto') }}">Productos</a></li>
-                <li><a href="{{ route('servicio')}}">Servicios</a></li>
-                <li><a href="{{ route('acerca_de')}}">Acerca de</a></li>
-            </ul>
-
-            <!-- Acciones móvil -->
-            <ul class="mobile-nav-actions">
-                <li role="none">
-                    <a href="{{ route('notificaciones.index') }}" role="menuitem" aria-label="Notificaciones">
-                        <div class="notification-container">
-                            <i class="fas fa-bell"></i>
-                            @if(isset($notificaciones) && $notificaciones->where('leida', false)->count() > 0)
-                            @if($notificaciones->where('leida', false)->count() <= 99)
-                                <span class="notification-badge">{{ $notificaciones->where('leida', false)->count() }}</span>
-                                @else
-                                <span class="notification-badge large-number">99+</span>
-                                @endif
-                                @endif
-                        </div>
-                        <span class="visually-hidden">Notificaciones</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('carrito.index') }}">
-                        <i class="fas fa-shopping-cart"></i>
-                        <span>Carrito de Compras</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                        <i class="fas fa-sign-out-alt"></i>
-                        <span>Cerrar Sesión</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </header>
-
+    <x-navbar :notificaciones="$notificaciones" />
     <!-- Hero Section -->
     <section class="hero-section">
         <div class="container">
@@ -235,24 +107,33 @@
             <h3 class="contact-title">¡Conversemos!</h3>
             <p class="contact-subtitle">¿Tienes preguntas, sugerencias o quieres ser parte de nuestra comunidad? Nos encantaría escucharte</p>
 
-            <form>
+            <form id="contactoForm" action="{{ route('contacto.enviar') }}" method="POST">
+                @csrf
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Nombre completo</label>
-                        <input type="text" class="form-control" placeholder="Escribe tu nombre completo">
+                        <input type="text" name="nombre" class="form-control"
+                            placeholder="Escribe tu nombre completo"
+                            value="{{ old('nombre') }}" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Correo electrónico</label>
-                        <input type="email" class="form-control" placeholder="tu.email@ejemplo.com">
+                        <input type="email" name="correo" class="form-control"
+                            placeholder="tu.email@ejemplo.com"
+                            value="{{ old('correo') }}" required>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Asunto</label>
-                    <input type="text" class="form-control" placeholder="¿En qué te podemos ayudar?">
+                    <input type="text" name="asunto" class="form-control"
+                        placeholder="¿En qué te podemos ayudar?"
+                        value="{{ old('asunto') }}" required>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Mensaje</label>
-                    <textarea class="form-control" placeholder="Comparte tus comentarios, preguntas o ideas con nosotros..."></textarea>
+                    <textarea name="mensaje" class="form-control"
+                        placeholder="Comparte tus comentarios, preguntas o ideas con nosotros..."
+                        required>{{ old('mensaje') }}</textarea>
                 </div>
                 <button type="submit" class="btn-send">
                     <i class="fas fa-paper-plane"></i>
@@ -314,55 +195,31 @@
             </div>
         </div>
     </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ asset('js/hamburguesa.js') }}"></script>
+    <script src="{{ asset('js/acerca_de.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Scroll animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, observerOptions);
-
-        // Observe all animated elements
-        document.querySelectorAll('.content-card, .value-item, .contact-section').forEach((el) => {
-            observer.observe(el);
+        @if(session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: '¡Éxito!',
+            text: '{{ session('
+            success ') }}',
+            confirmButtonColor: '#198754'
         });
+        @endif
 
-        // Add smooth scrolling for better UX
-        document.documentElement.style.scrollBehavior = 'smooth';
-
-        // Form validation (basic)
-        document.querySelector('form').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const inputs = this.querySelectorAll('input, textarea');
-            let isValid = true;
-
-            inputs.forEach(input => {
-                if (input.hasAttribute('required') && !input.value.trim()) {
-                    isValid = false;
-                    input.style.borderColor = '#e74c3c';
-                } else {
-                    input.style.borderColor = 'var(--border-light)';
-                }
-            });
-
-            if (isValid) {
-                // Here you would normally send the form data
-                alert('¡Gracias por tu mensaje! Te contactaremos pronto.');
-                this.reset();
-            } else {
-                alert('Por favor completa todos los campos requeridos.');
-            }
+        @if(session('error'))
+        Swal.fire({
+            icon: 'error',
+            title: '¡Oops!',
+            text: '{{ session('
+            error ') }}',
+            confirmButtonColor: '#d33'
         });
+        @endif
     </script>
 </body>
 

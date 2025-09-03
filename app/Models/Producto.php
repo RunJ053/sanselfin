@@ -43,7 +43,18 @@ class Producto extends Model
         return $this->belongsTo(Categoria::class, 'categoria_id');
     }
 
-    public function estados(){
+    public function estados()
+    {
         return $this->belongsTo(Estado::class, 'estado_id');
+    }
+
+    public function resenas()
+    {
+        return $this->hasMany(ResenaProducto::class);
+    }
+
+    public function getPromedioCalificacionAttribute()
+    {
+        return $this->resenas()->avg('calificacion') ?? 0;
     }
 }

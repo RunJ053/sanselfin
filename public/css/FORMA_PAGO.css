@@ -102,3 +102,24 @@ body {
     border: none;
     height: 100%;
 }
+.cart-loader {
+    width: 100%;
+    overflow: hidden;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.cart-icon {
+    width: 40px;
+    height: 40px;
+    color: #10b981;
+    animation: moveCart 2s linear infinite;
+}
+
+@keyframes moveCart {
+    0% { transform: translateX(-100px); }
+    50% { transform: translateX(100px); }
+    100% { transform: translateX(-100px); }
+}

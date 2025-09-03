@@ -6,6 +6,7 @@ use App\Models\OpcionEntrega;
 use App\Models\CarritoCompra;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use App\Models\Notificacion;
 use Illuminate\Support\Facades\Auth;
 
 class OpcionEntregaController extends Controller
@@ -28,14 +29,36 @@ class OpcionEntregaController extends Controller
         // Dirección del usuario logueado
         $direccionUsuario = Auth::user()->direccion;
 
-        // Calculamos subtotal en base a los ítems 
-        $subtotal = $itemsCarrito->sum('subtotal');
-        //calcular impuestos 
-        $impuestoCalculado = $itemsCarrito->sum('impuesto_calculado');
-        // Calcular el total
-        $total = $subtotal + $impuestoCalculado;
+        // Inicializar acumuladores
+        $subtotal = 0;
+        $impuestos = 0;
+        $descuento = 0;
+        $total = 0;
+        $sub = 0;
 
-        return view('facturacion.opcionEnvio', compact('itemsCarrito', 'destino', 'direccionUsuario', 'subtotal', 'impuestoCalculado', 'total'));
+        // Recorrer items del carrito y sumar lo que ya está calculado en la BD
+        foreach ($itemsCarrito as $item) {
+            $subtotal += $item->subtotal;                 // subtotal ya viene con precio_unitario * cantidad
+            $impuestos += $item->impuesto_calculado;      // lo calculaste en add/update
+            $descuento += $item->descuento;               // lo calculaste en add/update
+            $total += $item->total_item;             // subtotal - descuento + impuesto
+            $sub = $subtotal + $impuestos;
+        }
+        // * Mostar notificaciones pendientes
+        $notificaciones = Notificacion::where('usuario_id', auth()->id())->orderBy('created_at', 'desc')->get();
+
+        return view(
+            'facturacion.opcionEnvio',
+            compact(
+                'itemsCarrito',
+                'destino',
+                'direccionUsuario',
+                'subtotal',
+                'impuestos',
+                'total',
+                'notificaciones'
+            )
+        );
     }
 
     public function store(Request $request)
@@ -47,7 +70,8 @@ class OpcionEntregaController extends Controller
         $destino = OpcionEntrega::find($request->destino_envio);
 
         // Total de productos calculado desde el carrito
-        $totalProductos = CarritoCompra::where('usuario', auth()->id())->sum(DB::raw('cantidad * precio_unitario'));
+        $totalProductos = CarritoCompra::where('usuario', auth()->id())
+            ->sum(DB::raw('(subtotal - COALESCE(descuento,0)) + impuesto_calculado'));
 
         $total = $totalProductos + $destino->costo;
 
@@ -61,7 +85,6 @@ class OpcionEntregaController extends Controller
             ],
             'total_final' => $total
         ]);
-
 
         return redirect()->route('forma_de_pago')->with('success', 'Opción de envío seleccionada correctamente.');
     }

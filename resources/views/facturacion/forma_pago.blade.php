@@ -24,7 +24,8 @@
                         </div>
                         <div class="p-4 rounded-lg shadow bg-white">
                             <h2 class="text-lg font-bold">Resumen de la compra</h2>
-                            <p>Subtotal + IVA*: ${{ number_format($total, 0, ',', '.') }}</p>
+                            <p><strong>Subtotal: $</strong> {{ number_format($sub, 0, ',', '.') }}</p>
+                            <p style="color: red;"><strong>Descuento: - $</strong> {{ number_format($descuento, 0, ',', '.') }}</p>
                             <p>Envío: ${{ number_format($costoEnvio, 0, ',', '.') }}</p>
                             <hr>
                             <hr class="my-2">
@@ -60,8 +61,7 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
 
         <!-- Pago en Efectivo -->
-        <a href="{{ route('checkout.efectivo') }}"
-            class="group relative overflow-hidden bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100">
+        <div class="group relative overflow-hidden bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100">
 
             <!-- Efecto de brillo -->
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-400 via-blue-500 to-purple-500"></div>
@@ -111,16 +111,20 @@
                 </div>
 
                 <!-- Botón -->
-                <form action="" method="post">
-                    <div class="bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 px-6 rounded-full font-semibold group-hover:from-emerald-600 group-hover:to-green-700 transition-all duration-300 shadow-lg">
+                <form id="efectivo-form" action="{{ route('checkout.efectivo') }}" method="GET">
+                    @csrf
+                    <button type="submit"
+                        class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 px-6 rounded-full font-semibold shadow-lg hover:from-emerald-600 hover:to-green-700 transition-all duration-300">
                         Seleccionar
-                        <svg class="w-5 h-5 ml-2 inline-block group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                        <svg class="w-5 h-5 ml-2 inline-block group-hover:translate-x-1 transition-transform"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 7l5 5m0 0l-5 5m5-5H6" />
                         </svg>
-                    </div>
+                    </button>
                 </form>
             </div>
-        </a>
+        </div>
 
         <!-- PayU -->
         <form method="POST" action="{{ route('checkout.payu') }}" class="group relative overflow-hidden bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100">
@@ -193,4 +197,26 @@
         </div>
     </div>
 </main>
+<script>
+    document.getElementById("efectivo-form").addEventListener("submit", function (e) {
+        // Mostrar la alerta justo antes de enviar
+        Swal.fire({
+            title: 'Procesando tu pago',
+            html: `<div class="cart-loader">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" class="cart-icon">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9h12l-2-9M9 21h.01M15 21h.01" />
+                </svg>
+            </div>
+            <p class="mt-3">Por favor espera...</p>`,
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            didOpen: () => {
+                // spinner ya activo
+            }
+        });
+        // No bloqueamos el envío, dejamos que continúe normal
+    });
+</script>
 @endsection

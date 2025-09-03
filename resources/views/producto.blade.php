@@ -2,6 +2,7 @@
 
 @section('content')
     <main>
+        <x-navbar :notificaciones="$notificaciones" />
         <aside>
             <div class="filter-title">
                 <i class="fas fa-filter"></i>

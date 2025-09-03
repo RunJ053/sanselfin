@@ -16,6 +16,7 @@ class Pedido extends Model
         'usuario',
         'pagos',
         'envios',
+        'estado_id',
     ];
 
     public function usuario()
@@ -29,5 +30,14 @@ class Pedido extends Model
     public function envio()
     {
         return $this->belongsTo(OpcionEntrega::class, 'envios');
+    }
+
+    public function detalles()
+    {
+        return $this->hasMany(DetallePedido::class, 'pedidos');
+    }
+    public function estado()
+    {
+        return $this->belongsTo(Estado::class, 'estado_id');
     }
 }

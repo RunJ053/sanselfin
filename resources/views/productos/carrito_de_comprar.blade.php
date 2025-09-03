@@ -61,7 +61,7 @@
                                     <p class="flex items-center justify-center lg:justify-start text-gray-600">
                                         💲 Precio:
                                         <span class="font-semibold text-green-600 ml-1">
-                                            ${{ number_format($item->precio_unitario, 0, ',', '.') }}
+                                            ${{ number_format($item->precioConImpuesto, 0, ',', '.') }}
                                         </span>
                                     </p>
                                     <p class="flex items-center justify-center lg:justify-start text-gray-600">
@@ -74,7 +74,7 @@
                             <!-- Controles -->
                             <!-- Input cantidad -->
                             <input type="number" value="{{ $item->cantidad }}" min="1" max="{{ $item->producto->stock }}"
-                                class="cantidad-input w-16 text-center border-3 border-gray-800 rounded-lg" data-id="{{ $item->id }}"> 
+                                class="cantidad-input w-16 text-center border-3 border-gray-800 rounded-lg" data-id="{{ $item->id }}">
                             <!-- Botón actualizar -->
                             <button type="button"
                                 class="btn-update bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-md"
@@ -115,27 +115,28 @@
                         <div class="flex justify-between items-center p-4 bg-gray-50 rounded-xl">
                             <span class="text-gray-700 font-medium">Subtotal:</span>
                             <span class="font-bold text-gray-800">
-                                ${{ number_format($subtotal, 0, ',', '.') }}
+                                ${{ number_format($sub, 0, ',', '.') }}
                             </span>
                         </div>
 
-                        <!-- IVA -->
-                        <div class="flex justify-between items-center p-4 bg-yellow-50 rounded-xl">
-                            <span class="text-gray-700 font-medium">IVA (*):</span>
-                            <span class="font-bold text-gray-800">
-                                ${{ number_format($impuestoCalculado, 0, ',', '.') }}
+                        <!-- Descuento -->
+                        <div class="flex justify-between items-center p-4 bg-red-50 rounded-xl">
+                            <span class="text-gray-700 font-medium">Descuento:</span>
+                            <span class="font-bold text-red-600">
+                                - ${{ number_format($descuento, 0, ',', '.') }}
                             </span>
                         </div>
 
                         <!-- Total -->
                         <div class="bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl p-4 text-white shadow-lg">
                             <div class="flex justify-between items-center">
-                                <span class="text-xl font-bold">Total:</span>
+                                <span class="text-xl font-bold">Total a pagar:</span>
                                 <span class="text-2xl font-bold">
-                                    ${{ number_format($total, 0, ',', '.') }}
+                                    ${{ number_format($totalConDescuento, 0, ',', '.') }}
                                 </span>
                             </div>
                         </div>
+
                         <hr class="my-6 border-gray-300">
                         <!-- Botón de pago -->
                         @if ($itemsCarrito->count() > 0)

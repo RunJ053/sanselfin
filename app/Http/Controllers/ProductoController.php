@@ -95,6 +95,8 @@ class ProductoController extends Controller
 
     public function indexUsuarioPro(Request $request)
     {
+        $userId = auth()->id();
+        $notificaciones = Notificacion::where('usuario_id', $userId)->orderBy('created_at', 'desc')->get();
         try {
             $perPage = 12;
 
@@ -127,8 +129,11 @@ class ProductoController extends Controller
             $productosMapeados = $productosPaginados->getCollection()->map(function ($producto) {
                 $precioUnitario = $producto->precio_unitario;
 
-                if ($producto->promociones && $producto->promociones->porcentaje_descuento > 0) {
-                    $precioUnitario = $precioUnitario * (1 - ($producto->promociones->porcentaje_descuento / 100));
+                // Obtener el impueto que tiene cada producto
+                $impuesto = $producto->impuestos ? $producto->impuestos->porcentaje : 0;
+
+                if ($producto->promociones && $producto->promociones->descuento > 0) {
+                    $precioUnitario = $precioUnitario * (1 - ($producto->promociones->descuento / 100));
                 }
 
                 $imagenPath = 'img/product/' . $producto->imagen;
@@ -138,14 +143,20 @@ class ProductoController extends Controller
                     $imagenUrl = asset('img/es_de_frutas_y_verduas_1.webp');
                 }
 
+                // calcular el precio con impuesto incluido
+                $productoTotal = $producto->precio_unitario + ($producto->precio_unitario * $impuesto / 100);
+
+                // 🔥 Calificación real: promedio de reseñas
+                $promedioResenas = round($producto->resenas()->avg('calificacion')) ?? 0;
+
                 return [
                     'id' => $producto->id,
                     'nombre' => $producto->nombre_producto,
                     'descripcion' => $producto->descripccion,
-                    'valor' => number_format($precioUnitario, 0, ',', '.'),
+                    'valor' => number_format($productoTotal, 0, ',', '.'),
                     'precio_base' => $producto->precio_unitario,
                     'imagen' => $imagenUrl,
-                    'rating' => rand(3, 5),
+                    'rating' => $promedioResenas,
                     'descuento' => $producto->promociones && $producto->promociones->porcentaje_descuento > 0,
                     'descuento_porcentaje' => $producto->promociones ? $producto->promociones->porcentaje_descuento : 0,
                 ];
@@ -154,6 +165,7 @@ class ProductoController extends Controller
             $productosPaginados->setCollection($productosMapeados);
 
             $categorias = Categoria::all();
+
 
             if ($request->ajax()) {
                 $htmlProductos = view('partials.productos_list', [
@@ -173,7 +185,8 @@ class ProductoController extends Controller
                 'productos' => $productosPaginados,
                 'categoriaId' => $categorias,
                 'currentCategory' => $request->categoria ?? 'all',
-                'searchTerm' => $request->search ?? ''
+                'searchTerm' => $request->search ?? '',
+                'notificaciones' => $notificaciones
             ]);
         } catch (\Exception $e) {
             // Si algo falla, retornamos la vista vacía con mensaje
@@ -204,16 +217,25 @@ class ProductoController extends Controller
             $imagenUrl = asset('img/es_de_frutas_y_verduas_1.webp');
         }
 
+        // Obtener el impueto que tiene cada producto
+        $impuesto = $producto->impuestos ? $producto->impuestos->porcentaje : 0;
+
+        // calcular el precio con impuesto incluido
+        $productoTotal = $producto->precio_unitario + ($producto->precio_unitario * $impuesto / 100);
+
+        // Calificación real: promedio de reseñas
+        $promedioResenas = round($producto->resenas()->avg('calificacion')) ?? 0;
+
         return [
             'id' => $producto->id,
             'nombre' => $producto->nombre_producto,
             'descripcion' => $producto->descripccion,
-            'valor' => '$' . number_format($precioUnitario, 0, ',', '.'),
+            'valor' => '$' . number_format($productoTotal, 0, ',', '.'),
             'precio_base' => $producto->precio_unitario,
             'imagen' => $imagenUrl,
             'stock' => $producto->stock,
             'categoria' => $producto->categoria ? $producto->categoria->nombre : 'Sin Categoría',
-            'rating' => rand(3, 5),
+            'rating' => $promedioResenas,
             'descuento' => $producto->descuento_id !== null,
             'descuento_porcentaje' => $producto->descuento ? $producto->descuento->porcentaje_descuento : 0,
         ];

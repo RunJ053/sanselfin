@@ -16,7 +16,6 @@ class DetallePedido extends Model
         'pedidos',
         'productos',
         'usuario',
-        'estados'
     ];
 
     public function pedido()
@@ -32,10 +31,5 @@ class DetallePedido extends Model
     public function usuario()
     {
         return $this->belongsTo(DatoUsuario::class, 'usuario');
-    }
-
-    public function estado()
-    {
-        return $this->belongsTo(Estado::class, 'estados');
     }
 }

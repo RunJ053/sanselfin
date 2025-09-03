@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CarritoCompra;
 use App\Models\Producto;
 use Illuminate\Http\Request;
+use App\Models\Notificacion;
 use Illuminate\Support\Facades\Auth;
 
 class CarritoCompraController extends Controller
@@ -15,17 +16,53 @@ class CarritoCompraController extends Controller
         if (!Auth::check()) {
             return redirect()->route('login')->with('error', 'Debes iniciar sesión para ver tu carrito.');
         }
-        $userId = Auth::id();
-        $itemsCarrito = CarritoCompra::with('producto')->where('usuario', $userId)->get();
-        // Calculamos subtotal en base a los ítems 
-        $subtotal = $itemsCarrito->sum('subtotal');
-        //calcular impuestos 
-        $impuestoCalculado = $itemsCarrito->sum('impuesto_calculado');
-        // Calcular el total
-        $total = $subtotal + $impuestoCalculado;
-        return view('productos.carrito_de_comprar', compact('itemsCarrito', 'subtotal', 'impuestoCalculado','total'));
-    }
 
+        $userId = Auth::id();
+
+        // Traer carrito con producto, impuestos y promociones
+        $itemsCarrito = CarritoCompra::with(['producto.impuestos', 'producto.promociones'])
+            ->where('usuario', $userId)
+            ->get();
+
+        // Inicializar acumuladores
+        $subtotal = 0;
+        $impuestos = 0;
+        $descuento = 0;
+        $totalFinal = 0;
+        $sub = 0;
+
+        // Recorrer items del carrito y sumar lo que ya está calculado en la BD
+        foreach ($itemsCarrito as $item) {
+            $subtotal += $item->subtotal;                 // subtotal ya viene con precio_unitario * cantidad
+            $impuestos += $item->impuesto_calculado;      // lo calculaste en add/update
+            $descuento += $item->descuento;               // lo calculaste en add/update
+            $totalFinal += $item->total_item;             // subtotal - descuento + impuesto
+            $sub = $subtotal + $impuestos;
+
+            // Calcular el precio con impuesto para este item
+            $producto = $item->producto;
+            $impuesto = $producto->impuestos ? $producto->impuestos->porcentaje : 0;
+            $item->precioConImpuesto = $producto->precio_unitario + ($producto->precio_unitario * $impuesto / 100);
+        }
+
+        // Notificaciones
+        $notificaciones = Notificacion::where('usuario_id', $userId)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Total con descuento ya aplicado
+        $totalConDescuento = $totalFinal;
+
+        return view('productos.carrito_de_comprar', compact(
+            'itemsCarrito',
+            'sub',
+            'impuestos',
+            'descuento',
+            'totalFinal',
+            'totalConDescuento',
+            'notificaciones'
+        ));
+    }
 
 
     /**
@@ -44,58 +81,85 @@ class CarritoCompraController extends Controller
             return response()->json(['message' => 'Debe iniciar sesión para añadir productos al carrito.'], 401);
         }
 
-        $userId = Auth::id();
+        $userId     = Auth::id();
         $productoId = $request->input('producto_id');
-        $cantidad = $request->input('cantidad');
+        $cantidad   = $request->input('cantidad');
 
         try {
-            $producto = Producto::with('impuestos', 'promociones')->find($productoId);
+            $producto = Producto::with(['impuestos', 'promociones'])->find($productoId);
             if (!$producto) {
                 return response()->json(['message' => 'Producto no encontrado.'], 404);
             }
 
-            // Precio con posible descuento
-            $precioUnitario = $producto->precio_unitario;
+            // Ítem existente en carrito
+            $itemExistente = CarritoCompra::where('usuario', $userId)
+                ->where('producto_id', $productoId)
+                ->first();
 
-            // Aplicar descuento si existe
-            if ($producto->promociones && $producto->promociones->porcentaje_descuento > 0) {
-                $precioUnitario = $precioUnitario * (1 - ($producto->promociones->porcentaje_descuento / 100));
+            $cantidadActualCarrito = $itemExistente ? $itemExistente->cantidad : 0;
+            $cantidadFinal = $cantidadActualCarrito + $cantidad;
+
+            // Stock
+            if ($cantidadFinal > $producto->stock) {
+                return response()->json([
+                    'message' => "No puedes añadir más de {$producto->stock} unidades al carrito. Ya tienes {$cantidadActualCarrito} en el carrito.",
+                    'status'  => 'error',
+                ], 400);
             }
 
-            $subtotal = $precioUnitario * $cantidad;
-            // Obtener tods los ivas en la tabla de impuestos
+            // ---- Cálculos según tu orden ----
+            $precioUnitario = $producto->precio_unitario;
 
-            // Buscar IVA relacionado
-            $ivaPorcentaje = $producto->impuestos ? $producto->impuestos->porcentaje : 0;
-            $impuestoCalculado = ($subtotal * $ivaPorcentaje) / 100;
-            $totalItem = $subtotal + $impuestoCalculado;
+            // 1) Subtotal base (sin impuesto)
+            $subtotalBase = $precioUnitario * $cantidadFinal;
 
-            $itemExistente = CarritoCompra::where('usuario', $userId)->where('producto_id', $productoId)->first();
+            // 2) Impuesto solo sobre el subtotal base
+            $ivaPorcentaje = $producto->impuestos ? ($producto->impuestos->porcentaje ?? 0) : 0;
+            $impuestoCalculado = round($subtotalBase * ($ivaPorcentaje / 100), 2);
+
+            // 3) Subtotal + impuesto (para base del descuento)
+            $subtotalMasImpuesto = $subtotalBase + $impuestoCalculado;
+
+            // 4) Descuento (% viene de promociones; soporta 'porcentaje_descuento' o 'descuento')
+            $porcPromo = 0;
+            if ($producto->promociones) {
+                $porcPromo = $producto->promociones->porcentaje_descuento
+                    ?? $producto->promociones->descuento
+                    ?? 0;
+            }
+            $descuentoAplicado = round($subtotalMasImpuesto * ($porcPromo / 100), 2);
+
+            // 5) Total item = (subtotal + impuesto) - descuento
+            $totalItem = round($subtotalMasImpuesto - $descuentoAplicado, 2);
 
             if ($itemExistente) {
-                $itemExistente->cantidad += $cantidad;
-                $itemExistente->subtotal = $itemExistente->precio_unitario * $itemExistente->cantidad;
-                $itemExistente->impuesto_calculado = ($itemExistente->subtotal * $ivaPorcentaje) / 100;
-                $itemExistente->total_item = $itemExistente->subtotal + $itemExistente->impuesto_calculado;
+                $itemExistente->cantidad            = $cantidadFinal;
+                $itemExistente->precio_unitario     = $precioUnitario;         // base sin impuesto
+                $itemExistente->subtotal            = round($precioUnitario * $cantidadFinal, 2);
+                $itemExistente->impuesto_calculado  = $impuestoCalculado;
+                $itemExistente->descuento           = $descuentoAplicado;      // descuento sobre (base+impuesto)
+                $itemExistente->total_item          = $totalItem;              // (base+impuesto) - descuento
                 $itemExistente->save();
             } else {
+                // para nuevo ítem, cantidadFinal == cantidad
                 CarritoCompra::create([
-                    'usuario' => $userId,
-                    'producto_id' => $productoId,
-                    'cantidad' => $cantidad,
-                    'precio_unitario' => $precioUnitario,
-                    'subtotal' => $subtotal,
+                    'usuario'            => $userId,
+                    'producto_id'        => $productoId,
+                    'cantidad'           => $cantidadFinal,
+                    'precio_unitario'    => $precioUnitario,
+                    'subtotal'           => round($precioUnitario * $cantidadFinal, 2),
                     'impuesto_calculado' => $impuestoCalculado,
-                    'total_item' => $totalItem,
+                    'descuento'          => $descuentoAplicado,
+                    'total_item'         => $totalItem,
                 ]);
             }
 
             $cartCount = CarritoCompra::where('usuario', $userId)->sum('cantidad');
 
             return response()->json([
-                'message' => 'Producto añadido al carrito exitosamente.',
+                'message'    => 'Producto añadido al carrito exitosamente.',
                 'cart_count' => $cartCount,
-                'status' => 'success'
+                'status'     => 'success',
             ]);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Error al añadir el producto al carrito.'], 500);
@@ -119,7 +183,6 @@ class CarritoCompraController extends Controller
 
     public function update(Request $request, $itemId)
     {
-        // Validar que la cantidad sea al menos 1
         $request->validate([
             'cantidad' => 'required|integer|min:1'
         ], [
@@ -134,36 +197,64 @@ class CarritoCompraController extends Controller
             return response()->json(['message' => 'Producto en el carrito no encontrado.'], 404);
         }
 
-        $producto = Producto::find($item->producto_id);
+        $producto = Producto::with(['impuestos', 'promociones'])->find($item->producto_id);
         if (!$producto) {
             return response()->json(['message' => 'Producto asociado no encontrado.'], 404);
         }
 
-        // 🔹 Validar stock disponible
-        $cantidadSolicitada = $request->input('cantidad');
+        $cantidadSolicitada = (int) $request->input('cantidad');
         if ($cantidadSolicitada > $producto->stock) {
             return response()->json([
                 'message' => "No puedes actualizar. Solo hay {$producto->stock} unidades disponibles."
             ], 422);
         }
 
-        // ✅ Actualizar cantidad y subtotal
-        $item->cantidad = $cantidadSolicitada;
-        $item->subtotal = $producto->precio_unitario * $item->cantidad;
-        // Recalcular impuesto_calculado y total_item
-        $ivaPorcentaje = $producto->impuestos ? $producto->impuestos->porcentaje : 0;
-        $item->impuesto_calculado = ($item->subtotal * $ivaPorcentaje) / 100;
-        $item->total_item = $item->subtotal + $item->impuesto_calculado;
+        // ---- Cálculos ----
+        $precioUnitario = $producto->precio_unitario;
+
+        // 1) Subtotal base (sin impuesto)
+        $subtotalBase = $precioUnitario * $cantidadSolicitada;
+
+        // 2) Impuesto solo sobre el subtotal base
+        $ivaPorcentaje = $producto->impuestos ? ($producto->impuestos->porcentaje ?? 0) : 0;
+        $impuestoCalculado = round($subtotalBase * ($ivaPorcentaje / 100), 2);
+
+        // 3) Subtotal + impuesto
+        $subtotalMasImpuesto = $subtotalBase + $impuestoCalculado;
+
+        // 4) Descuento (sobre subtotal+impuesto)
+        $porcPromo = 0;
+        if ($producto->promociones) {
+            $porcPromo = $producto->promociones->porcentaje_descuento
+                ?? $producto->promociones->descuento
+                ?? 0;
+        }
+        $descuentoAplicado = round($subtotalMasImpuesto * ($porcPromo / 100), 2);
+
+        // 5) Total item
+        $totalItem = round($subtotalMasImpuesto - $descuentoAplicado, 2);
+
+        // Guardar
+        $item->cantidad            = $cantidadSolicitada;
+        $item->precio_unitario     = $precioUnitario;
+        $item->subtotal            = round($subtotalBase, 2);
+        $item->impuesto_calculado  = $impuestoCalculado;
+        $item->descuento           = $descuentoAplicado;
+        $item->total_item          = $totalItem;
         $item->save();
 
         return response()->json([
-            'message' => 'Cantidad actualizada exitosamente ✅',
-            'cantidad' => $item->cantidad,
-            'subtotal' => number_format($item->subtotal, 0, ',', '.'),
-            'impuesto_calculado' => number_format($item->impuesto_calculado, 0, ',', '.'),
-            'total_item' => number_format($item->total_item, 0, ',', '.')
+            'message'            => 'Cantidad actualizada exitosamente ✅',
+            'cantidad'           => $item->cantidad,
+            'precio_unitario'    => number_format($item->precio_unitario, 2, ',', '.'),
+            'subtotal'           => number_format($item->subtotal, 2, ',', '.'),            // base
+            'impuesto_calculado' => number_format($item->impuesto_calculado, 2, ',', '.'),
+            'descuento'          => number_format($item->descuento, 2, ',', '.'),
+            'total_item'         => number_format($item->total_item, 2, ',', '.'),
         ]);
     }
+
+
 
     public function remove($itemId)
     {

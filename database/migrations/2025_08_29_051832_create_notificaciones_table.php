@@ -15,13 +15,11 @@ return new class extends Migration
     {
         Schema::create('notificaciones', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('usuario_id'); // Relación con tu modelo DatoUsuario
             $table->string('titulo');
             $table->text('mensaje');
             $table->boolean('leida')->default(false);
+            $table->foreignId('usuario_id')->constrained('datos_usuario')->onDelete('cascade')->nullable();
             $table->timestamps();
-
-            $table->foreign('usuario_id')->references('id')->on('datos_usuario')->onDelete('cascade');
         });
     }
 
@@ -32,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('notificacions');
+        Schema::dropIfExists('notificaciones');
     }
 };

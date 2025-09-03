@@ -12,7 +12,11 @@ use App\Http\Controllers\OpcionEntregaController;
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\TareaController;
 use App\Http\Controllers\NotificacionController;
+use App\Http\Controllers\FacturaDetalleController;
+use App\Http\Controllers\ContactoController;
+use App\Http\Controllers\ResenaProductoController;
 use Illuminate\Support\Facades\Route;
+use App\Models\Promocion;
 use App\Models\Producto;
 use App\Models\Notificacion;
 
@@ -61,16 +65,21 @@ Route::middleware(['auth'])->group(function () {
 
     Route::GET('/dashboard/user', function () {
         $productos = Producto::latest()->take(15)->get();
-        $notificaciones = Notificacion::where('usuario_id', auth()->id())
-            ->orderBy('created_at', 'desc')
-            ->get();
-        return view('index2', compact('productos', 'notificaciones'));
+        $notificaciones = Notificacion::where('usuario_id', auth()->id())->orderBy('created_at', 'desc')->get();
+        $promociones = Promocion::latest()->take(3)->get();
+        return view('index2', compact('productos', 'notificaciones', 'promociones'));
     })->name('user.dashboard');
 
-    // * Notificaciones
-    Route::GET('/notificaciones', [NotificacionController::class, 'index'])->name('notificaciones.index');
+    // Notificaciones
+    Route::get('/notificaciones', [NotificacionController::class, 'index'])->name('notificaciones.index');
+    Route::post('/notificaciones', [NotificacionController::class, 'store'])->name('notificaciones.store');
+    // Acciones globales (van antes de {id})
+    Route::patch('/notificaciones/marcar-todas-leidas', [NotificacionController::class, 'marcarTodasLeidas'])->name('notificaciones.marcarTodasLeidas');
+    Route::delete('/notificaciones/eliminar-todas', [NotificacionController::class, 'eliminarTodas'])->name('notificaciones.eliminarTodas');
+    Route::delete('/notificaciones/eliminar-seleccionadas', [NotificacionController::class, 'eliminarSeleccionadas'])->name('notificaciones.eliminarSeleccionadas');
+    // Acciones por ID (van al final)
     Route::patch('/notificaciones/{id}/leida', [NotificacionController::class, 'marcarLeida'])->name('notificaciones.leida');
-    Route::POST('/notificaciones', [NotificacionController::class, 'store'])->name('notificaciones.store');
+    Route::delete('/notificaciones/{id}', [NotificacionController::class, 'destroy'])->name('notificaciones.destroy');
 
     // ! Rutas de perfil de usuario
     Route::GET('/my-profile', [LoginController::class, 'myProfile'])->name('myProfile');
@@ -78,9 +87,11 @@ Route::middleware(['auth'])->group(function () {
     Route::PUT('/user/update/{id}', [DatoUsuarioController::class, 'update'])->name('user.update');
     Route::GET('/user/change-password', [DatoUsuarioController::class, 'changePasswordForm'])->name('user.changePasswordForm');
     Route::POST('/user/change-password', [DatoUsuarioController::class, 'changePassword'])->name('user.changePassword');
+    Route::GET('/user/mi_historial', [DatoUsuarioController::class, 'miHistorial'])->name('user.mi_historial');
+    Route::POST('/user/mi_historial', [DatoUsuarioController::class, 'miHistorial'])->name('facturacion.verFactura');
 
     // ? Ruta principal para mostrar productos con filtros y búsqueda
-    Route::GET('/productos',[ProductoController::class, 'indexUsuarioPro'])->name('producto');
+    Route::GET('/productos', [ProductoController::class, 'indexUsuarioPro'])->name('producto');
 
     // ? Ruta para obtener los detalles de un solo producto para el modal (si aún lo necesitas con AJAX)
     // ! Esta ruta devolverá JSON y será consumida por el JavaScript del modal.
@@ -106,6 +117,17 @@ Route::middleware(['auth'])->group(function () {
     Route::GET('/checkout/efectivo', [FormaPagoController::class, 'pagarEfectivo'])->name('checkout.efectivo')->middleware('verificar.envio');
     Route::POST('/checkout/payu', [FormaPagoController::class, 'pagarPayU'])->name('checkout.payu')->middleware('verificar.envio');
 
+    // ! Rutas para ver la factura en PDF/Vista dedicada
+    Route::get('/factura/{pedido}', [FacturaDetalleController::class, 'verFactura'])->name('facturacion.verFactura');
+    Route::get('/factura/{pedido}/pdf', [FacturaDetalleController::class, 'verFacturaPdf'])->name('facturacion.verFacturaPdf');
+
+    // ! Rutas para crear las reseñas y hacer la puntuacion de los productos
+    Route::get('/resenas', [ResenaProductoController::class, 'index'])->name('resenas.index');
+    Route::post('/resenas/{producto}', [ResenaProductoController::class, 'store'])->name('resenas.store');
+    Route::get('/resenas/{resena}/edit', [ResenaProductoController::class, 'edit'])->name('resenas.edit');
+    Route::put('/resenas/{resena}', [ResenaProductoController::class, 'update'])->name('resenas.update');
+    Route::delete('/resenas/{resena}', [ResenaProductoController::class, 'destroy'])->name('resenas.destroy');
+
     // ? Ruta para mostrar los servicios
     Route::GET('/Servicios', function () {
         $notificaciones = Notificacion::where('usuario_id', auth()->id())
@@ -121,6 +143,9 @@ Route::middleware(['auth'])->group(function () {
             ->get();
         return view('acerca_de', compact('notificaciones'));
     })->name('acerca_de');
+
+    // ! Ruta para enviar un correo al correo oficial de la pgina
+    Route::post('/contacto/enviar', [ContactoController::class, 'enviar'])->name('contacto.enviar');
 
     Route::middleware(['is_admin_or_empleado'])->group(function () { // Usaremos un middleware para administradores
         Route::GET('/dashboard/admin', [InventarioController::class, 'index'])->name('admin.dashboard');
