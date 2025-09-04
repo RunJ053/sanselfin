@@ -50,6 +50,7 @@ class CarritoCompraController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
+        $carritoCount = CarritoCompra::where('usuario', $userId)->count('cantidad'); 
         // Total con descuento ya aplicado
         $totalConDescuento = $totalFinal;
 
@@ -60,7 +61,8 @@ class CarritoCompraController extends Controller
             'descuento',
             'totalFinal',
             'totalConDescuento',
-            'notificaciones'
+            'notificaciones',
+            'carritoCount'
         ));
     }
 

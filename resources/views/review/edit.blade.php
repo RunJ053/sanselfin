@@ -1,6 +1,7 @@
 @extends('layouts.review.resenaLayout')
 
 @section('content')
+<x-navbar :notificaciones="$notificaciones" :carritoCount="$carritoCount" />
 <div class="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 flex items-center justify-center p-6">
     <div class="max-w-lg w-full">
         {{-- Header --}}

@@ -55,7 +55,7 @@
 
 <body class="bg-gradient-to-br from-purple-50 via-blue-50 to-green-50 min-h-screen">
     @yield('content')
-    <x-navbar :notificaciones="$notificaciones" />
+    <x-navbar :notificaciones="$notificaciones" :carritoCount="$carritoCount" />
     <script src="{{ asset('js/hamburguesa.js')}}"></script>
     <script>
         // Manejar el envío del formulario de efectivo

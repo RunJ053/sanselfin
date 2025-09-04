@@ -7,7 +7,7 @@
 $notificaciones = $notificaciones ?? collect();
 $promociones = $promociones ?? collect();
 @endphp
-<x-navbar :notificaciones="$notificaciones" />
+<x-navbar :notificaciones="$notificaciones" :carritoCount="$carritoCount" />
 <main>
     <!-- Sección Hero -->
     <section data-aos="zoom-in-down" class="hero" aria-labelledby="hero-title">
@@ -27,7 +27,7 @@ $promociones = $promociones ?? collect();
                 </p>
             </div>
             <div data-aos="fade-left" data-aos-delay="600" class="hero-info">
-                <p>Descubre más productos</p>
+                <p>Descubre más productos</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
                 <button class="button"><a href="{{ route('producto')}}">Explorar Productos</a></button>
             </div>
         </div>

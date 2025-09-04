@@ -69,7 +69,7 @@
 
 <body>
     @yield('content')
-    <x-navbar :notificaciones="$notificaciones" />
+    <x-navbar :notificaciones="$notificaciones" :carritoCount="$carritoCount" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ asset('js/hamburguesa.js') }}"></script>
     <script src="{{ asset('js/carrito.js') }}"></script>

@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Route;
 use App\Models\Promocion;
 use App\Models\Producto;
 use App\Models\Notificacion;
+use App\Models\CarritoCompra;
 
 //inicio de paginas
 Route::GET("/", function () {
@@ -67,7 +68,8 @@ Route::middleware(['auth'])->group(function () {
         $productos = Producto::latest()->take(15)->get();
         $notificaciones = Notificacion::where('usuario_id', auth()->id())->orderBy('created_at', 'desc')->get();
         $promociones = Promocion::latest()->take(3)->get();
-        return view('index2', compact('productos', 'notificaciones', 'promociones'));
+        $carritoCount = CarritoCompra::where('usuario', auth()->id())->count();
+        return view('index2', compact('productos', 'notificaciones', 'promociones', 'carritoCount'));
     })->name('user.dashboard');
 
     // Notificaciones

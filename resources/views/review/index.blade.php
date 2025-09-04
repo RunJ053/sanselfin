@@ -1,6 +1,7 @@
 @extends('layouts.review.resenaLayout')
 
 @section('content')
+<x-navbar :notificaciones="$notificaciones" :carritoCount="$carritoCount" />
 <div class="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
     <div class="max-w-6xl mx-auto p-6" x-data="{ tab: 'pendientes' }">
         {{-- Header con gradiente --}}

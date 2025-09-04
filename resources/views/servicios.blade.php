@@ -28,7 +28,7 @@
 </head>
 
 <body>
-  <x-navbar :notificaciones="$notificaciones" />
+  <x-navbar :notificaciones="$notificaciones" :carritoCount="$carritoCount" />
   <main class="max-w-3xl mx-auto mt-8 px-4">
     <div class="grid grid-cols-1 gap-6" id="accordionExample">
 

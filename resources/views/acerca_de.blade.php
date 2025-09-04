@@ -15,7 +15,7 @@
 </head>
 
 <body>
-    <x-navbar :notificaciones="$notificaciones" />
+    <x-navbar :notificaciones="$notificaciones" :carritoCount="$carritoCount" />
     <!-- Hero Section -->
     <section class="hero-section">
         <div class="container">

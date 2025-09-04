@@ -6,6 +6,7 @@ use App\Models\Producto;
 use App\Models\Categoria;
 use App\Models\Impuesto;
 use App\Models\Estado;
+use App\Models\CarritoCompra;
 use App\Models\Notificacion;
 use Illuminate\Support\Str;
 use App\Models\Promocion;
@@ -146,7 +147,7 @@ class ProductoController extends Controller
                 // calcular el precio con impuesto incluido
                 $productoTotal = $producto->precio_unitario + ($producto->precio_unitario * $impuesto / 100);
 
-                // 🔥 Calificación real: promedio de reseñas
+                // Calificación real: promedio de reseñas
                 $promedioResenas = round($producto->resenas()->avg('calificacion')) ?? 0;
 
                 return [
@@ -165,6 +166,7 @@ class ProductoController extends Controller
             $productosPaginados->setCollection($productosMapeados);
 
             $categorias = Categoria::all();
+            $carritoCount = CarritoCompra::where('usuario', $userId)->count('cantidad'); 
 
 
             if ($request->ajax()) {
@@ -186,7 +188,8 @@ class ProductoController extends Controller
                 'categoriaId' => $categorias,
                 'currentCategory' => $request->categoria ?? 'all',
                 'searchTerm' => $request->search ?? '',
-                'notificaciones' => $notificaciones
+                'notificaciones' => $notificaciones,
+                'carritoCount' => $carritoCount
             ]);
         } catch (\Exception $e) {
             // Si algo falla, retornamos la vista vacía con mensaje
