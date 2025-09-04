@@ -129,9 +129,14 @@ class FormaPagoController extends Controller
 
             // 2. Crear detalles de pedido
             foreach ($carrito as $item) {
+                $subtotalProducto = $item->precio_unitario * $item->cantidad;
+                $precio = $subtotalProducto + $item->impuesto_calculado;
+                $descuentoProducto = $item->descuento;
+                $totalProducto = $subtotalProducto - $descuentoProducto + $item->impuesto_calculado;
+
                 DetallePedido::create([
                     'cantidad'           => $item->cantidad,
-                    'precio'             => $sub,
+                    'precio'             => $subtotalProducto,
                     'descuento_aplicado' => $item->descuento,
                     'pedidos'            => $pedido->id,
                     'productos'          => $item->producto_id,
@@ -163,8 +168,8 @@ class FormaPagoController extends Controller
                     'factura_cabecera_id' => $facturaCabecera->id,
                     'producto_id'         => $item->producto_id,
                     'cantidad'            => $item->cantidad,
-                    'precio_unitario'     => $precio,
-                    'subTotal'            => $subtotalProducto,
+                    'precio_unitario'     => $subtotalProducto,
+                    'subTotal'            => $precio,
                     'descuento'           => $descuentoProducto,
                     'envio'               => $costoEnvio,
                     'montoTotal'          => $totalProducto,
