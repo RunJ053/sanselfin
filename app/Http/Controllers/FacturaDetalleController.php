@@ -6,6 +6,7 @@ use App\Models\Pedido;
 use App\Models\FacturaCabecera;
 use App\Models\Notificacion;
 use App\Models\DatoUsuario;
+use App\Models\CarritoCompra;
 use App\Models\FacturaDetalle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -47,11 +48,13 @@ class FacturaDetalleController extends Controller
         $totales = $this->computeFacturaTotals($factura);
 
         $notificaciones = Notificacion::where('usuario_id', $usuarioId)->orderBy('created_at', 'desc')->get();
+        $carritoCount = CarritoCompra::where('usuario', $usuarioId)->count('cantidad'); 
 
         return view('facturacion.show', array_merge([
             'factura' => $factura,
             'pedido' => $pedido,
-            'notificaciones' => $notificaciones
+            'notificaciones' => $notificaciones,
+            'carritoCount' => $carritoCount
         ], $totales));
     }
 

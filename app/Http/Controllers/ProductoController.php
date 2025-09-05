@@ -179,7 +179,8 @@ class ProductoController extends Controller
 
 
             if ($request->ajax()) {
-                $htmlProductos = view('partials.productos_list', [
+                $htmlProductos = view('partials.productos_l
+                ist', [
                     'productos' => $productosPaginados->items(),
                     'searchTerm' => $request->search,
                     'currentFilter' => $request->categoria
