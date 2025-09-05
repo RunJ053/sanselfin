@@ -19,13 +19,21 @@ class ProductoController extends Controller
      *
      */
     public function index()
-    {
-        $inventarios = Producto::with(['categorias', 'impuestos', 'promociones'])->get();
+{
+    try {
+        $inventarios = Producto::with(['categorias', 'impuestos', 'promociones'])
+            ->paginate(10);
+        $totalProductos = Producto::count();
         $categorias = Categoria::all();
         $impuestos = Impuesto::all();
         $promociones = Promocion::all();
-        return view('admin.inventario', compact('inventarios', 'categorias', 'impuestos', 'promociones'));
+
+        return view('admin.inventario', compact('inventarios', 'categorias', 'totalProductos', 'impuestos', 'promociones'));
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', 'Ocurrió un problema al cargar los inventarios.');
     }
+}
+
 
     public function create()
     {
@@ -66,6 +74,7 @@ class ProductoController extends Controller
         $prod->precio_unitario = $request->valor_unitario;
         $prod->impuesto_id = $request->Impuesto;
         $prod->descuento_id = $request->Promocion;
+        $prod->estado_id = 1;
 
         if ($request->hasFile('imagen')) {
             $file = $request->file('imagen');
@@ -83,10 +92,10 @@ class ProductoController extends Controller
     {
         $categorias = Categoria::all();
         $producto = Producto::findOrFail($producto->id);
-        $estado = Estado::where('estado_id', $producto->id)->first();
+        $estado = Estado::where('id', $producto->estado_id)->first();
         $impuestos = Impuesto::all();
         $promociones = Promocion::all();
-        return view('admin.edit_produc', compact('producto', 'categorias', 'inventario', 'impuestos', 'promociones'));
+        return view('admin.edit_produc', compact('producto', 'categorias', 'impuestos', 'promociones', 'estado'));
     }
     /**
      * Display a listing of the resource for users.
@@ -251,7 +260,7 @@ class ProductoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, Producto $producto, Inventario $inventario)
+    public function update(Request $request, Producto $producto)
     {
         // Validación de los datos del formulario
         $request->validate([
@@ -261,7 +270,7 @@ class ProductoController extends Controller
             'valor_unitario' => 'required|numeric',
             'Impuesto' => 'required|integer',
             'Promocion' => 'required|integer',
-            'cantidad' => 'required|integer|min:0',
+            'cantidad' => 'required|integer|min:1',
             'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
@@ -270,6 +279,7 @@ class ProductoController extends Controller
         $producto->descripccion = $request->descripcion;
         $producto->precio_unitario = $request->valor_unitario;
         $producto->categoria_id = $request->Categoria;
+        $producto->stock = $request->cantidad;
         $producto->impuesto_id = $request->Impuesto;
         $producto->descuento_id = $request->Promocion;
 
@@ -289,21 +299,6 @@ class ProductoController extends Controller
 
         // Guardar el producto
         $producto->save();
-
-        // Verificar si el inventario ya existe para este producto
-        $inventario = Inventario::where('producto_id', $producto->id)->first();
-
-        if ($inventario) {
-            // Si el inventario ya existe, solo actualizarlo
-            $inventario->stock = $request->cantidad;
-            $inventario->save();
-        } else {
-            // Si no existe, crear un nuevo inventario
-            Inventario::create([
-                'producto_id' => $producto->id,
-                'stock' => $request->cantidad
-            ]);
-        }
 
         return redirect()->route('producto.index')->with('success', 'Producto actualizado correctamente.');
     }

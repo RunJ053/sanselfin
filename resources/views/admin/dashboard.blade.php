@@ -7,14 +7,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- CSS personalizado -->
-   <link rel="shortcut icon" href="{{ asset('img/logo/icon.png') }}" type="image/x-icon" />
+  <link rel="shortcut icon" href="{{ asset('img/logo/icon.png') }}" type="image/x-icon" />
   <link rel="stylesheet" href="{{ asset('css/reporte_admin.css') }}">
   <link rel="stylesheet" href="{{ asset('css/footer.css') }}">
 
   <!-- Bootstrap y Chart.js -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <!-- Iconos -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -30,30 +30,65 @@
       padding: 8px 20px;
       display: flex;
       align-items: center;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
       background: linear-gradient(90deg, #5cc05f 0%, #3a9b3a 100%);
     }
-    .header-brand img { height: 44px; width: auto; }
-    .header-brand .brand-text { font-weight: 700; color: #fff; margin-left: 10px; letter-spacing: 0.2px; }
 
-.nav-links .nav-link {
-  color: rgba(255,255,255,0.95);
-  font-weight: 600;
-  text-decoration: none; /* quita la raya */
-}
+    .header-brand img {
+      height: 44px;
+      width: auto;
+    }
 
-.nav-links .nav-link:hover {
-  color: #f8f9fa;
-  text-decoration: none; /* no mostrar raya al pasar el mouse */
-}
+    .header-brand .brand-text {
+      font-weight: 700;
+      color: #fff;
+      margin-left: 10px;
+      letter-spacing: 0.2px;
+    }
+
+    .nav-links .nav-link {
+      color: rgba(255, 255, 255, 0.95);
+      font-weight: 600;
+      text-decoration: none;
+      /* quita la raya */
+    }
+
+    .nav-links .nav-link:hover {
+      color: #f8f9fa;
+      text-decoration: none;
+      /* no mostrar raya al pasar el mouse */
+    }
 
 
-    .user-area { display:flex; align-items:center; gap:12px; }
-    .user-welcome { color: #fff; font-weight:600; margin-right:6px; }
-    .logout-btn { background: #ffda3a; color: #1a1a1a; border-radius:22px; padding:6px 11px; font-weight:600; box-shadow: 0 2px 6px rgba(0,0,0,0.12); border: none; }
+    .user-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-welcome {
+      color: #fff;
+      font-weight: 600;
+      margin-right: 6px;
+    }
+
+    .logout-btn {
+      background: #ffda3a;
+      color: #1a1a1a;
+      border-radius: 22px;
+      padding: 6px 11px;
+      font-weight: 600;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+      border: none;
+    }
 
     /* Ajuste del contenido principal para que no quede debajo del header */
-    .main-content { padding: 24px; margin-top: 106px; } /* ajustar si cambias la altura del header */
+    .main-content {
+      padding: 24px;
+      margin-top: 106px;
+    }
+
+    /* ajustar si cambias la altura del header */
 
     /* Restantes estilos originales */
     .chart-container {
@@ -63,7 +98,9 @@
       max-width: 700px;
       margin: 0 auto;
     }
-    .chart-card, .table-card {
+
+    .chart-card,
+    .table-card {
       background-color: white;
       border-radius: 10px;
       padding: 1.5rem;
@@ -77,13 +114,16 @@
       border-radius: 6px;
       margin-bottom: 10px;
     }
+
     .tarea-card.hecha {
       border-left-color: #28a745;
       background-color: #eaf6ea;
     }
+
     .tarea-acciones a {
       margin-right: 6px;
     }
+
     .grafico-contenedor {
       display: flex;
       flex-wrap: wrap;
@@ -91,37 +131,58 @@
       justify-content: center;
       align-items: center;
     }
+
     .grafico-contenedor canvas {
       background: #fff;
       padding: 15px;
       border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
       width: 300px !important;
       height: 300px !important;
       max-width: 100%;
     }
 
-    .tarea-acciones a { margin-right: 5px; }
+    .tarea-acciones a {
+      margin-right: 5px;
+    }
 
     @media (max-width: 768px) {
-      .nav-links { display: none; } /* se muestra el toggler en móvil */
-      .user-welcome { display: none; }
-      .header-bar { left: 6px; right: 6px; top: 6px; padding: 8px 12px; }
-      .main-content { margin-top: 96px; padding: 12px; }
+      .nav-links {
+        display: none;
+      }
+
+      /* se muestra el toggler en móvil */
+      .user-welcome {
+        display: none;
+      }
+
+      .header-bar {
+        left: 6px;
+        right: 6px;
+        top: 6px;
+        padding: 8px 12px;
+      }
+
+      .main-content {
+        margin-top: 96px;
+        padding: 12px;
+      }
     }
 
     .card-hover {
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
+
     .card-hover:hover {
       transform: translateY(-5px);
-      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
       cursor: pointer;
     }
   </style>
 </head>
 
 <body>
+  <main>
   <!-- HEADER -->
   <header class="header-bar">
     <div class="d-flex align-items-center header-brand">
@@ -149,59 +210,72 @@
     <!-- usuario -->
     <div class="user-area ms-auto">
       @auth
-        <div class="user-welcome">
-          <i class="fas fa-user-circle me-1"></i>
-          {{ session('nombre_usuario') ?? Auth::user()->nombre ?? Auth::user()->nomb_usu ?? 'Administrador' }}
-        </div>
-        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:inline;">
-          @csrf
-          <button type="submit" class="logout-btn">
-            <i class="fas fa-sign-out-alt"></i> Salir
-          </button>
-        </form>
+      <div class="user-welcome">
+        <i class="fas fa-user-circle me-1"></i>
+        {{ session('nombre_usuario') ?? Auth::user()->nombre ?? Auth::user()->nomb_usu ?? 'Administrador' }}
+      </div>
+      <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:inline;">
+        @csrf
+        <button type="submit" class="logout-btn">
+          <i class="fas fa-sign-out-alt"></i> Salir
+        </button>
+      </form>
       @else
-        <a href="{{ route('login') }}" class="logout-btn">
-          <i class="fas fa-exclamation-circle"></i> Login
-        </a>
+      <a href="{{ route('login') }}" class="logout-btn">
+        <i class="fas fa-exclamation-circle"></i> Login
+      </a>
       @endauth
     </div>
   </header>
 
   <!-- Contenido principal -->
-<div class="main-content" style="margin-left:20px; padding:20px;">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-  <h2>Galería Visual de Productos</h2>
-  <a href="{{ route('dashboard.index') }}" class="btn btn-outline-success">
-    <i class="fas fa-sync-alt"></i> Recargar Galería
-    </a>
-  </div>
+  <div class="main-content container mx-auto px-4">
+    <!-- Encabezado -->
+    <div class="flex flex-col md:flex-row items-center justify-between mb-6">
+      <h2 class="text-2xl font-bold text-gray-800">Galería Visual de Productos</h2>
+      <a href="{{ route('dashboard.index') }}"
+        class="mt-3 md:mt-0 inline-flex items-center gap-2 border border-green-600 text-green-600 px-4 py-2 rounded-lg hover:bg-green-600 hover:text-white transition">
+        <i class="fas fa-sync-alt"></i> Recargar Galería
+      </a>
+    </div>
 
-@if($agrupados->isNotEmpty())
-  @foreach($agrupados as $categoria => $lista)
-    <div class="categoria-section">
-      <div class="categoria-title">{{ $categoria }}</div>
-      <div class="row g-4">
+    @if($agrupados->isNotEmpty())
+    @foreach($agrupados as $categoria => $lista)
+    <!-- Sección por categoría -->
+    <div class="mb-10">
+      <div class="flex items-center gap-2 mb-4 bg-green-50 border-l-4 border-green-500 px-4 py-2 rounded-md">
+        <i class="fas fa-tag text-green-600"></i>
+        <h3 class="text-lg md:text-xl font-semibold text-gray-700">{{ $categoria }}</h3>
+      </div>
+
+      <!-- Grid de productos -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         @foreach($lista as $p)
-          <div class="col-sm-6 col-md-4 col-lg-3">
-            <div class="producto-card">
-              <img src="{{ asset('img/product/'.$p->imagen) }}" alt="{{ $p->nombre_producto }}">
-              <div class="producto-info text-center">
-                <strong>{{ $p->nombre_producto }}</strong><br>
-                <small class="text-muted">${{ number_format($p->precio_unitario, 2, ',', '.') }}</small><br>
-                <span class="badge bg-{{ $p->stock > 0 ? 'success' : 'danger' }}">
-                  {{ $p->stock > 0 ? 'Stock: '.$p->stock : 'Agotado' }}
-                </span>
-              </div>
-            </div>
+        <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition card-hover">
+          <img src="{{ asset('img/product/'.$p->imagen) }}"
+            alt="{{ $p->nombre_producto }}"
+            class="w-full h-40 object-cover">
+          <div class="p-4 text-center">
+            <p class="font-bold text-gray-800">{{ $p->nombre_producto }}</p>
+            <p class="text-gray-500 text-sm mb-2">
+              ${{ number_format($p->precio_unitario, 2, ',', '.') }}
+            </p>
+            <span class="px-3 py-1 rounded-full text-xs font-semibold
+                  {{ $p->stock > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
+              {{ $p->stock > 0 ? 'Stock: '.$p->stock : 'Agotado' }}
+            </span>
           </div>
+        </div>
         @endforeach
       </div>
     </div>
-  @endforeach
-@else
-  <div class="alert alert-info">No hay productos con imágenes para mostrar.</div>
-@endif
-    </section>
+    @endforeach
+    @else
+    <div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 rounded-md" role="alert">
+      <p>No hay productos con imágenes para mostrar.</p>
+    </div>
+    @endif
+  </div>
   </main>
   <!-- Footer -->
   <footer class="footer mt-5">
@@ -258,4 +332,5 @@
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
