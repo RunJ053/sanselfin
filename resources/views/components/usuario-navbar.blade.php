@@ -30,7 +30,16 @@
 
                         <li role="none">
                             <a href="{{ route('carrito.index') }}" role="menuitem" aria-label="Carrito de Compras">
-                                <i class="fas fa-shopping-cart"></i>
+                                <div class="notification-container">
+                                    <i class="fas fa-shopping-cart"></i>
+                                    @if(isset($carritoCount) && $carritoCount > 0)
+                                    @if($carritoCount <= 99)
+                                        <span class="notification-badge">{{ $carritoCount }}</span>
+                                        @else
+                                        <span class="notification-badge large-number">99+</span>
+                                        @endif
+                                        @endif
+                                </div>
                                 <span class="visually-hidden">Carrito</span>
                             </a>
                         </li>
@@ -114,9 +123,18 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('carrito.index') }}">
-                            <i class="fas fa-shopping-cart"></i>
-                            <span>Carrito de Compras</span>
+                        <a href="{{ route('carrito.index') }}" role="menuitem" aria-label="Carrito de Compras">
+                            <div class="notification-container">
+                                <i class="fas fa-shopping-cart"></i>
+                                @if(isset($carritoCount) && $carritoCount > 0)
+                                @if($carritoCount <= 99)
+                                    <span class="notification-badge">{{ $carritoCount }}</span>
+                                    @else
+                                    <span class="notification-badge large-number">99+</span>
+                                    @endif
+                                    @endif
+                            </div>
+                            <span class="visually-hidden">Carrito</span>
                         </a>
                     </li>
                     <li>

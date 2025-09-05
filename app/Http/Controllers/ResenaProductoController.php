@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ResenaProducto;
 use App\Models\Producto;
 use App\Models\Notificacion;
+use App\Models\CarritoCompra;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -38,8 +39,10 @@ class ResenaProductoController extends Controller
         $notificaciones = Notificacion::where('usuario_id', $userId)
             ->orderBy('created_at', 'desc')
             ->get();
+        
+        $carritoCount = CarritoCompra::where('usuario', $userId)->count('cantidad'); 
 
-        return view('review.index', compact('resenas', 'productosPendientes', 'notificaciones'));
+        return view('review.index', compact('resenas', 'productosPendientes', 'notificaciones', 'carritoCount'));
     }
 
     public function store(Request $request, Producto $producto)
@@ -85,7 +88,9 @@ class ResenaProductoController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('review.edit', compact('resena', 'notificaciones'));
+        $carritoCount = CarritoCompra::where('usuario', $userId)->count('cantidad'); 
+
+        return view('review.edit', compact('resena', 'notificaciones', 'carritoCount'));
     }
 
     public function update(Request $request, ResenaProducto $resena)

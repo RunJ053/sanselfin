@@ -50,7 +50,7 @@ class CarritoCompraController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        $carritoCount = CarritoCompra::where('usuario', $userId)->count('cantidad'); 
+        $carritoCount = CarritoCompra::where('usuario', $userId)->count('cantidad');
         // Total con descuento ya aplicado
         $totalConDescuento = $totalFinal;
 
@@ -256,8 +256,6 @@ class CarritoCompraController extends Controller
         ]);
     }
 
-
-
     public function remove($itemId)
     {
         if (!Auth::check()) {
@@ -280,6 +278,24 @@ class CarritoCompraController extends Controller
             ]);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Error al eliminar el producto del carrito.'], 500);
+        }
+    }
+
+    public function vaciar(Request $request)
+    {
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'Debes iniciar sesión para vaciar tu carrito.');
+        }
+
+        $usuarioId = Auth::id();
+
+        try {
+            // Eliminar todos los productos del carrito del usuario
+            CarritoCompra::where('usuario', $usuarioId)->delete();
+
+            return redirect()->back()->with('success', '🛒 Carrito vaciado correctamente');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', '❌ Hubo un problema al vaciar el carrito, intenta de nuevo.');
         }
     }
 }

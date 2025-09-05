@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Log; // Asegúrate de que esta línea esté presente
+use Illuminate\Support\Facades\Log;
 
 use App\Http\Requests\RegisterUserRequest;
 use App\Http\Requests\RegisterEmpleadoRequest;
@@ -84,10 +84,7 @@ class AuthController extends Controller
 
     protected function registerUser(RegisterUserRequest $request)
     {
-        Log::info('Inicio del proceso de registro de usuario normal.');
-
         $data = $request->validated();
-        Log::info('Datos de registro validados para el usuario: ' . $data['email']);
 
         try {
             // Verificamos si el email ya existe para evitar duplicados
@@ -178,7 +175,7 @@ class AuthController extends Controller
 
         // Generar un token único
         $token = Str::random(10); // Token más largo para mayor seguridad
-        $expiresAt = Carbon::now()->addMinutes(20); // El token expira en 60 minutos
+        $expiresAt = Carbon::now()->addMinutes(60); // El token expira en 60 minutos
 
         try {
             // Eliminar cualquier token anterior para este email

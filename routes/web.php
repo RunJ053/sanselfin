@@ -103,6 +103,7 @@ Route::middleware(['auth'])->group(function () {
     Route::GET('/carrito', [CarritoCompraController::class, 'index'])->name('carrito.index');
     Route::patch('/update/{itemId}', [CarritoCompraController::class, 'update'])->name('carrito.update');
     Route::DELETE('/remove/{itemId}', [CarritoCompraController::class, 'remove'])->name('carrito.remove');
+    Route::delete('/carrito/vaciar', [CarritoCompraController::class, 'vaciar'])->name('carrito.vaciar');
 
     // ! Rutas de la API del carrito (para JS)
     Route::prefix('api/carrito')->group(function () {
@@ -135,7 +136,8 @@ Route::middleware(['auth'])->group(function () {
         $notificaciones = Notificacion::where('usuario_id', auth()->id())
             ->orderBy('created_at', 'desc')
             ->get();
-        return view('servicios', compact('notificaciones'));
+        $carritoCount = CarritoCompra::where('usuario', auth()->id())->count();
+        return view('servicios', compact('notificaciones','carritoCount'));
     })->name('servicio');
 
     // ? Ruta para el acerca de
@@ -143,10 +145,11 @@ Route::middleware(['auth'])->group(function () {
         $notificaciones = Notificacion::where('usuario_id', auth()->id())
             ->orderBy('created_at', 'desc')
             ->get();
-        return view('acerca_de', compact('notificaciones'));
+        $carritoCount = CarritoCompra::where('usuario', auth()->id())->count();
+        return view('acerca_de', compact('notificaciones', 'carritoCount'));
     })->name('acerca_de');
 
-    // ! Ruta para enviar un correo al correo oficial de la pgina
+    // ! Ruta para enviar un correo al correo oficial de la página
     Route::post('/contacto/enviar', [ContactoController::class, 'enviar'])->name('contacto.enviar');
 
     Route::middleware(['is_admin_or_empleado'])->group(function () { // Usaremos un middleware para administradores

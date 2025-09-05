@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Notificacion;
+use App\Models\CarritoCompra;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,8 +18,9 @@ class NotificacionController extends Controller
         $notificaciones = Notificacion::where('usuario_id', $userId)
             ->orderBy('created_at', 'desc')
             ->get();
+        $carritoCount = CarritoCompra::where('usuario', $userId)->count('cantidad'); 
 
-        return view('notificacion.indexNotificacion', compact('notificaciones'));
+        return view('notificacion.indexNotificacion', compact('notificaciones','carritoCount'));
     }
 
     /**

@@ -47,6 +47,8 @@ class OpcionEntregaController extends Controller
         // * Mostar notificaciones pendientes
         $notificaciones = Notificacion::where('usuario_id', auth()->id())->orderBy('created_at', 'desc')->get();
 
+        $carritoCount = CarritoCompra::where('usuario', $userId)->count('cantidad'); 
+
         return view(
             'facturacion.opcionEnvio',
             compact(
@@ -56,7 +58,8 @@ class OpcionEntregaController extends Controller
                 'subtotal',
                 'impuestos',
                 'total',
-                'notificaciones'
+                'notificaciones',
+                'carritoCount'
             )
         );
     }

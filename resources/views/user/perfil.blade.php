@@ -3,7 +3,7 @@
 @section('title', 'Perfil de Usuario')
 
 @section('content')
-<x-navbar :notificaciones="$notificaciones" :carritoCount="$carritoCount" />
+<x-usuario-navbar :notificaciones="$notificaciones" :carritoCount="$carritoCount" />
 
 <div class="main-container">
     <!-- Mobile Menu -->

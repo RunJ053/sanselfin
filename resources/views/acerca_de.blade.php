@@ -174,7 +174,7 @@
                         <div class="contact-info">
                             <p><i class="fas fa-clock"></i> Lunes a Sábados, 8:00 a.m a 6:00 p.m</p>
                             <p><i class="fas fa-map-marker-alt"></i>
-                                <a href="https://share.google/uCjgbp9lKkg6hyuRB" target="_blank" rel="noopener noreferrer"> Tv. 94 L #88-08, Bogotá</a>
+                                <a style="color: gray; text-decoration: none;" href="https://share.google/uCjgbp9lKkg6hyuRB" target="_blank" rel="noopener noreferrer"> Tv. 94 L #88-08, Bogotá</a>
                             </p>
                             <p><i class="fas fa-envelope"></i> fincaaldia25@gmail.com</p>
                             <p><i class="fas fa-phone"></i> 300 123 4567</p>

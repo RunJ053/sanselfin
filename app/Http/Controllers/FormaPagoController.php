@@ -55,6 +55,7 @@ class FormaPagoController extends Controller
 
         // * Mostar notificaciones pendientes
         $notificaciones = Notificacion::where('usuario_id', auth()->id())->orderBy('created_at', 'desc')->get();
+        $carritoCount = CarritoCompra::where('usuario', $userId)->count('cantidad'); 
 
         return view(
             'facturacion.forma_pago',
@@ -66,7 +67,8 @@ class FormaPagoController extends Controller
                 'totalEnvio',
                 'notificaciones',
                 'descuento',
-                'sub'
+                'sub',
+                'carritoCount'
             )
         );
     }

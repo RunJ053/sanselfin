@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\DatoUsuario;
 use App\Models\Notificacion;
+use App\Models\CarritoCompra;
 use Carbon\Carbon;
 use App\Models\Pedido;
 use App\Models\DetallePedido;
@@ -61,6 +62,8 @@ class LoginController extends Controller
         $notificaciones = Notificacion::where('usuario_id', $usuarioId)
             ->orderBy('created_at', 'desc')
             ->get();
+        
+        $carritoCount = CarritoCompra::where('usuario', $usuarioId)->count('cantidad'); 
 
         $detallePedidos = DetallePedido::whereIn('pedidos', $pedidosUsuario->pluck('id'))->get();
 
@@ -70,7 +73,8 @@ class LoginController extends Controller
             'pedidosMensuales',
             'gastoMensual',
             'promedioGasto',
-            'pedidosUsuario'
+            'pedidosUsuario',
+            'carritoCount'
         ));
     }
 }

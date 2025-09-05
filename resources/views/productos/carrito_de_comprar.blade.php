@@ -32,11 +32,19 @@
                             <div class="w-3 h-3 bg-gradient-to-r from-green-500 to-yellow-500 rounded-full mr-3 animate-pulse-slow"></div>
                             <h2 class="text-2xl font-bold text-gray-800">Productos en tu carrito</h2>
                         </div>
-                        <div class="bg-gradient-to-r from-purple-100 to-blue-100 px-4 py-2 rounded-full">
+                        <div class="bg-gradient-to-r from-purple-100 to-blue-100 px-5 py-2 rounded-full">
                             <span class="text-sm font-semibold text-gray-900" id="contadorCarrito">
                                 {{ $itemsCarrito->sum('cantidad') }} items
                             </span>
                         </div>
+                        <form action="{{ route('carrito.vaciar') }}" method="POST" onsubmit="return confirm('¿Seguro que quieres vaciar el carrito?')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit"
+                                class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300">
+                                Vaciar Carrito
+                            </button>
+                        </form>
                     </div>
 
                     <!-- Iterar productos -->

@@ -14,7 +14,7 @@
 </head>
 <body>
     @yield('content')
-    <x-usuario-navbar :notificaciones="$notificaciones" />
+    <x-usuario-navbar :notificaciones="$notificaciones" :carritoCount="$carritoCount" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="//unpkg.com/alpinejs" defer></script>
     <script src="{{ asset('js/hamburguesa.js') }}"></script>
