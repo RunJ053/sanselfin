@@ -180,6 +180,27 @@ Route::middleware(['auth'])->group(function () {
 });
 
 //tareadel admin
+
+//Tarjetas Admin
+Route::post('/tarjetas/productos', [AdminController::class, 'tarjetaProducto'])->name('tarjeta.Producto');
+Route::post('/tarjetas/stock', [AdminController::class, 'tarjetaStock'])->name('tarjeta.Stock');
+Route::post('/tarjetas/pedidos', [AdminController::class, 'tarjetaPedido'])->name('tarjeta.Pedido');
+//Vistas de las tarjetas
+//usuarios
+use App\Http\Controllers\AdminController;
+Route::get('/usuarios', [AdminController::class, 'index'])->name('usuario.index');
+Route::get('/usuarios/create', [AdminController::class, 'create'])->name('usuario.create');
+Route::post('/usuarios', [AdminController::class, 'store'])->name('usuario.store');
+Route::get('/usuarios/{id}/edit', [AdminController::class, 'edit'])->name('usuario.edit');
+Route::put('/usuarios/{id}', [AdminController::class, 'update'])->name('usuario.update');
+Route::delete('/usuarios/{id}', [AdminController::class, 'destroy'])->name('usuario.destroy');
+
+
+
+//Route::get('/dashboard', [TareaController::class, 'index'])->name('dashboard.index');
+Route::post('/dashboard/tareas', [TareaController::class, 'store'])->name('tarea.store');
+Route::get('/dashboard/tareas/hecha/{id}', [TareaController::class, 'marcarHecha'])->name('tarea.hecha');
+Route::get('/dashboard/tareas/eliminar/{id}', [TareaController::class, 'eliminar'])->name('tarea.eliminar');
 //Route::GET('/dashboard', [TareaController::class, 'index'])->name('dashboard.index');
 Route::POST('/dashboard/tareas', [TareaController::class, 'store'])->name('tarea.store');
 Route::GET('/dashboard/tareas/hecha/{id}', [TareaController::class, 'marcarHecha'])->name('tarea.hecha');

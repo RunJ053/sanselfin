@@ -1,24 +1,18 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-  <meta charset="UTF-8">
-  <title>Dashboard Inventario</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <!-- CSS personalizado -->
-   <link rel="shortcut icon" href="{{ asset('img/logo/icon.png') }}" type="image/x-icon" />
-  <link rel="stylesheet" href="{{ asset('css/reporte_admin.css') }}">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestión de Usuarios</title>
+  <link rel="shortcut icon" href="{{ asset('img/logo/icon.png') }}" type="image/x-icon" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ asset('css/INVENTARIO.CSS') }}">
   <link rel="stylesheet" href="{{ asset('css/footer.css') }}">
+</head>
+<body>
 
-  <!-- Bootstrap y Chart.js -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <!-- Iconos -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-  <style>
+ <style>
     /* HEADER estilo similar a la primera imagen */
     .header-bar {
       position: fixed;
@@ -39,12 +33,15 @@
 .nav-links .nav-link {
   color: rgba(255,255,255,0.95);
   font-weight: 600;
-  text-decoration: none; /* quita la raya */
+  text-decoration: none;
+ 
+  padding: 6px 14px;
+  border-radius: 50px; /* redondeado */
+  transition: background 0.3s ease;
 }
-
 .nav-links .nav-link:hover {
-  color: #f8f9fa;
-  text-decoration: none; /* no mostrar raya al pasar el mouse */
+  color: #fff;
+  text-decoration: none;
 }
 
 
@@ -118,6 +115,49 @@
       box-shadow: 0 10px 20px rgba(0,0,0,0.2);
       cursor: pointer;
     }
+
+    .btn-nuevo {
+  background: #28a745;
+  color: #fff;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 50px; /* redondeado */
+  border: none;
+  transition: all 0.2s ease-in-out;
+  text-decoration: none;
+}
+.btn-nuevo:hover {
+  background: #218838;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  text-decoration: none;
+}
+
+/* Tarjetas de estadísticas redondas */
+.stat-card {
+  background: #fff;
+  border-radius: 20px; /* esquinas redondeadas */
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+}
+.stat-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%; /* icono dentro de un círculo */
+  background: #5cc05f;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  font-size: 24px;
+  margin: 0 auto 12px auto;
+}
   </style>
 </head>
 
@@ -132,8 +172,8 @@
     </div>
 
     <!-- toggler móvil -->
-    <button class="navbar-toggler ms-3 d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#topNav">
-      <span class="navbar-toggler-icon" style="filter: invert(1)"></span>
+    <button class="nav-toggler ms-3 d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#topNav">
+      <span class="nav-toggler-icon" style="filter: invert(1)"></span>
     </button>
 
     <!-- enlaces -->
@@ -167,43 +207,94 @@
     </div>
   </header>
 
-  <!-- Contenido principal -->
+<!-- Contenido principal -->
 <div class="main-content" style="margin-left:20px; padding:20px;">
   <div class="d-flex justify-content-between align-items-center mb-4">
-  <h2>Galería Visual de Productos</h2>
-  <a href="{{ route('dashboard.index') }}" class="btn btn-outline-success">
-    <i class="fas fa-sync-alt"></i> Recargar Galería
+    <h2>Gestión de Usuarios</h2>
+    <a href="{{ route('usuario.create') }}" class="btn-nuevo">
+      <i class="fas fa-user-plus"></i>Nuevo Usuario
     </a>
   </div>
 
-@if($agrupados->isNotEmpty())
-  @foreach($agrupados as $categoria => $lista)
-    <div class="categoria-section">
-      <div class="categoria-title">{{ $categoria }}</div>
-      <div class="row g-4">
-        @foreach($lista as $p)
-          <div class="col-sm-6 col-md-4 col-lg-3">
-            <div class="producto-card">
-              <img src="{{ asset('img/product/'.$p->imagen) }}" alt="{{ $p->nombre_producto }}">
-              <div class="producto-info text-center">
-                <strong>{{ $p->nombre_producto }}</strong><br>
-                <small class="text-muted">${{ number_format($p->precio_unitario, 2, ',', '.') }}</small><br>
-                <span class="badge bg-{{ $p->stock > 0 ? 'success' : 'danger' }}">
-                  {{ $p->stock > 0 ? 'Stock: '.$p->stock : 'Agotado' }}
-                </span>
-              </div>
-            </div>
-          </div>
-        @endforeach
+  <!-- Estadísticas -->
+  <div class="row mb-4">
+    <div class="col-md-4">
+      <div class="card bg-success text-white shadow">
+        <div class="card-body">
+          <h5><i class="fas fa-users me-2"></i>Total Usuarios</h5>
+          <p class="fs-4">{{ count($usuarios) }}</p>
+        </div>
       </div>
     </div>
-  @endforeach
-@else
-  <div class="alert alert-info">No hay productos con imágenes para mostrar.</div>
-@endif
-    </section>
-  </main>
-  <!-- Footer -->
+
+    <div class="col-md-4">
+      <div class="card bg-primary text-white shadow">
+        <div class="card-body">
+          <h5><i class="fas fa-boxes me-2"></i>Productos Totales</h5>
+          <p class="fs-4">{{ count($inventarios ?? []) }}</p>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card bg-warning text-dark shadow">
+        <div class="card-body">
+          <h5><i class="fas fa-tags me-2"></i>Total Categorías</h5>
+          <p class="fs-4">{{ count($categorias) }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabla de usuarios -->
+  <div class="table-responsive">
+    <table class="table table-striped table-hover">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Apellido</th>
+          <th>Dirección</th>
+          <th>Correo</th>
+          <th>Teléfono</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach ($usuarios as $user)
+        <tr>
+          <td>{{ $user->id }}</td>
+          <td>{{ $user->nombre }}</td>
+          <td>{{ $user->apellidos }}</td>
+          <td>{{ $user->direccion }}</td>
+          <td>{{ $user->email }}</td>
+          <td>{{ $user->telefono }}</td>
+          <td>
+                <!-- Botón Editar -->
+                <a href="{{ route('usuario.edit', $user->id)}}" 
+                class="btn btn-sm btn-warning mb-1">
+                    <i class="fas fa-edit"></i>
+                </a>
+
+                <!-- Botón Eliminar -->
+                <form action="{{ route('usuario.destroy', $user->id) }}" 
+                    method="POST" style="display:inline;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-sm btn-danger mb-1" 
+                            onclick="return confirm('¿Estás seguro de eliminar este usuario?');">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </form>
+          </td>
+        </tr>
+        @endforeach
+      </tbody>
+    </table>
+  </div>
+
+ <!-- Footer -->
   <footer class="footer mt-5">
     <div class="container">
       <div class="footer-grid">
@@ -254,8 +345,9 @@
       </div>
     </div>
   </footer>
-  </main>
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

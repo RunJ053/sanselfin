@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>Registrar Producto</title>
     <link rel="stylesheet" href="{{ asset('css/nuevo_producto.css') }}">
+    <link rel="shortcut icon" href="{{asset('img/logo/icon.png')}}" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 </head>
 
@@ -95,3 +96,4 @@
 </div>
 
 </body>
+</html>
