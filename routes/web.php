@@ -129,12 +129,15 @@ Route::post('/tarjetas/pedidos', [AdminController::class, 'tarjetaPedido'])->nam
 //Vistas de las tarjetas
 //usuarios
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\NotiController;
+
 Route::get('/usuarios', [AdminController::class, 'index'])->name('usuario.index');
 Route::get('/usuarios/create', [AdminController::class, 'create'])->name('usuario.create');
 Route::post('/usuarios', [AdminController::class, 'store'])->name('usuario.store');
 Route::get('/usuarios/{id}/edit', [AdminController::class, 'edit'])->name('usuario.edit');
 Route::put('/usuarios/{id}', [AdminController::class, 'update'])->name('usuario.update');
 Route::delete('/usuarios/{id}', [AdminController::class, 'destroy'])->name('usuario.destroy');
+Route::get('/notificaciones', [NotiController::class, 'index'])->name('admin.noti_admin');
 
 
 

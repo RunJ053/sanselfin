@@ -21,7 +21,7 @@
 <body>
 
  <style>
-    /* HEADER estilo similar a la primera imagen */
+    /* HEADER estilo*/
     .header-bar {
       position: fixed;
       top: 10px;
@@ -124,50 +124,64 @@
 </head>
 
 <body>
-  <!-- HEADER -->
-  <header class="header-bar">
-    <div class="d-flex align-items-center header-brand">
-      <a href="{{ route('admin.dashboard') }}" class="d-flex align-items-center text-decoration-none">
-        <img src="{{ asset('img/logo/icon.png') }}" alt="Logo">
-        <span class="brand-text">Finca al Día</span>
-      </a>
-    </div>
+<!-- HEADER -->
+<header class="header-bar">
+  <div class="d-flex align-items-center header-brand">
+    <a href="{{ route('admin.dashboard') }}" class="d-flex align-items-center text-decoration-none">
+      <img src="{{ asset('img/logo/icon.png') }}" alt="Logo">
+      <span class="brand-text">Finca al Día</span>
+    </a>
+  </div>
 
-    <!-- toggler móvil -->
-    <button class="navbar-toggler ms-3 d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#topNav">
-      <span class="navbar-toggler-icon" style="filter: invert(1)"></span>
-    </button>
+  <!-- toggler móvil -->
+  <button class="navbar-toggler ms-3 d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#topNav">
+    <span class="navbar-toggler-icon" style="filter: invert(1)"></span>
+  </button>
 
-    <!-- enlaces -->
-    <nav class="ms-4 me-auto collapse d-md-flex nav-links" id="topNav">
-      <ul class="navbar-nav d-flex flex-row gap-3">
-        <li class="nav-item"><a class="nav-link" href="{{ route('admin.dashboard') }}"><i class="fas fa-home me-1"></i> Inicio</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{ route('producto.index') }}"><i class="fas fa-boxes me-1"></i> Inventario</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{ route('dashboard.index') }}"><i class="fas fa-chart-bar me-1"></i> Reportes</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{ route('usuario.index') }}"><i class="fas fa-users me-1"></i> Usuarios</a></li>
-      </ul>
-    </nav>
+  <!-- enlaces -->
+  <nav class="ms-4 me-auto collapse d-md-flex nav-links" id="topNav">
+    <ul class="navbar-nav d-flex flex-row gap-3">
+      <li class="nav-item"><a class="nav-link" href="{{ route('admin.dashboard') }}"><i class="fas fa-home me-1"></i> Inicio</a></li>
+      <li class="nav-item"><a class="nav-link" href="{{ route('producto.index') }}"><i class="fas fa-boxes me-1"></i> Inventario</a></li>
+      <li class="nav-item"><a class="nav-link" href="{{ route('dashboard.index') }}"><i class="fas fa-chart-bar me-1"></i> Reportes</a></li>
+      <li class="nav-item"><a class="nav-link" href="{{ route('usuario.index') }}"><i class="fas fa-users me-1"></i> Usuarios</a></li>
+    </ul> 
+  </nav>
 
-    <!-- usuario -->
-    <div class="user-area ms-auto">
-      @auth
+  <!-- usuario -->
+  <div class="user-area ms-auto">
+    @auth
+      <div class="d-flex align-items-center gap-3">
         <div class="user-welcome">
           <i class="fas fa-user-circle me-1"></i>
           {{ session('nombre_usuario') ?? Auth::user()->nombre ?? Auth::user()->nomb_usu ?? 'Administrador' }}
         </div>
+
+        <!-- campana al lado del usuario -->
+      <a href="{{ route('admin.noti_admin') }}" class="btn btn-link text-white position-relative p-0" style="font-size: 1rem;">
+        <i class="fas fa-bell"></i>
+        @if(!empty($notificaciones) && count($notificaciones) > 0)
+          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+              {{ count($notificaciones) }}
+          </span>
+        @endif
+      </a>
+
+        <!-- botón salir -->
         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:inline;">
           @csrf
           <button type="submit" class="logout-btn">
             <i class="fas fa-sign-out-alt"></i> Salir
           </button>
         </form>
-      @else
-        <a href="{{ route('login') }}" class="logout-btn">
-          <i class="fas fa-exclamation-circle"></i> Login
-        </a>
-      @endauth
-    </div>
-  </header>
+      </div>
+    @else
+      <a href="{{ route('login') }}" class="logout-btn">
+        <i class="fas fa-exclamation-circle"></i> Login
+      </a>
+    @endauth
+  </div>
+</header>
 
 
   <!-- CONTENIDO PRINCIPAL -->
@@ -266,65 +280,71 @@
           </div>
         </div>
 
-        <!-- Gráfico tareas por tipo -->
-        <div class="chart-card mb-4">
-          <h5 class="mb-3">📈 Resumen de Tareas</h5>
-          <div class="chart-container">
-            <canvas id="graficoTareas"></canvas>
+        <div class="row">
+          <!-- Resumen de Tareas -->
+          <div class="col-md-6">
+            <div class="chart-card mb-4">
+              <h5 class="mb-3">📈 Resumen de Tareas</h5>
+              <div class="chart-container">
+                <canvas id="graficoTareas"></canvas>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <!-- Gestión de Tareas -->
-        <div class="chart-card mb-4">
-          <h5 class="mb-3">📝 Gestión de Tareas</h5>
+          <!-- Gestión de Tareas -->
+          <div class="col-md-6">
+            <div class="chart-card mb-4">
+              <h5 class="mb-3">📝 Gestión de Tareas</h5>
 
-          <!-- Formulario -->
-          <form method="POST" action="{{ route('tarea.store') }}" class="row g-3 mb-3">
-            @csrf
-            <div class="col-md-4"><input type="text" name="tarea_titulo" class="form-control" placeholder="Título" required></div>
-            <div class="col-md-4"><input type="text" name="tarea_descripcion" class="form-control" placeholder="Descripción (opcional)"></div>
-            <div class="col-md-2">
-              <select name="tarea_tipo" class="form-select">
-                <option value="pendiente">Pendiente</option>
-                <option value="hecha">Hecha</option>
-              </select>
-            </div>
-            <div class="col-md-2"><button class="btn btn-success w-100">Agregar</button></div>
-          </form>
-
-          <!-- Listado -->
-          <div class="row">
-            <div class="col-md-6">
-              <h6 class="text-warning">Pendientes</h6>
-              @forelse($pendientes ?? [] as $tarea)
-                <div class="tarea-card">
-                  <strong>{{ $tarea->titulo }}</strong>
-                  <p class="mb-1">{{ $tarea->descripcion }}</p>
-                  <small>{{ $tarea->fecha_creacion }}</small>
-                  <div class="tarea-acciones mt-2">
-                    <a href="{{ route('tarea.hecha', $tarea->id) }}" class="btn btn-sm btn-success"><i class="fas fa-check"></i></a>
-                    <a href="{{ route('tarea.eliminar', $tarea->id) }}" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></a>
-                  </div>
+              <!-- Formulario -->
+              <form method="POST" action="{{ route('tarea.store') }}" class="row g-3 mb-3">
+                @csrf
+                <div class="col-md-4"><input type="text" name="tarea_titulo" class="form-control" placeholder="Título" required></div>
+                <div class="col-md-4"><input type="text" name="tarea_descripcion" class="form-control" placeholder="Descripción (opcional)"></div>
+                <div class="col-md-2">
+                  <select name="tarea_tipo" class="form-select">
+                    <option value="pendiente">Pendiente</option>
+                    <option value="hecha">Hecha</option>
+                  </select>
                 </div>
-              @empty
-                <p class="text-muted">No hay tareas pendientes.</p>
-              @endforelse
-            </div>
+                <div class="col-md-2"><button class="btn btn-success w-100">Agregar</button></div>
+              </form>
 
-            <div class="col-md-6">
-              <h6 class="text-success">Hechas</h6>
-              @forelse($hechas ?? [] as $tarea)
-                <div class="tarea-card hecha">
-                  <strong>{{ $tarea->titulo }}</strong>
-                  <p class="mb-1">{{ $tarea->descripcion }}</p>
-                  <small>{{ $tarea->fecha_creacion }}</small>
-                  <div class="tarea-acciones mt-2">
-                    <a href="{{ route('tarea.eliminar', $tarea->id) }}" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></a>
-                  </div>
+              <!-- Listado -->
+              <div class="row">
+                <div class="col-md-6">
+                  <h6 class="text-warning">Pendientes</h6>
+                  @forelse($pendientes ?? [] as $tarea)
+                    <div class="tarea-card">
+                      <strong>{{ $tarea->titulo }}</strong>
+                      <p class="mb-1">{{ $tarea->descripcion }}</p>
+                      <small>{{ $tarea->fecha_creacion }}</small>
+                      <div class="tarea-acciones mt-2">
+                        <a href="{{ route('tarea.hecha', $tarea->id) }}" class="btn btn-sm btn-success"><i class="fas fa-check"></i></a>
+                        <a href="{{ route('tarea.eliminar', $tarea->id) }}" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></a>
+                      </div>
+                    </div>
+                  @empty
+                    <p class="text-muted">No hay tareas pendientes.</p>
+                  @endforelse
                 </div>
-              @empty
-                <p class="text-muted">No hay tareas echas.</p>
-              @endforelse
+
+                <div class="col-md-6">
+                  <h6 class="text-success">Hechas</h6>
+                  @forelse($hechas ?? [] as $tarea)
+                    <div class="tarea-card hecha">
+                      <strong>{{ $tarea->titulo }}</strong>
+                      <p class="mb-1">{{ $tarea->descripcion }}</p>
+                      <small>{{ $tarea->fecha_creacion }}</small>
+                      <div class="tarea-acciones mt-2">
+                        <a href="{{ route('tarea.eliminar', $tarea->id) }}" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></a>
+                      </div>
+                    </div>
+                  @empty
+                    <p class="text-muted">No hay tareas echas.</p>
+                  @endforelse
+                </div>
+              </div>
             </div>
           </div>
         </div>
