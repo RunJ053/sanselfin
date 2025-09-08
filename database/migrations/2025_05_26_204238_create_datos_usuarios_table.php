@@ -43,6 +43,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('datos_usuario'); // Luego elimina la tabla
+        Schema::dropIfExists('datos_usuario');
     }
 };

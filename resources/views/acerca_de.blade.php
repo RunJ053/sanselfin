@@ -15,133 +15,8 @@
 </head>
 
 <body>
-    <nav class="main-nav" aria-label="Navegación principal">
-        <!-- Logo -->
-        <div class="nav-left">
-            <a href="{{ route('user.dashboard') }}" class="logo-link">
-                <img src="{{asset ('img/logo/icon.png')}}" alt="Logo de La Finca al Día" width="120" height="40">
-            </a>
-        </div>
-
-        <!-- Enlaces de navegación centrales -->
-        <div class="nav-center">
-            <ul class="nav-links" role="menubar">
-                <li role="none"><a href="{{ route('user.dashboard') }}" role="menuitem">Inicio</a></li>
-                <li role="none"><a href="{{ route('producto') }}" role="menuitem">Productos</a></li>
-                <li role="none"><a href="{{ route('servicio')}}" role="menuitem">Servicios</a></li>
-                <li role="none"><a href="{{ route('acerca_de')}}" role="menuitem">Acerca de</a></li>
-            </ul>
-        </div>
-
-        <!-- Acciones de la derecha -->
-        <div class="nav-right">
-            <ul class="nav-actions" role="menubar">
-                <li role="none">
-                    <a href="/notificaciones" role="menuitem" aria-label="Notificaciones">
-                        <i class="fas fa-bell"></i>
-                        <span class="visually-hidden">Notificaciones</span>
-                    </a>
-                </li>
-                <li role="none">
-                    <a href="/carrito" role="menuitem" aria-label="Carrito de Compras">
-                        <i class="fas fa-shopping-cart"></i>
-                        <span class="visually-hidden">Carrito</span>
-                    </a>
-                </li>
-                <li role="none">
-                    <a href="/ayuda" role="menuitem" aria-label="Ayuda">
-                        <i class="fa-solid fa-circle-exclamation"></i>
-                        <span>Ayuda</span>
-                    </a>
-                </li>
-            </ul>
-
-            <!-- Avatar de usuario -->
-            <div class="user-avatar" onclick="toggleDropdown()" role="button" aria-haspopup="true" aria-expanded="false">
-                @auth <!-- Verificamos que el usuario esté autenticado -->
-                @if (Auth::user()->user_img)
-                <img src="{{ asset('img/usuario_img/' . Auth::user()->user_img) }}"
-                    alt="Avatar de {{ Auth::user()->nombre }}"
-                    class="avatar-image">
-                @else
-                <i class="fas fa-user"></i>
-                @endif
-                @endauth
-
-                <div class="dropdown-menu" id="dropdownMenu">
-                    <a href="{{ route('myProfile') }}" class="dropdown-item">Mi Perfil</a>
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                        @csrf
-                    </form>
-                    <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                        Cerrar Sesión
-                    </a>
-
-                </div>
-            </div>
-
-            <!-- Botón hamburguesa -->
-            <button class="menu-toggle" onclick="toggleMobileMenu()" aria-expanded="false" aria-label="Menú">
-                <i class="fas fa-bars"></i>
-            </button>
-        </div>
-    </nav>
-
-    <!-- Overlay para móvil -->
-    <div class="mobile-overlay" id="mobileOverlay" onclick="closeMobileMenu()"></div>
-
-    <!-- Menú móvil -->
-    <div class="mobile-menu" id="mobileMenu">
-        <div class="mobile-menu-header">
-            <button class="mobile-menu-close" onclick="closeMobileMenu()">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-
-        <!-- Enlaces de navegación móvil -->
-        <ul class="mobile-nav-links">
-            <li><a href="{{ route('user.dashboard') }}">Inicio</a></li>
-            <li><a href="{{ route('producto') }}">Productos</a></li>
-            <li><a href="{{ route('servicio')}}">Servicios</a></li>
-            <li><a href="{{ route('acerca_de')}}">Acerca de</a></li>
-        </ul>
-
-        <!-- Acciones móvil -->
-        <ul class="mobile-nav-actions">
-            <li>
-                <a href="/notificaciones">
-                    <i class="fas fa-bell"></i>
-                    <span>Notificaciones</span>
-                </a>
-            </li>
-            <li>
-                <a href="/carrito">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span>Carrito de Compras</span>
-                </a>
-            </li>
-            <li>
-                <a href="/ayuda">
-                    <i class="fa-solid fa-circle-exclamation"></i>
-                    <span>Necesito Ayuda</span>
-                </a>
-            </li>
-            <li>
-                <a href="/perfil">
-                    <i class="fas fa-user"></i>
-                    <span>Mi Perfil</span>
-                </a>
-            </li>
-            <li>
-                <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Cerrar Sesión</span>
-                </a>
-            </li>
-        </ul>
-    </div>
-
-     <!-- Hero Section -->
+    <x-navbar :notificaciones="$notificaciones" :carritoCount="$carritoCount" />
+    <!-- Hero Section -->
     <section class="hero-section">
         <div class="container">
             <div class="hero-content">
@@ -231,25 +106,34 @@
         <div class="contact-section">
             <h3 class="contact-title">¡Conversemos!</h3>
             <p class="contact-subtitle">¿Tienes preguntas, sugerencias o quieres ser parte de nuestra comunidad? Nos encantaría escucharte</p>
-            
-            <form>
+
+            <form id="contactoForm" action="{{ route('contacto.enviar') }}" method="POST">
+                @csrf
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Nombre completo</label>
-                        <input type="text" class="form-control" placeholder="Escribe tu nombre completo">
+                        <input type="text" name="nombre" class="form-control"
+                            placeholder="Escribe tu nombre completo"
+                            value="{{ old('nombre') }}" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Correo electrónico</label>
-                        <input type="email" class="form-control" placeholder="tu.email@ejemplo.com">
+                        <input type="email" name="correo" class="form-control"
+                            placeholder="tu.email@ejemplo.com"
+                            value="{{ old('correo') }}" required>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Asunto</label>
-                    <input type="text" class="form-control" placeholder="¿En qué te podemos ayudar?">
+                    <input type="text" name="asunto" class="form-control"
+                        placeholder="¿En qué te podemos ayudar?"
+                        value="{{ old('asunto') }}" required>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Mensaje</label>
-                    <textarea class="form-control" placeholder="Comparte tus comentarios, preguntas o ideas con nosotros..."></textarea>
+                    <textarea name="mensaje" class="form-control"
+                        placeholder="Comparte tus comentarios, preguntas o ideas con nosotros..."
+                        required>{{ old('mensaje') }}</textarea>
                 </div>
                 <button type="submit" class="btn-send">
                     <i class="fas fa-paper-plane"></i>
@@ -259,128 +143,83 @@
         </div>
     </div>
 
-
-    <footer class="footer">
-        <div data-aos="fade-zoom-in" data-aos-easing="ease-in-back" data-aos-delay="100" data-aos-offset="0"
-            class="footer-top">
+    <footer data-aos="fade-up"
+        data-aos-duration="100"
+        class="footer">
+        <div class="footer-top">
             <div class="container">
                 <div class="footer-grid">
-                    <!-- Información de la empresa -->
+                    <!-- Sección de información de la empresa -->
                     <div class="footer-section">
-                        <img src="{{asset('img/logo/icon.png')}}" alt="Logo Finca al Día" class="footer-logo" width="45%" height="45%">
-                        <p class="company-description">Llevamos los productos más frescos del campo a tu mesa,
-                            garantizando calidad y frescura en cada entrega.</p>
+                        <img src="{{asset('img/logo/icon.png')}}" alt="Logo Finca al Día" class="footer-logo">
+                        <p class="company-description">Llevamos los productos más frescos del campo a tu mesa, garantizando calidad y frescura en cada entrega.</p>
                         <div class="social-links">
-                            <a href="#" aria-label="Síguenos en Facebook" rel="noopener">
-                                <i class="fab fa-facebook" aria-hidden="true"></i>
-                            </a>
-                            <a href="#" aria-label="Síguenos en Instagram" rel="noopener">
-                                <i class="fab fa-instagram" aria-hidden="true"></i>
-                            </a>
-                            <a href="#" aria-label="Contáctanos por WhatsApp" rel="noopener">
-                                <i class="fab fa-whatsapp" aria-hidden="true"></i>
-                            </a>
+                            <a href="" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                            <a href="" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                            <a href="" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
                         </div>
                     </div>
-
-                    <!-- Enlaces rápidos -->
+                    <!-- Sección de enlaces rápidos -->
                     <div class="footer-section">
                         <h3>Enlaces Rápidos</h3>
                         <ul class="footer-links">
-                            <li><a href="#"
-                                    onclick="alert('Empieza registrandote primero. ¡Y asi puedes realizar compras!')">Nuestros
-                                    Productos</a></li>
-                            <li><a href="#">Recetas</a></li>
-                            <li><a href="#">Blog</a></li>
-                            <li><a href="#"
-                                    onclick="alert('Empieza registrandote primero. ¡Y asi puedes realizar compras!')">Sobre
-                                    Nosotros</a></li>
-                            <li><a href="#"
-                                    onclick="alert('Empieza registrandote primero. ¡Y asi puedes realizar compras!')">FAQ</a>
-                            </li>
+                            <li><a href="{{route('producto')}}">Nuestros Productos</a></li>
+                            <li><a href="{{route('servicio')}}">Sobre Nosotros</a></li>
+                            <li><a href="{{route('acerca_de')}}">FAQ</a></li>
                         </ul>
                     </div>
-
-                    <!-- Información de contacto -->
+                    <!-- Sección de contacto -->
                     <div class="footer-section">
                         <h3>Contacto</h3>
-                        <address class="contact-info">
-                            <p><i class="fas fa-clock" aria-hidden="true"></i> Lunes a Sábados, 8:00 a.m a 6:00 p.m
+                        <div class="contact-info">
+                            <p><i class="fas fa-clock"></i> Lunes a Sábados, 8:00 a.m a 6:00 p.m</p>
+                            <p><i class="fas fa-map-marker-alt"></i>
+                                <a style="color: gray; text-decoration: none;" href="https://share.google/uCjgbp9lKkg6hyuRB" target="_blank" rel="noopener noreferrer"> Tv. 94 L #88-08, Bogotá</a>
                             </p>
-                            <p><i class="fas fa-map-marker-alt" aria-hidden="true"></i> [Tu dirección aquí]</p>
-                            <p><i class="fas fa-envelope" aria-hidden="true"></i>
-                                <a href="mailto:informacion@gmail.com">informacion@gmail.com</a>
-                            </p>
-                            <p><i class="fas fa-phone" aria-hidden="true"></i>
-                                <a href="tel:+573001234567">300 123 4567</a>
-                            </p>
-                        </address>
+                            <p><i class="fas fa-envelope"></i> fincaaldia25@gmail.com</p>
+                            <p><i class="fas fa-phone"></i> 300 123 4567</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
         <!-- Footer Bottom -->
         <div class="footer-bottom">
             <div class="container">
                 <p>&copy; 2024 Finca al Día. Todos los derechos reservados.</p>
-                <div class="payment-methods" aria-label="Métodos de pago aceptados">
-                    <img src="{{asset('img/logo/visa.png')}}" alt="Visa" width="50" height="30">
-                    <img src="{{asset('img/logo/logo-Mastercard.png')}}" alt="Mastercard" width="50" height="30">
-                    <img src="{{asset('img/logo/nequi.png')}}" alt="Nequi" width="50" height="30">
+                <div class="payment-methods">
+                    <img src="{{asset('img/logo/visa.png')}}" alt="Visa">
+                    <img src="{{asset('img/logo/logo-Mastercard.png')}}" alt="Mastercard">
+                    <img src="{{asset('img/logo/nequi.png')}}" alt="Nequi">
                 </div>
             </div>
         </div>
     </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ asset('js/hamburguesa.js') }}"></script>
+    <script src="{{ asset('js/acerca_de.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Scroll animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, observerOptions);
-
-        // Observe all animated elements
-        document.querySelectorAll('.content-card, .value-item, .contact-section').forEach((el) => {
-            observer.observe(el);
+        @if(session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: '¡Éxito!',
+            text: '{{ session('
+            success ') }}',
+            confirmButtonColor: '#198754'
         });
+        @endif
 
-        // Add smooth scrolling for better UX
-        document.documentElement.style.scrollBehavior = 'smooth';
-
-        // Form validation (basic)
-        document.querySelector('form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const inputs = this.querySelectorAll('input, textarea');
-            let isValid = true;
-            
-            inputs.forEach(input => {
-                if (input.hasAttribute('required') && !input.value.trim()) {
-                    isValid = false;
-                    input.style.borderColor = '#e74c3c';
-                } else {
-                    input.style.borderColor = 'var(--border-light)';
-                }
-            });
-            
-            if (isValid) {
-                // Here you would normally send the form data
-                alert('¡Gracias por tu mensaje! Te contactaremos pronto.');
-                this.reset();
-            } else {
-                alert('Por favor completa todos los campos requeridos.');
-            }
+        @if(session('error'))
+        Swal.fire({
+            icon: 'error',
+            title: '¡Oops!',
+            text: '{{ session('
+            error ') }}',
+            confirmButtonColor: '#d33'
         });
+        @endif
     </script>
 </body>
 

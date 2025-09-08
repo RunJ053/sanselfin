@@ -18,7 +18,9 @@ return new class extends Migration
             $table->foreignId('impuesto_id')->constrained('impuestos')->onDelete('cascade');
             $table->foreignId('descuento_id')->constrained('promociones')->onDelete('cascade')->nullable();
             $table->foreignId('categoria_id')->constrained('categorias')->onDelete('cascade');
+            $table->foreignId('estado_id')->constrained('estados')->onDelete('cascade')->default(1);
             $table->string('nombre_producto');
+            $table->integer('stock')->default(0);
             $table->text('descripccion')->nullable();
             $table->string('imagen')->nullable();
             $table->decimal('precio_unitario',10,2)->default(0.00);

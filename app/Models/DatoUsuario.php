@@ -56,6 +56,10 @@ class DatoUsuario extends Model implements Authenticatable // Implementa la inte
     {
         return $this->belongsTo(Localidad::class, 'localidad');
     }
+    public function notificaciones()
+    {
+        return $this->hasMany(Notificacion::class, 'usuario_id');
+    }
 
     /**
      * Define la relación con el código de verificación.

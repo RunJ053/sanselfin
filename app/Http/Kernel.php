@@ -66,6 +66,7 @@ class Kernel extends HttpKernel
         'is_admin' => \App\Http\Middleware\IsAdmin::class, // Middleware personalizado para verificar si es admin y está verificado
         'is_empleado' => \App\Http\Middleware\IsEmpleado::class, // Middleware personalizado para verificar si es empleado y está verificado
         'is_admin_or_empleado' => \App\Http\Middleware\IsAdminOrEmpleado::class, // Middleware para verificar si es admin o empleado
+        'verificar.envio' => \App\Http\Middleware\VerificarEnvioSeleccionado::class,
     ];
     // app/Http/Kernel.php
 }

@@ -2,9 +2,8 @@
 
 @section('title', 'Perfil de Usuario')
 
-@section('nav')
-
 @section('content')
+<x-usuario-navbar :notificaciones="$notificaciones" :carritoCount="$carritoCount" />
 
 <div class="main-container">
     <!-- Mobile Menu -->
@@ -21,7 +20,7 @@
             </button>
             <button class="mobile-menu-item" onclick="showModule('orders')">
                 <i class="fas fa-box"></i>
-                <span>Mis Pedidos</span>
+                <span>Mis Compras</span>
             </button>
             <button class="mobile-menu-item" onclick="showModule('profile')">
                 <i class="fas fa-user"></i>
@@ -48,15 +47,16 @@
                         <i class="fas fa-home"></i>
                         <span>Inicio</span>
                     </button>
-                    <button class="nav-item" onclick="showModule('cart')">
-                        <i class="fas fa-shopping-cart"></i>
-                        <span>Mi Carrito</span>
-                        <span class="badge">3</span>
-                    </button>
                     <button class="nav-item" onclick="showModule('orders')">
                         <i class="fas fa-box"></i>
-                        <span>Mis Pedidos</span>
+                        <span>Mis Compras</span>
                     </button>
+                    <form action="{{ route('resenas.index') }}" method="get">
+                        <button class="nav-item">
+                            <i class="fas fa-star"></i>
+                            <span>Mis Reseñas</span>
+                        </button>
+                    </form>
                     <button class="nav-item" onclick="showModule('profile')">
                         <i class="fas fa-user"></i>
                         <span>Mi Perfil</span>
@@ -64,10 +64,6 @@
                     <button class="nav-item" onclick="showModule('addresses')">
                         <i class="fas fa-map-marker-alt"></i>
                         <span>Direcciones</span>
-                    </button>
-                    <button class="nav-item" onclick="showModule('notifications')">
-                        <i class="fas fa-bell"></i>
-                        <span>Notificaciones</span>
                     </button>
                 </nav>
             </div>
@@ -84,42 +80,28 @@
                     <div class="stats-grid">
                         <div class="stat-card">
                             <p class="stat-label">Pedidos este mes</p>
-                            <p class="stat-value">8</p>
+                            <p class="stat-value">{{ $pedidosMensuales }}</p>
                         </div>
                         <div class="stat-card">
-                            <p class="stat-label">Ahorro total</p>
-                            <p class="stat-value">$45.000</p>
+                            <p class="stat-label">Gastado este mes</p>
+                            <p class="stat-value">${{ number_format($gastoMensual, 0, ',', '.') }}</p>
                         </div>
                         <div class="stat-card">
-                            <p class="stat-label">Puntos acumulados</p>
-                            <p class="stat-value">320</p>
+                            <p class="stat-label">Promedio gastado</p>
+                            <p class="stat-value">${{ number_format($promedioGasto, 0, ',', '.') }}</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Quick Access Modules -->
                 <div class="modules-grid">
-                    <div class="module-card" onclick="showModule('cart')">
-                        <div class="module-header">
-                            <div class="module-icon module-cart">
-                                <i class="fas fa-shopping-cart"></i>
-                            </div>
-                            <span class="module-badge">3</span>
-                        </div>
-                        <h3 class="module-title">Mi Carrito</h3>
-                        <div class="module-footer">
-                            <span>Ver detalles</span>
-                            <i class="fas fa-chevron-right"></i>
-                        </div>
-                    </div>
-
                     <div class="module-card" onclick="showModule('orders')">
                         <div class="module-header">
                             <div class="module-icon module-orders">
                                 <i class="fas fa-box"></i>
                             </div>
                         </div>
-                        <h3 class="module-title">Mis Pedidos</h3>
+                        <h3 class="module-title">Mis Compras</h3>
                         <div class="module-footer">
                             <span>Ver detalles</span>
                             <i class="fas fa-chevron-right"></i>
@@ -164,58 +146,25 @@
                 </div>
             </div>
 
-            <!-- Cart Module -->
-            <div id="cart-content" class="module-content hidden">
-                <div class="content-section">
-                    <h2 class="section-title">Mi Carrito de Compras</h2>
-
-                    <div class="cart-item">
-                        <div class="cart-item-left">
-                            <div class="cart-item-image">
-                                <i class="fas fa-carrot"></i>
-                            </div>
-                            <div class="cart-item-info">
-                                <h3>Zanahorias Orgánicas</h3>
-                                <p>1 kg</p>
-                            </div>
-                        </div>
-                        <div class="cart-item-right">
-                            <p class="cart-item-price">$3.500</p>
-                            <p class="cart-item-quantity">Cantidad: 2</p>
-                        </div>
-                    </div>
-
-                    <div class="cart-item">
-                        <div class="cart-item-left">
-                            <div class="cart-item-image">
-                                <i class="fas fa-leaf"></i>
-                            </div>
-                            <div class="cart-item-info">
-                                <h3>Espinacas Frescas</h3>
-                                <p>500 gr</p>
-                            </div>
-                        </div>
-                        <div class="cart-item-right">
-                            <p class="cart-item-price">$2.800</p>
-                            <p class="cart-item-quantity">Cantidad: 1</p>
-                        </div>
-                    </div>
-
-                    <div class="cart-total">
-                        <div class="cart-total-row">
-                            <span class="cart-total-label">Total:</span>
-                            <span class="cart-total-value">$9.800</span>
-                        </div>
-                        <button class="checkout-btn">Proceder al Pago</button>
-                    </div>
-                </div>
-            </div>
-
             <!-- Other Modules (placeholder) -->
             <div id="orders-content" class="module-content hidden">
                 <div class="content-section">
-                    <h2 class="section-title">Mis Pedidos</h2>
-                    <p>Aquí verás el historial de todos tus pedidos realizados...</p>
+                    <h2 class="section-title">Mis Compras</h2>
+
+                    @forelse ($pedidosUsuario as $pedido)
+                    <div class="order-card">
+                        <div class="order-header">
+                            <h3>Compra del {{ $pedido->created_at->format('d/m/Y') }}</h3>
+                            <span class="order-status">
+                                {{ $pedido->estado->desc_estado ?? 'Desconocido' }}
+                            </span>
+                        </div>
+                        <p><strong>Total de la compra:</strong> ${{ number_format($pedido->total, '0', ',') }}</p>
+                        <a href="{{ route('facturacion.verFactura', $pedido->id) }}" class="view-invoice-btn">Ver Factura</a>
+                    </div>
+                    @empty
+                    <p class="empty-message">Aquí verás tus pedidos cuando realices compras</p>
+                    @endforelse
                 </div>
             </div>
 
@@ -239,26 +188,26 @@
                         <p><strong>Verificado:</strong> {{ $usuario->is_verified ? 'Sí' : 'No' }}</p>
                         <p><strong>Imagen de Usuario:</strong>
                             @if($usuario->user_img)
-                                <img src="{{ asset('img/usuario_img/' . $usuario->user_img) }}" alt="Imagen de Perfil" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;">
+                            <img src="{{ asset('img/usuario_img/' . $usuario->user_img) }}" alt="Imagen de Perfil" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;">
                             @else
-                                No se ha subido imagen de perfil.
+                            No se ha subido imagen de perfil.
                             @endif
                         </p>
                         <p><strong>Imagen del Documento:</strong>
                             @if($usuario->nom_imgs)
                             @php
-                                $extension = pathinfo($usuario->nom_imgs, PATHINFO_EXTENSION);
+                            $extension = pathinfo($usuario->nom_imgs, PATHINFO_EXTENSION);
                             @endphp
 
                             @if(in_array($extension, ['jpg', 'jpeg', 'png', 'gif']))
-                                <img src="{{ asset('img/documents/' . $usuario->nom_imgs) }}" alt="Imagen del Documento" style="max-width: 200px; height: auto;">
+                            <img src="{{ asset('img/documents/' . $usuario->nom_imgs) }}" alt="Imagen del Documento" style="max-width: 200px; height: auto;">
                             @elseif($extension == 'pdf')
-                                <a href="{{ asset('img/documents/' . $usuario->nom_imgs) }}" target="_blank">Ver Documento PDF</a>
+                            <a href="{{ asset('img/documents/' . $usuario->nom_imgs) }}" target="_blank">Ver Documento PDF</a>
                             @else
-                                Tipo de archivo no soportado.
+                            Tipo de archivo no soportado.
                             @endif
                             @else
-                                No se ha subido documento.
+                            No se ha subido documento.
                             @endif
                         </p>
                     </div>
@@ -269,56 +218,23 @@
                 </div>
             </div>
 
-            <div id="favorites-content" class="module-content hidden">
-                <div class="content-section">
-                    <h2 class="section-title">Mis Favoritos</h2>
-                    <p>Productos que has marcado como favoritos...</p>
-                </div>
-            </div>
-
             <div id="addresses-content" class="module-content hidden">
-                <div class="content-section">
+                <div class="content-section section-with-logo">
+                    <img class="section-logo" src="{{ asset('img/logo/icon.png') }}" alt="Logo">
+
                     <h2 class="section-title">Mis Direcciones</h2>
-                    <img style="position: absolute; top: 0; right: 0; width: 22%; height: 40%;" src="{{asset('img/logo/icon.png')}}" alt="Logo">
                     <p>Gestiona las direcciones de entrega...</p>
                     <hr>
                     <p class="profile-info">Agrega, edita o elimina tus direcciones de envío desde tú perfil para facilitar tus compras.</p>
-                    <p>Cuando soicites tu pedido te lo enviaremos a la siguiente dirección:</p>
-                    </hr>
-                    </br>
-                    <div class="profile-info">  
+                    <p>Cuando solicites tu pedido te lo enviaremos a la siguiente dirección:</p>
+                    <br>
+                    <div class="profile-info">
                         <p><strong>Tu dirección actual es:</strong> {{ $usuario->direccion }}</p>
                         <p><strong>En la localidad de:</strong> {{ $usuario->datosLocalidad->descripcion ?? 'No especificada' }}</p>
                     </div>
                 </div>
             </div>
 
-            <div id="payments-content" class="module-content hidden">
-                <div class="content-section">
-                    <h2 class="section-title">Métodos de Pago</h2>
-                    <p>Administra tus tarjetas y métodos de pago...</p>
-                </div>
-            </div>
-
-           <div>
-    @if($section === 'notifications')
-        <div id="notifications-content" class="module-content">
-            <div class="content-section">
-                <h2 class="section-title">Notificaciones</h2>
-                <p>Revisa todas tus notificaciones...</p>
-            </div>
-        </div>
-    @else
-        <!-- Otras secciones -->
-    @endif
-</div>
-
-            <div id="settings-content" class="module-content hidden">
-                <div class="content-section">
-                    <h2 class="section-title">Configuración</h2>
-                    <p>Ajusta las configuraciones de tu cuenta...</p>
-                </div>
-            </div>
         </main>
     </div>
 </div>

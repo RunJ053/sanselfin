@@ -2,84 +2,86 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Pedido;
+use App\Models\FacturaCabecera;
+use App\Models\Notificacion;
+use App\Models\DatoUsuario;
+use App\Models\CarritoCompra;
 use App\Models\FacturaDetalle;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class FacturaDetalleController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    private function computeFacturaTotals($factura): array
     {
-        //
+        $detalles = $factura->detalles; // colección de FacturaDetalle
+
+        $sub = (float) $detalles->sum('subTotal');               // suma de subtotales sin impuestos
+        $descuento = (float) $detalles->sum('descuento');        // suma de descuentos
+        $totalProductos = (float) $detalles->sum('montoTotal');  // ya guardaste montoTotal por item al crear la factura
+        $costoEnvio = (float) optional($detalles->first())->envio ?? 0;
+        $total = $totalProductos + $costoEnvio;
+
+        // impuestos = totalProductos - (sub - descuento)
+        $impuestos = $totalProductos - ($sub - $descuento);
+
+        return compact('sub', 'descuento', 'totalProductos', 'costoEnvio', 'total', 'impuestos');
+    }
+
+    public function verFactura($pedidoId)
+    {
+        if (!Auth::check()) {
+            return redirect()->route('login')->withErrors(['login_error' => 'Debe iniciar sesión primero']);
+        }
+
+        $usuarioId = Auth::id();
+        $pedido = Pedido::with('detalles.producto')->findOrFail($pedidoId);
+
+        // Buscar la factura vinculada. Si planeas añadir pedido_id (recomendado), cámbialo aquí:
+        $factura = FacturaCabecera::where('cliente_id', $pedido->usuario)
+            ->latest()
+            ->with('detalles.producto', 'formaPago', 'usuario')
+            ->firstOrFail();
+
+        $totales = $this->computeFacturaTotals($factura);
+
+        $notificaciones = Notificacion::where('usuario_id', $usuarioId)->orderBy('created_at', 'desc')->get();
+        $carritoCount = CarritoCompra::where('usuario', $usuarioId)->count('cantidad'); 
+
+        return view('facturacion.show', array_merge([
+            'factura' => $factura,
+            'pedido' => $pedido,
+            'notificaciones' => $notificaciones,
+            'carritoCount' => $carritoCount
+        ], $totales));
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Ver/descargar factura en PDF
      */
-    public function create()
+    public function verFacturaPdf($pedidoId, Request $request)
     {
-        //
-    }
+        $pedido = Pedido::with('detalles.producto')->findOrFail($pedidoId);
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        $factura = FacturaCabecera::where('cliente_id', $pedido->usuario)
+            ->latest()
+            ->with('detalles.producto', 'formaPago', 'usuario')
+            ->firstOrFail();
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\FacturaDetalle  $facturaDetalle
-     * @return \Illuminate\Http\Response
-     */
-    public function show(FacturaDetalle $facturaDetalle)
-    {
-        //
-    }
+        $totales = $this->computeFacturaTotals($factura);
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\FacturaDetalle  $facturaDetalle
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(FacturaDetalle $facturaDetalle)
-    {
-        //
-    }
+        $pdf = Pdf::loadView('facturacion.pdf', array_merge([
+            'factura' => $factura,
+            'pedido'  => $pedido
+        ], $totales));
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\FacturaDetalle  $facturaDetalle
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, FacturaDetalle $facturaDetalle)
-    {
-        //
-    }
+        // si usas ?download=1
+        if ($request->query('download')) {
+            return $pdf->download($factura->numero_factura . '.pdf');
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\FacturaDetalle  $facturaDetalle
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(FacturaDetalle $facturaDetalle)
-    {
-        //
+        return $pdf->stream($factura->numero_factura . '.pdf');
     }
 }

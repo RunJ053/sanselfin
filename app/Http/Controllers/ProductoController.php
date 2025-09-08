@@ -1,13 +1,15 @@
 <?php
 
 namespace App\Http\Controllers;
-use Illuminate\Support\Collection;
+
 use App\Models\Producto;
 use App\Models\Categoria;
 use App\Models\Impuesto;
+use App\Models\Estado;
+use App\Models\CarritoCompra;
+use App\Models\Notificacion;
 use Illuminate\Support\Str;
 use App\Models\Promocion;
-use App\Models\Inventario;
 use Illuminate\Http\Request;
 
 class ProductoController extends Controller
@@ -17,13 +19,21 @@ class ProductoController extends Controller
      *
      */
     public function index()
-    {
-        $inventarios = Producto::with(['categorias', 'impuestos', 'promociones'])->get();
+{
+    try {
+        $inventarios = Producto::with(['categorias', 'impuestos', 'promociones'])
+            ->paginate(10);
+        $totalProductos = Producto::count();
         $categorias = Categoria::all();
         $impuestos = Impuesto::all();
         $promociones = Promocion::all();
-        return view('admin.inventario', compact('inventarios', 'categorias', 'impuestos', 'promociones'));
+
+        return view('admin.inventario', compact('inventarios', 'categorias', 'totalProductos', 'impuestos', 'promociones'));
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', 'Ocurrió un problema al cargar los inventarios.');
     }
+}
+
 
     public function create()
     {
@@ -48,6 +58,7 @@ class ProductoController extends Controller
             'Categoria' => 'required|integer',
             'descripcion' => 'required|string',
             'valor_unitario' => 'required|numeric',
+            'cantidad' => 'required|integer|min:1',
             'Impuesto' => 'required|integer',
             'Promocion' => 'required|integer',
             'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -59,9 +70,11 @@ class ProductoController extends Controller
         $prod->nombre_producto = $request->nombre;
         $prod->categoria_id = $request->Categoria;
         $prod->descripccion = $request->descripcion;
+        $prod->stock = $request->cantidad;
         $prod->precio_unitario = $request->valor_unitario;
         $prod->impuesto_id = $request->Impuesto;
         $prod->descuento_id = $request->Promocion;
+        $prod->estado_id = 1;
 
         if ($request->hasFile('imagen')) {
             $file = $request->file('imagen');
@@ -72,15 +85,6 @@ class ProductoController extends Controller
 
         $prod->save();
 
-        // Crear y guardar el nuevo inventario
-        $inventario = new Inventario;
-        $inventario->producto_id = $prod->id;
-        $inventario->nombre_producto = $prod->nombre_producto;
-        $inventario->descripcion = $prod->descripccion;
-        $inventario->stock = $request->cantidad; // Asignar la cantidad del formulario
-
-        $inventario->save();
-
         return redirect()->route('producto.index');
     }
 
@@ -88,10 +92,10 @@ class ProductoController extends Controller
     {
         $categorias = Categoria::all();
         $producto = Producto::findOrFail($producto->id);
-        $inventario = Inventario::where('producto_id', $producto->id)->first();
+        $estado = Estado::where('id', $producto->estado_id)->first();
         $impuestos = Impuesto::all();
         $promociones = Promocion::all();
-        return view('admin.edit_produc', compact('producto', 'categorias','inventario', 'impuestos', 'promociones'));
+        return view('admin.edit_produc', compact('producto', 'categorias', 'impuestos', 'promociones', 'estado'));
     }
     /**
      * Display a listing of the resource for users.
@@ -100,93 +104,109 @@ class ProductoController extends Controller
      */
 
     public function indexUsuarioPro(Request $request)
-{
-    $perPage = 2;
+    {
+        $userId = auth()->id();
+        $notificaciones = Notificacion::where('usuario_id', $userId)->orderBy('created_at', 'desc')->get();
+        try {
+            $perPage = 12;
 
-    $query = Producto::with(['categorias', 'promociones']);
+            $query = Producto::with(['categorias', 'promociones'])
+                ->whereHas('estados', function ($q) {
+                    $q->where('desc_estado', 'Activo');
+                })->where('stock', '>', 5); // Solo productos con más de 5 disponibles
 
-    // --- Filtrar por categoría ---
-    if ($request->has('categoria') && $request->categoria !== 'all') {
-        $categoriaNombre = $request->categoria;
-        $categoria = Categoria::where('nombre', $categoriaNombre)->first();
-        if ($categoria) {
-            $query->where('categoria_id', $categoria->id);
+            // --- Filtrar por categoría ---
+            if ($request->has('categoria') && $request->categoria !== 'all') {
+                $categoriaNombre = $request->categoria;
+                $categoria = Categoria::where('nombre', $categoriaNombre)->first();
+                if ($categoria) {
+                    $query->where('categoria_id', $categoria->id);
+                }
+            }
+
+            // --- Buscar por nombre o descripción ---
+            if ($request->has('search') && !empty($request->search)) {
+                $searchTerm = $request->search;
+                $query->where(function ($q) use ($searchTerm) {
+                    $q->where('nombre_producto', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('descripccion', 'like', '%' . $searchTerm . '%');
+                });
+            }
+
+            // --- APLICAR LA PAGINACIÓN ---
+            $productosPaginados = $query->paginate($perPage);
+
+            $productosMapeados = $productosPaginados->getCollection()->map(function ($producto) {
+                $precioUnitario = $producto->precio_unitario;
+
+                // Obtener el impueto que tiene cada producto
+                $impuesto = $producto->impuestos ? $producto->impuestos->porcentaje : 0;
+
+                if ($producto->promociones && $producto->promociones->descuento > 0) {
+                    $precioUnitario = $precioUnitario * (1 - ($producto->promociones->descuento / 100));
+                }
+
+                $imagenPath = 'img/product/' . $producto->imagen;
+                $imagenUrl = asset($imagenPath);
+
+                if (empty($producto->imagen) || !file_exists(public_path($imagenPath))) {
+                    $imagenUrl = asset('img/es_de_frutas_y_verduas_1.webp');
+                }
+
+                // calcular el precio con impuesto incluido
+                $productoTotal = $producto->precio_unitario + ($producto->precio_unitario * $impuesto / 100);
+
+                // Calificación real: promedio de reseñas
+                $promedioResenas = round($producto->resenas()->avg('calificacion')) ?? 0;
+
+                return [
+                    'id' => $producto->id,
+                    'nombre' => $producto->nombre_producto,
+                    'descripcion' => $producto->descripccion,
+                    'valor' => number_format($productoTotal, 0, ',', '.'),
+                    'precio_base' => $producto->precio_unitario,
+                    'imagen' => $imagenUrl,
+                    'rating' => $promedioResenas,
+                    'descuento' => $producto->promociones && $producto->promociones->porcentaje_descuento > 0,
+                    'descuento_porcentaje' => $producto->promociones ? $producto->promociones->porcentaje_descuento : 0,
+                ];
+            });
+
+            $productosPaginados->setCollection($productosMapeados);
+
+            $categorias = Categoria::all();
+            $carritoCount = CarritoCompra::where('usuario', $userId)->count('cantidad'); 
+
+
+            if ($request->ajax()) {
+                $htmlProductos = view('partials.productos_l
+                ist', [
+                    'productos' => $productosPaginados->items(),
+                    'searchTerm' => $request->search,
+                    'currentFilter' => $request->categoria
+                ])->render();
+
+                return response()->json([
+                    'html' => $htmlProductos,
+                    'productCount' => $productosPaginados->total(),
+                    'pagination' => (string) $productosPaginados->links()
+                ]);
+            }
+
+            return view('producto', [
+                'productos' => $productosPaginados,
+                'categoriaId' => $categorias,
+                'currentCategory' => $request->categoria ?? 'all',
+                'searchTerm' => $request->search ?? '',
+                'notificaciones' => $notificaciones,
+                'carritoCount' => $carritoCount
+            ]);
+        } catch (\Exception $e) {
+            // Si algo falla, retornamos la vista vacía con mensaje
+            return back()->with('error', 'Error al cargar los productos: ' . $e->getMessage());
         }
     }
 
-    // --- Buscar por nombre o descripción ---
-    if ($request->has('search') && !empty($request->search)) {
-        $searchTerm = $request->search;
-        $query->where(function ($q) use ($searchTerm) {
-            $q->where('nombre_producto', 'like', '%' . $searchTerm . '%')
-            ->orWhere('descripccion', 'like', '%' . $searchTerm . '%');
-        });
-    }
-
-    // --- APLICAR LA PAGINACIÓN AQUÍ ---
-    $productosPaginados = $query->paginate($perPage);
-
-    $productosMapeados = $productosPaginados->getCollection()->map(function ($producto) {
-        $precioUnitario = $producto->precio_unitario;
-
-        // VERIFICA SIEMPRE QUE LA RELACIÓN EXISTE ANTES DE ACCEDER A SUS PROPIEDADES
-        if ($producto->promociones && $producto->promociones->porcentaje_descuento > 0) { 
-            $precioUnitario = $precioUnitario * (1 - ($producto->promociones->porcentaje_descuento / 100));
-        }
-        // if ($producto->descuento && $producto->descuento->porcentaje_descuento > 0) {
-        //     $precioUnitario = $precioUnitario * (1 - ($producto->descuento->porcentaje_descuento / 100));
-        // }
-
-
-        $imagenPath = 'img/product/' . $producto->imagen;
-        $imagenUrl = asset($imagenPath);
-
-        // Agrega una comprobación para la existencia del archivo de imagen
-        if (empty($producto->imagen) || !file_exists(public_path($imagenPath))) {
-            $imagenUrl = asset('img/es_de_frutas_y_verduas_1.webp');
-        }
-
-        return [
-            'id' => $producto->id,
-            'nombre' => $producto->nombre_producto,
-            'descripcion' => $producto->descripccion,
-            'valor' => number_format($precioUnitario, 0, ',', '.'),
-            'precio_base' => $producto->precio_unitario,
-            'imagen' => $imagenUrl,
-            'rating' => rand(3, 5),
-            'descuento' => $producto->promociones && $producto->promociones->porcentaje_descuento > 0,
-            'descuento_porcentaje' => $producto->promociones ? $producto->promociones->porcentaje_descuento : 0,
-        ];
-    });
-
-    // Reinsertar la colección mapeada en el paginador
-    $productosPaginados->setCollection($productosMapeados);
-
-    $categorias = Categoria::all(); // Asegúrate de cargar todas las categorías para el sidebar
-
-    // Determinar si la solicitud es AJAX (para cargar solo los productos)
-    if ($request->ajax()) {
-        $htmlProductos = view('partials.productos_list', [
-            'productos' => $productosPaginados->items(),
-            'searchTerm' => $request->search,
-            'currentFilter' => $request->categoria
-        ])->render();
-
-        return response()->json([
-            'html' => $htmlProductos,
-            // total() funcionará correctamente aquí
-            'productCount' => $productosPaginados->total(), // Esto devolverá el conteo total
-            'pagination' => (string) $productosPaginados->links()
-        ]);
-    }
-
-    return view('producto', [
-        'productos' => $productosPaginados,
-        'categoriaId' => $categorias,
-        'currentCategory' => $request->categoria ?? 'all',
-        'searchTerm' => $request->search ?? ''
-    ]);
-}
 
     public function showProductDetails($id)
     {
@@ -209,20 +229,31 @@ class ProductoController extends Controller
         if (!file_exists(public_path($imagenPath))) {
             $imagenUrl = asset('img/es_de_frutas_y_verduas_1.webp');
         }
-        
+
+        // Obtener el impueto que tiene cada producto
+        $impuesto = $producto->impuestos ? $producto->impuestos->porcentaje : 0;
+
+        // calcular el precio con impuesto incluido
+        $productoTotal = $producto->precio_unitario + ($producto->precio_unitario * $impuesto / 100);
+
+        // Calificación real: promedio de reseñas
+        $promedioResenas = round($producto->resenas()->avg('calificacion')) ?? 0;
+
         return [
             'id' => $producto->id,
             'nombre' => $producto->nombre_producto,
             'descripcion' => $producto->descripccion,
-            'valor' => '$' . number_format($precioUnitario, 0, ',', '.'),
+            'valor' => '$' . number_format($productoTotal, 0, ',', '.'),
             'precio_base' => $producto->precio_unitario,
             'imagen' => $imagenUrl,
+            'stock' => $producto->stock,
             'categoria' => $producto->categoria ? $producto->categoria->nombre : 'Sin Categoría',
-            'rating' => rand(3, 5),
+            'rating' => $promedioResenas,
             'descuento' => $producto->descuento_id !== null,
             'descuento_porcentaje' => $producto->descuento ? $producto->descuento->porcentaje_descuento : 0,
         ];
     }
+
 
     /**
      * Obtiene los detalles de un producto específico para el modal.
@@ -230,7 +261,7 @@ class ProductoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\JsonResponse
      */
-   public function update(Request $request, Producto $producto, Inventario $inventario)
+    public function update(Request $request, Producto $producto)
     {
         // Validación de los datos del formulario
         $request->validate([
@@ -240,7 +271,7 @@ class ProductoController extends Controller
             'valor_unitario' => 'required|numeric',
             'Impuesto' => 'required|integer',
             'Promocion' => 'required|integer',
-            'cantidad' => 'required|integer|min:0',
+            'cantidad' => 'required|integer|min:1',
             'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
@@ -249,6 +280,7 @@ class ProductoController extends Controller
         $producto->descripccion = $request->descripcion;
         $producto->precio_unitario = $request->valor_unitario;
         $producto->categoria_id = $request->Categoria;
+        $producto->stock = $request->cantidad;
         $producto->impuesto_id = $request->Impuesto;
         $producto->descuento_id = $request->Promocion;
 
@@ -268,21 +300,6 @@ class ProductoController extends Controller
 
         // Guardar el producto
         $producto->save();
-
-        // Verificar si el inventario ya existe para este producto
-        $inventario = Inventario::where('producto_id', $producto->id)->first();
-
-        if ($inventario) {
-            // Si el inventario ya existe, solo actualizarlo
-            $inventario->stock = $request->cantidad;
-            $inventario->save();
-        } else {
-            // Si no existe, crear un nuevo inventario
-            Inventario::create([
-                'producto_id' => $producto->id,
-                'stock' => $request->cantidad
-            ]);
-        }
 
         return redirect()->route('producto.index')->with('success', 'Producto actualizado correctamente.');
     }

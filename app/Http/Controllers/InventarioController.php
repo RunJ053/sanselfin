@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\DatoUsuario;
-use App\Models\Inventario;
 use App\Models\Producto;
 use App\Models\Tarea;
 use Illuminate\Http\Request;
@@ -22,13 +21,12 @@ class InventarioController extends Controller
 
         $inventarios = Producto::all();
         $numeroUsuarios = DatoUsuario::count();
-        $cantidadMax = Inventario::max('stock');
-        $cantidadMin = Inventario::min('stock');
+        $cantidadMax = Producto::max('stock');
+        $cantidadMin = Producto::min('stock');
 
         $productosRecientes = Producto::with('categorias')
             ->orderBy('created_at', 'desc')
             ->simplePaginate(3); 
-           
 
         // Datos para gráfico: productos por categoría
         $dataCat = DB::table('productos')
@@ -64,7 +62,6 @@ class InventarioController extends Controller
             ->groupBy(fn($item) => $item->categorias->nombre ?? 'Sin categoría')
             ->map(fn($items) => count($items));
         // Retornar a la vista con todos los datos
-      
             return view('index_admin', compact('inventarios', 'cantidadMax', 'cantidadMin','productosRecientes','dataCat', 'pendientes',
             'hechas',
             'labelsTareas',
@@ -85,9 +82,9 @@ class InventarioController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Inventario $inventario)
+    public function edit(Producto $producto)
     {
-        return view('admin.edit_produc', compact('inventario'));
+        return view('admin.edit_produc', compact('producto'));
     }
 
     public function galeria(Producto $productos)
@@ -96,7 +93,7 @@ class InventarioController extends Controller
             ->orderBy('categoria_id')
             ->get();
 
-        $agrupados = $productos->groupBy(fn($p) => $p->categoria->nombre ?? 'Sin Categoría');
+        $agrupados = $productos->groupBy(fn($p) => $p->categorias->nombre ?? 'Sin Categoría');
 
         return view('admin.dashboard', compact('agrupados'));
     }

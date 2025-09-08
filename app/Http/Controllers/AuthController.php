@@ -5,14 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Database\QueryException;
-use App\Mail\AdminVerificationMail;
 use App\Mail\PasswordResetRequestMail;
 use App\Mail\UserVerificationMail; // NUEVO: Importa la clase de correo para restablecimiento
 
 use App\Models\DatoUsuario;
 use App\Models\TipoCliente;
-use App\Models\AdminVerificationCode;
-use App\Models\UserVerificationCode; // Importamos el nuevo modelo
+use App\Models\UserVerificationCode;
+use App\Models\Producto;
 
 
 use Illuminate\Support\Facades\DB; //Para interactuar con la tabla password_resets
@@ -20,7 +19,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Log; // Asegúrate de que esta línea esté presente
+use Illuminate\Support\Facades\Log;
 
 use App\Http\Requests\RegisterUserRequest;
 use App\Http\Requests\RegisterEmpleadoRequest;
@@ -78,16 +77,14 @@ class AuthController extends Controller
             Auth::login($user);
             $request->session()->regenerate();
             session(['usuario_id' => $user->id, 'nombre_usuario' => $user->nombre, 'nombre_img' => $user->user_img]);
-            return redirect()->route('user.dashboard');
+            $productos = Producto::latest()->take(22)->get();
+            return view('index2', compact('productos'));
         }
     }
 
     protected function registerUser(RegisterUserRequest $request)
     {
-        Log::info('Inicio del proceso de registro de usuario normal.');
-
         $data = $request->validated();
-        Log::info('Datos de registro validados para el usuario: ' . $data['email']);
 
         try {
             // Verificamos si el email ya existe para evitar duplicados
@@ -178,7 +175,7 @@ class AuthController extends Controller
 
         // Generar un token único
         $token = Str::random(10); // Token más largo para mayor seguridad
-        $expiresAt = Carbon::now()->addMinutes(20); // El token expira en 60 minutos
+        $expiresAt = Carbon::now()->addMinutes(60); // El token expira en 60 minutos
 
         try {
             // Eliminar cualquier token anterior para este email

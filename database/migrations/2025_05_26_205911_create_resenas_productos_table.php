@@ -17,9 +17,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('usuario_id')->constrained('datos_usuario')->onDelete('cascade');
             $table->foreignId('producto_id')->constrained('productos')->onDelete('cascade');
-            $table->integer('calificacion')->default(0); // Calificación del producto (0-5)
+            $table->tinyInteger('calificacion')->default(0)->comment('1 a 5');
             $table->text('comentario')->nullable();
             $table->timestamps();
+
+            // Evita reseñas duplicadas de un usuario sobre el mismo producto
+            $table->unique(['usuario_id', 'producto_id']);
         });
     }
 
@@ -31,7 +34,5 @@ return new class extends Migration
     public function down()
     {
         Schema::dropIfExists('resenas_productos');
-        
-
     }
 };

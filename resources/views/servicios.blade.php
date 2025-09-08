@@ -28,133 +28,7 @@
 </head>
 
 <body>
-  <header>
-    <nav class="main-nav" aria-label="Navegación principal">
-      <!-- Logo -->
-      <div class="nav-left">
-        <a href="{{ route('user.dashboard') }}" class="logo-link">
-          <img src="{{asset ('img/logo/icon.png')}}" alt="Logo de La Finca al Día" width="120" height="40">
-        </a>
-      </div>
-
-      <!-- Enlaces de navegación centrales -->
-      <div class="nav-center">
-        <ul class="nav-links" role="menubar">
-          <li role="none"><a href="{{ route('user.dashboard') }}" role="menuitem">Inicio</a></li>
-          <li role="none"><a href="{{ route('producto') }}" role="menuitem">Productos</a></li>
-          <li role="none"><a href="{{ route('servicio')}}" role="menuitem">Servicios</a></li>
-          <li role="none"><a href="{{ route('acerca_de')}}" role="menuitem">Acerca de</a></li>
-        </ul>
-      </div>
-
-      <!-- Acciones de la derecha -->
-      <div class="nav-right">
-        <ul class="nav-actions" role="menubar">
-          <li role="none">
-            <a href="/notificaciones" role="menuitem" aria-label="Notificaciones">
-              <i class="fas fa-bell"></i>
-              <span class="visually-hidden">Notificaciones</span>
-            </a>
-          </li>
-          <li role="none">
-            <a href="/carrito" role="menuitem" aria-label="Carrito de Compras">
-              <i class="fas fa-shopping-cart"></i>
-              <span class="visually-hidden">Carrito</span>
-            </a>
-          </li>
-          <li role="none">
-            <a href="/ayuda" role="menuitem" aria-label="Ayuda">
-              <i class="fa-solid fa-circle-exclamation"></i>
-              <span>Ayuda</span>
-            </a>
-          </li>
-        </ul>
-
-        <!-- Avatar de usuario -->
-        <div class="user-avatar" onclick="toggleDropdown()" role="button" aria-haspopup="true" aria-expanded="false">
-          @auth <!-- Verificamos que el usuario esté autenticado -->
-          @if (Auth::user()->user_img)
-          <img src="{{ asset('img/usuario_img/' . Auth::user()->user_img) }}"
-            alt="Avatar de {{ Auth::user()->nombre }}"
-            class="avatar-image">
-          @else
-          <i class="fas fa-user"></i>
-          @endif
-          @endauth
-
-          <div class="dropdown-menu" id="dropdownMenu">
-            <a href="{{ route('myProfile') }}" class="dropdown-item">Mi Perfil</a>
-            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-              @csrf
-            </form>
-            <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-              Cerrar Sesión
-            </a>
-
-          </div>
-        </div>
-
-        <!-- Botón hamburguesa -->
-        <button class="menu-toggle" onclick="toggleMobileMenu()" aria-expanded="false" aria-label="Menú">
-          <i class="fas fa-bars"></i>
-        </button>
-      </div>
-    </nav>
-
-    <!-- Overlay para móvil -->
-    <div class="mobile-overlay" id="mobileOverlay" onclick="closeMobileMenu()"></div>
-
-    <!-- Menú móvil -->
-    <div class="mobile-menu" id="mobileMenu">
-      <div class="mobile-menu-header">
-        <button class="mobile-menu-close" onclick="closeMobileMenu()">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-
-      <!-- Enlaces de navegación móvil -->
-      <ul class="mobile-nav-links">
-        <li><a href="{{ route('user.dashboard') }}">Inicio</a></li>
-        <li><a href="{{ route('producto') }}">Productos</a></li>
-        <li><a href="{{ route('servicio')}}">Servicios</a></li>
-        <li><a href="{{ route('acerca_de')}}">Acerca de</a></li>
-      </ul>
-
-      <!-- Acciones móvil -->
-      <ul class="mobile-nav-actions">
-        <li>
-          <a href="/notificaciones">
-            <i class="fas fa-bell"></i>
-            <span>Notificaciones</span>
-          </a>
-        </li>
-        <li>
-          <a href="/carrito">
-            <i class="fas fa-shopping-cart"></i>
-            <span>Carrito de Compras</span>
-          </a>
-        </li>
-        <li>
-          <a href="/ayuda">
-            <i class="fa-solid fa-circle-exclamation"></i>
-            <span>Necesito Ayuda</span>
-          </a>
-        </li>
-        <li>
-          <a href="/perfil">
-            <i class="fas fa-user"></i>
-            <span>Mi Perfil</span>
-          </a>
-        </li>
-        <li>
-          <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-            <i class="fas fa-sign-out-alt"></i>
-            <span>Cerrar Sesión</span>
-          </a>
-        </li>
-      </ul>
-    </div>
-  </header>
+  <x-navbar :notificaciones="$notificaciones" :carritoCount="$carritoCount" />
   <main class="max-w-3xl mx-auto mt-8 px-4">
     <div class="grid grid-cols-1 gap-6" id="accordionExample">
 
@@ -300,13 +174,15 @@
 
     </div>
   </main>
-  <footer class="footer">
+  <footer data-aos="fade-up"
+    data-aos-duration="100"
+    class="footer">
     <div class="footer-top">
       <div class="container">
         <div class="footer-grid">
           <!-- Sección de información de la empresa -->
           <div class="footer-section">
-            <img src="img/logo/icon.png" alt="Logo Finca al Día" class="footer-logo">
+            <img src="{{asset('img/logo/icon.png')}}" alt="Logo Finca al Día" class="footer-logo">
             <p class="company-description">Llevamos los productos más frescos del campo a tu mesa, garantizando calidad y frescura en cada entrega.</p>
             <div class="social-links">
               <a href="" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
@@ -318,11 +194,9 @@
           <div class="footer-section">
             <h3>Enlaces Rápidos</h3>
             <ul class="footer-links">
-              <li><a href="PRODUCTO.html">Nuestros Productos</a></li>
-              <li><a href="index2.html">Recetas</a></li>
-              <li><a href="index2.html">Blog</a></li>
-              <li><a href="ACERCA_DE.html">Sobre Nosotros</a></li>
-              <li><a href="SERVICIOS.html">FAQ</a></li>
+              <li><a href="{{route('producto')}}">Nuestros Productos</a></li>
+              <li><a href="{{route('servicio')}}">Sobre Nosotros</a></li>
+              <li><a href="{{route('acerca_de')}}">FAQ</a></li>
             </ul>
           </div>
           <!-- Sección de contacto -->
@@ -330,19 +204,12 @@
             <h3>Contacto</h3>
             <div class="contact-info">
               <p><i class="fas fa-clock"></i> Lunes a Sábados, 8:00 a.m a 6:00 p.m</p>
-              <p><i class="fas fa-map-marker-alt"></i> [Tu dirección aquí]</p>
-              <p><i class="fas fa-envelope"></i> informacion@gmail.com</p>
+              <p><i class="fas fa-map-marker-alt"></i>
+                <a href="https://share.google/uCjgbp9lKkg6hyuRB" target="_blank" rel="noopener noreferrer"> Tv. 94 L #88-08, Bogotá</a>
+              </p>
+              <p><i class="fas fa-envelope"></i> fincaaldia25@gmail.com</p>
               <p><i class="fas fa-phone"></i> 300 123 4567</p>
             </div>
-          </div>
-          <!-- Sección de newsletter -->
-          <div class="footer-section">
-            <h3>Boletín Informativo</h3>
-            <p>Suscríbete para recibir ofertas especiales y noticias sobre productos frescos.</p>
-            <form class="newsletter-form">
-              <input type="email" placeholder="Tu correo electrónico" required>
-              <button type="submit">Suscribirse</button>
-            </form>
           </div>
         </div>
       </div>
@@ -352,14 +219,13 @@
       <div class="container">
         <p>&copy; 2024 Finca al Día. Todos los derechos reservados.</p>
         <div class="payment-methods">
-          <img src="img/logo/visa.png" alt="Visa">
-          <img src="img/logo/logo-Mastercard.png" alt="Mastercard">
-          <img src="img/logo/nequi.png" alt="Nequi">
+          <img src="{{asset('img/logo/visa.png')}}" alt="Visa">
+          <img src="{{asset('img/logo/logo-Mastercard.png')}}" alt="Mastercard">
+          <img src="{{asset('img/logo/nequi.png')}}" alt="Nequi">
         </div>
       </div>
     </div>
   </footer>
-
   <script src="{{ asset('js/hamburguesa.js') }}"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
   <script>
