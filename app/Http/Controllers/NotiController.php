@@ -11,11 +11,10 @@ class NotiController extends Controller
     {
         
         // Productos con stock bajo (ej: <= 5 unidades) desde inventarios
-        $productosStockBajo = DB::table('inventarios')
-            ->join('productos', 'inventarios.producto_id', '=', 'productos.id')
-            ->select('inventarios.*', 'productos.nombre_producto')
-            ->where('inventarios.stock', '<=', 5)
-            ->orderBy('inventarios.stock', 'asc')
+        $productosStockBajo = DB::table('productos')
+            ->select('id', 'nombre_producto', 'stock')
+            ->where('stock', '<=', 5)
+            ->orderBy('stock', 'asc')
             ->take(5)
             ->get();
 
