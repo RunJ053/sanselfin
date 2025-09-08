@@ -126,6 +126,8 @@ Route::middleware(['auth'])->group(function () {
 Route::post('/tarjetas/productos', [AdminController::class, 'tarjetaProducto'])->name('tarjeta.Producto');
 Route::post('/tarjetas/stock', [AdminController::class, 'tarjetaStock'])->name('tarjeta.Stock');
 Route::post('/tarjetas/pedidos', [AdminController::class, 'tarjetaPedido'])->name('tarjeta.Pedido');
+Route::get('/notificaciones', [NotiController::class, 'index'])->name('notificaciones.index');
+
 //Vistas de las tarjetas
 //usuarios
 use App\Http\Controllers\AdminController;

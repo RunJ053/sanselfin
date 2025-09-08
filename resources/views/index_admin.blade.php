@@ -21,7 +21,7 @@
 <body>
 
  <style>
-    /* HEADER estilo similar a la primera imagen */
+    /* HEADER */
     .header-bar {
       position: fixed;
       top: 10px;
@@ -36,28 +36,17 @@
       background: linear-gradient(90deg, #5cc05f 0%, #3a9b3a 100%);
     }
     .header-brand img { height: 44px; width: auto; }
-    .header-brand .brand-text { font-weight: 700; color: #fff; margin-left: 10px; letter-spacing: 0.2px; }
+    .header-brand .brand-text { font-weight: 700; color: #fff; margin-left: 10px; }
 
-    .nav-links .nav-link {
-      color: rgba(255,255,255,0.95);
-      font-weight: 600;
-      text-decoration: none; /* quita la raya */
-    }
-
-    .nav-links .nav-link:hover {
-      color: #f8f9fa;
-      text-decoration: none; /* no mostrar raya al pasar el mouse */
-    }
-
+    .nav-links .nav-link { color: rgba(255,255,255,0.95); font-weight: 600; text-decoration: none; }
+    .nav-links .nav-link:hover { color: #f8f9fa; text-decoration: none; }
 
     .user-area { display:flex; align-items:center; gap:12px; }
     .user-welcome { color: #fff; font-weight:600; margin-right:6px; }
     .logout-btn { background: #ffda3a; color: #1a1a1a; border-radius:22px; padding:6px 11px; font-weight:600; box-shadow: 0 2px 6px rgba(0,0,0,0.12); border: none; }
 
-    /* Ajuste del contenido principal para que no quede debajo del header */
-    .main-content { padding: 24px; margin-top: 106px; } /* ajustar si cambias la altura del header */
+    .main-content { padding: 24px; margin-top: 106px; }
 
-    /* Restantes estilos originales */
     .chart-container {
       position: relative;
       height: 350px;
@@ -83,47 +72,19 @@
       border-left-color: #28a745;
       background-color: #eaf6ea;
     }
-    .tarea-acciones a {
-      margin-right: 6px;
-    }
-    .grafico-contenedor {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 30px;
-      justify-content: center;
-      align-items: center;
-    }
-    .grafico-contenedor canvas {
-      background: #fff;
-      padding: 15px;
-      border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      width: 300px !important;
-      height: 300px !important;
-      max-width: 100%;
-    }
+    .tarea-acciones a { margin-right: 6px; }
 
-    .tarea-acciones a { margin-right: 5px; }
+    .card-hover { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .card-hover:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); cursor: pointer; }
 
     @media (max-width: 768px) {
-      .nav-links { display: none; } /* se muestra el toggler en móvil */
+      .nav-links { display: none; }
       .user-welcome { display: none; }
       .header-bar { left: 6px; right: 6px; top: 6px; padding: 8px 12px; }
       .main-content { margin-top: 96px; padding: 12px; }
     }
-
-    .card-hover {
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    .card-hover:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-      cursor: pointer;
-    }
   </style>
-</head>
 
-<body>
   <!-- HEADER -->
   <header class="header-bar">
     <div class="d-flex align-items-center header-brand">
@@ -133,12 +94,10 @@
       </a>
     </div>
 
-    <!-- toggler móvil -->
     <button class="navbar-toggler ms-3 d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#topNav">
       <span class="navbar-toggler-icon" style="filter: invert(1)"></span>
     </button>
 
-    <!-- enlaces -->
     <nav class="ms-4 me-auto collapse d-md-flex nav-links" id="topNav">
       <ul class="navbar-nav d-flex flex-row gap-3">
         <li class="nav-item"><a class="nav-link" href="{{ route('admin.dashboard') }}"><i class="fas fa-home me-1"></i> Inicio</a></li>
@@ -148,7 +107,18 @@
       </ul>
     </nav>
 
-    <!-- usuario -->
+    <!-- Notificaciones -->
+<a href="{{ route('notificaciones.index') }}" class="btn btn-link text-white position-relative">
+    <i class="fas fa-bell fa-lg"></i>
+    <!-- Contador -->
+    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+        {{ count($notificaciones ?? []) }}
+    </span>
+</a>
+
+    </div>
+
+
     <div class="user-area ms-auto">
       @auth
         <div class="user-welcome">
@@ -157,18 +127,13 @@
         </div>
         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:inline;">
           @csrf
-          <button type="submit" class="logout-btn">
-            <i class="fas fa-sign-out-alt"></i> Salir
-          </button>
+          <button type="submit" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Salir</button>
         </form>
       @else
-        <a href="{{ route('login') }}" class="logout-btn">
-          <i class="fas fa-exclamation-circle"></i> Login
-        </a>
+        <a href="{{ route('login') }}" class="logout-btn"><i class="fas fa-exclamation-circle"></i> Login</a>
       @endauth
     </div>
   </header>
-
 
   <!-- CONTENIDO PRINCIPAL -->
   <main class="main-content container-fluid">
@@ -190,27 +155,21 @@
         </div>
       </section>
 
+      <!-- TARJETAS -->
       @if(auth()->check() && auth()->user()->role == 2)
       <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4 mb-4">
-        <!-- Tarjeta Usuarios -->
+        <!-- Usuarios -->
         <div class="col">
           <a href="{{ route('usuario.index') }}" class="text-decoration-none">
             <div class="card bg-primary text-white shadow h-100 card-hover">
               <div class="card-body">
                 <h5><i class="fas fa-users me-2"></i>Usuarios</h5>
-                <p>
-                  @if (isset($numeroUsuarios))
-                    Usuarios Registrados: {{ $numeroUsuarios }}
-                  @else
-                    Información de usuarios no disponible
-                  @endif
-                </p>
+                <p>{{ $numeroUsuarios ?? 'No disponible' }}</p>
               </div>
             </div>
           </a>
         </div>
-
-        <!-- Tarjeta Productos -->
+        <!-- Productos -->
         <div class="col">
           <a href="{{ route('tarjeta.Producto') }}" class="text-decoration-none">
             <div class="card bg-success text-white shadow h-100 card-hover">
@@ -221,8 +180,7 @@
             </div>
           </a>
         </div>
-
-        <!-- Tarjeta Stock -->
+        <!-- Stock -->
         <div class="col">
           <a href="{{ route('tarjeta.Stock') }}" class="text-decoration-none">
             <div class="card bg-warning text-dark shadow h-100 card-hover">
@@ -230,18 +188,16 @@
                 <h5><i class="fas fa-warehouse me-2"></i>Stock</h5>
                 <p>
                   @if (isset($cantidadMax) && isset($cantidadMin))
-                    Máximo: {{ $cantidadMax }} unidades, 
-                    Mínimo: {{ $cantidadMin }} unidades
+                    Máx: {{ $cantidadMax }} | Mín: {{ $cantidadMin }}
                   @else
-                    Información de stock no disponible
+                    No disponible
                   @endif
                 </p>
               </div>
             </div>
           </a>
         </div>
-
-        <!-- Tarjeta Pedidos -->
+        <!-- Pedidos -->
         <div class="col">
           <a href="{{ route('tarjeta.Pedido') }}" class="text-decoration-none">
             <div class="card bg-danger text-white shadow h-100 card-hover">
@@ -258,7 +214,7 @@
       <section>
         <h2 class="mb-4"><i class="fas fa-chart-bar me-2"></i>Dashboard General</h2>
 
-        <!-- Gráfico productos por categoría -->
+        <!-- Productos por categoría -->
         <div class="chart-card mb-4">
           <h5 class="mb-3">📊 Productos por Categoría</h5>
           <div class="chart-container">
@@ -266,65 +222,69 @@
           </div>
         </div>
 
-        <!-- Gráfico tareas por tipo -->
-        <div class="chart-card mb-4">
-          <h5 class="mb-3">📈 Resumen de Tareas</h5>
-          <div class="chart-container">
-            <canvas id="graficoTareas"></canvas>
+        <!-- Resumen y Gestión de Tareas (lado a lado) -->
+        <div class="row">
+          <!-- Resumen -->
+          <div class="col-md-6">
+            <div class="chart-card mb-4">
+              <h5 class="mb-3">📈 Resumen de Tareas</h5>
+              <div class="chart-container">
+                <canvas id="graficoTareas"></canvas>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <!-- Gestión de Tareas -->
-        <div class="chart-card mb-4">
-          <h5 class="mb-3">📝 Gestión de Tareas</h5>
-
-          <!-- Formulario -->
-          <form method="POST" action="{{ route('tarea.store') }}" class="row g-3 mb-3">
-            @csrf
-            <div class="col-md-4"><input type="text" name="tarea_titulo" class="form-control" placeholder="Título" required></div>
-            <div class="col-md-4"><input type="text" name="tarea_descripcion" class="form-control" placeholder="Descripción (opcional)"></div>
-            <div class="col-md-2">
-              <select name="tarea_tipo" class="form-select">
-                <option value="pendiente">Pendiente</option>
-                <option value="hecha">Hecha</option>
-              </select>
-            </div>
-            <div class="col-md-2"><button class="btn btn-success w-100">Agregar</button></div>
-          </form>
-
-          <!-- Listado -->
-          <div class="row">
-            <div class="col-md-6">
-              <h6 class="text-warning">Pendientes</h6>
-              @forelse($pendientes ?? [] as $tarea)
-                <div class="tarea-card">
-                  <strong>{{ $tarea->titulo }}</strong>
-                  <p class="mb-1">{{ $tarea->descripcion }}</p>
-                  <small>{{ $tarea->fecha_creacion }}</small>
-                  <div class="tarea-acciones mt-2">
-                    <a href="{{ route('tarea.hecha', $tarea->id) }}" class="btn btn-sm btn-success"><i class="fas fa-check"></i></a>
-                    <a href="{{ route('tarea.eliminar', $tarea->id) }}" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></a>
-                  </div>
+          <!-- Gestión -->
+          <div class="col-md-6">
+            <div class="chart-card mb-4">
+              <h5 class="mb-3">📝 Gestión de Tareas</h5>
+              <form method="POST" action="{{ route('tarea.store') }}" class="row g-3 mb-3">
+                @csrf
+                <div class="col-md-4"><input type="text" name="tarea_titulo" class="form-control" placeholder="Título" required></div>
+                <div class="col-md-4"><input type="text" name="tarea_descripcion" class="form-control" placeholder="Descripción (opcional)"></div>
+                <div class="col-md-2">
+                  <select name="tarea_tipo" class="form-select">
+                    <option value="pendiente">Pendiente</option>
+                    <option value="hecha">Hecha</option>
+                  </select>
                 </div>
-              @empty
-                <p class="text-muted">No hay tareas pendientes.</p>
-              @endforelse
-            </div>
+                <div class="col-md-2"><button class="btn btn-success w-100">Agregar</button></div>
+              </form>
 
-            <div class="col-md-6">
-              <h6 class="text-success">Hechas</h6>
-              @forelse($hechas ?? [] as $tarea)
-                <div class="tarea-card hecha">
-                  <strong>{{ $tarea->titulo }}</strong>
-                  <p class="mb-1">{{ $tarea->descripcion }}</p>
-                  <small>{{ $tarea->fecha_creacion }}</small>
-                  <div class="tarea-acciones mt-2">
-                    <a href="{{ route('tarea.eliminar', $tarea->id) }}" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></a>
-                  </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <h6 class="text-warning">Pendientes</h6>
+                  @forelse($pendientes ?? [] as $tarea)
+                    <div class="tarea-card">
+                      <strong>{{ $tarea->titulo }}</strong>
+                      <p class="mb-1">{{ $tarea->descripcion }}</p>
+                      <small>{{ $tarea->fecha_creacion }}</small>
+                      <div class="tarea-acciones mt-2">
+                        <a href="{{ route('tarea.hecha', $tarea->id) }}" class="btn btn-sm btn-success"><i class="fas fa-check"></i></a>
+                        <a href="{{ route('tarea.eliminar', $tarea->id) }}" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></a>
+                      </div>
+                    </div>
+                  @empty
+                    <p class="text-muted">No hay tareas pendientes.</p>
+                  @endforelse
                 </div>
-              @empty
-                <p class="text-muted">No hay tareas echas.</p>
-              @endforelse
+
+                <div class="col-md-6">
+                  <h6 class="text-success">Hechas</h6>
+                  @forelse($hechas ?? [] as $tarea)
+                    <div class="tarea-card hecha">
+                      <strong>{{ $tarea->titulo }}</strong>
+                      <p class="mb-1">{{ $tarea->descripcion }}</p>
+                      <small>{{ $tarea->fecha_creacion }}</small>
+                      <div class="tarea-acciones mt-2">
+                        <a href="{{ route('tarea.eliminar', $tarea->id) }}" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></a>
+                      </div>
+                    </div>
+                  @empty
+                    <p class="text-muted">No hay tareas hechas.</p>
+                  @endforelse
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -368,7 +328,6 @@
             </div>
           </div>
         </div>
-
       </section>
     </div>
   </main>
@@ -399,22 +358,11 @@
           responsive: true,
           plugins: {
             legend: { display: false },
-            tooltip: {
-              backgroundColor: '#2e7d32',
-              titleColor: '#fff',
-              bodyColor: '#fff'
-            }
+            tooltip: { backgroundColor: '#2e7d32', titleColor: '#fff', bodyColor: '#fff' }
           },
           scales: {
-            x: {
-              ticks: { color: '#555', font: { size: 12 } },
-              grid: { display: false }
-            },
-            y: {
-              beginAtZero: true,
-              ticks: { stepSize: 1, color: '#555', font: { size: 12 } },
-              grid: { color: 'rgba(0,0,0,0.05)' }
-            }
+            x: { ticks: { color: '#555' }, grid: { display: false } },
+            y: { beginAtZero: true, ticks: { stepSize: 1, color: '#555' }, grid: { color: 'rgba(0,0,0,0.05)' } }
           }
         }
       });
@@ -423,8 +371,7 @@
     @if (!empty($labelsTareas) && !empty($datosTareas))
     const ctxTareasEl = document.getElementById('graficoTareas');
     if (ctxTareasEl) {
-      const ctxTareas = ctxTareasEl.getContext('2d');
-      new Chart(ctxTareas, {
+      new Chart(ctxTareasEl.getContext('2d'), {
         type: 'doughnut',
         data: {
           labels: {!! json_encode($labelsTareas) !!},
@@ -436,20 +383,10 @@
             borderWidth: 1
           }]
         },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              position: 'bottom',
-              labels: { color: '#444' }
-            }
-          }
-        }
+        options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: '#444' } } } }
       });
     }
     @endif
   </script>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min
