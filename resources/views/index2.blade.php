@@ -3,10 +3,11 @@
 @section('title', 'La Finca al Día - Frutas y Verduras Frescas')
 
 @section('content')
-@php
-$notificaciones = $notificaciones ?? collect();
-$promociones = $promociones ?? collect();
-@endphp
+    @php
+    $notificaciones = $notificaciones ?? collect();
+    $promociones = $promociones ?? collect();
+    $carritoCount = $carritoCount ?? 0;
+    @endphp
 <x-navbar :notificaciones="$notificaciones" :carritoCount="$carritoCount" />
 <main>
     <!-- Sección Hero -->
