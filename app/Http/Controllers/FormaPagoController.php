@@ -55,7 +55,7 @@ class FormaPagoController extends Controller
 
         // * Mostar notificaciones pendientes
         $notificaciones = Notificacion::where('usuario_id', auth()->id())->orderBy('created_at', 'desc')->get();
-        $carritoCount = CarritoCompra::where('usuario', $userId)->count('cantidad'); 
+        $carritoCount = CarritoCompra::where('usuario', $userId)->count('cantidad');
 
         return view(
             'facturacion.forma_pago',
@@ -80,6 +80,8 @@ class FormaPagoController extends Controller
         $user = Auth::user();
 
         $carrito = CarritoCompra::where('usuario', $usuario)->with('producto')->get();
+        $notificaciones = Notificacion::where('usuario_id', $usuario)->orderBy('created_at', 'desc')->get();
+        $carritoCount = CarritoCompra::where('usuario', $usuario)->count('cantidad'); 
 
         if ($carrito->isEmpty()) {
             return redirect()->route('carrito.index')->with('error', 'Tu carrito está vacío.');
@@ -120,13 +122,13 @@ class FormaPagoController extends Controller
         try {
             // 1. Crear pedido
             $pedido = Pedido::create([
-                'fecha'           => now(),
-                'total'           => $total,
+                'fecha' => now(),
+                'total' => $total,
                 'direccion_envio' => $direccionEnvio,
-                'usuario'         => $usuario,
-                'pagos'           => 1101,
-                'envios'          => $envioId,
-                'estado_id'       => 3,
+                'usuario' => $usuario,
+                'pagos' => 1101,
+                'envios' => $envioId,
+                'estado_id' => 3,
             ]);
 
             // 2. Crear detalles de pedido
@@ -137,12 +139,12 @@ class FormaPagoController extends Controller
                 $totalProducto = $subtotalProducto - $descuentoProducto + $item->impuesto_calculado;
 
                 DetallePedido::create([
-                    'cantidad'           => $item->cantidad,
-                    'precio'             => $subtotalProducto,
+                    'cantidad' => $item->cantidad,
+                    'precio' => $subtotalProducto,
                     'descuento_aplicado' => $item->descuento,
-                    'pedidos'            => $pedido->id,
-                    'productos'          => $item->producto_id,
-                    'usuario'            => $usuario,
+                    'pedidos' => $pedido->id,
+                    'productos' => $item->producto_id,
+                    'usuario' => $usuario,
                 ]);
 
                 $item->producto->decrement('stock', $item->cantidad);
@@ -150,13 +152,13 @@ class FormaPagoController extends Controller
 
             // 3. Crear factura cabecera
             $facturaCabecera = FacturaCabecera::create([
-                'estado_id'      => 12,
-                'cliente_id'     => $usuario,
-                'forma_pago_id'  => 1101,
-                'envio_id'       => $envioId,
-                'pedido_id'      => $pedido->id,
+                'estado_id' => 12,
+                'cliente_id' => $usuario,
+                'forma_pago_id' => 1101,
+                'envio_id' => $envioId,
+                'pedido_id' => $pedido->id,
                 'numero_factura' => 'FAC-' . time(),
-                'fecha'          => now(),
+                'fecha' => now(),
             ]);
 
             // 4. Crear detalles de la factura
@@ -168,24 +170,24 @@ class FormaPagoController extends Controller
 
                 FacturaDetalle::create([
                     'factura_cabecera_id' => $facturaCabecera->id,
-                    'producto_id'         => $item->producto_id,
-                    'cantidad'            => $item->cantidad,
-                    'precio_unitario'     => $subtotalProducto,
-                    'subTotal'            => $precio,
-                    'descuento'           => $descuentoProducto,
-                    'envio'               => $costoEnvio,
-                    'montoTotal'          => $totalProducto,
+                    'producto_id' => $item->producto_id,
+                    'cantidad' => $item->cantidad,
+                    'precio_unitario' => $subtotalProducto,
+                    'subTotal' => $precio,
+                    'descuento' => $descuentoProducto,
+                    'envio' => $costoEnvio,
+                    'montoTotal' => $totalProducto,
                 ]);
             }
 
             // 5. Generar PDF
             $pdf = Pdf::loadView('facturacion.pdf', [
-                'factura'     => $facturaCabecera->load('usuario', 'estado', 'formaPago', 'detalles.producto'),
-                'precio'      => $precio ?? 0,
-                'sub'         => $sub,
-                'costoEnvio'  => $costoEnvio,
-                'descuento'   => $descuento,
-                'total'       => $total,
+                'factura' => $facturaCabecera->load('usuario', 'estado', 'formaPago', 'detalles.producto'),
+                'precio' => $precio ?? 0,
+                'sub' => $sub,
+                'costoEnvio' => $costoEnvio,
+                'descuento' => $descuento,
+                'total' => $total,
             ]);
 
             $pdfPath = public_path('facturas/' . $facturaCabecera->numero_factura . '.pdf');
@@ -197,17 +199,17 @@ class FormaPagoController extends Controller
             // 7. Notificación en BD
             Notificacion::create([
                 'usuario_id' => $usuario,
-                'titulo'     => 'Nuevo Pedido',
-                'mensaje'    => 'Tu pedido ha sido registrado con exito. Se adjuntó la factura en tu correo.',
-                'leido'      => false,
+                'titulo' => 'Nuevo Pedido',
+                'mensaje' => 'Tu pedido ha sido registrado con exito. Se adjuntó la factura en tu correo.',
+                'leido' => false,
             ]);
 
             // 8. Tarea para el admin
             Tarea::create([
-                'titulo'          => 'Nuevo pedido recibido',
-                'descripcion'     => 'Se ha recibido un nuevo pedido. Por favor, revisa los detalles y procede con el procesamiento.',
-                'tipo'            => 'pendiente',
-                'fecha_creacion'  => now(),
+                'titulo' => 'Nuevo pedido recibido',
+                'descripcion' => 'Se ha recibido un nuevo pedido. Por favor, revisa los detalles y procede con el procesamiento.',
+                'tipo' => 'pendiente',
+                'fecha_creacion' => now(),
             ]);
 
             // 9. Vaciar carrito
@@ -216,16 +218,26 @@ class FormaPagoController extends Controller
 
             DB::commit();
 
-            return redirect()->route('notificaciones.index')
-                ->with('success', 'Tu pedido ha sido registrado. La factura fue enviada a tu correo.');
+            return view('facturacion.respuestaEfectivo')->with([
+                'pedido' => $pedido,
+                'subtotal' => $subtotal,
+                'impuestos' => $impuestos,
+                'costoEnvio' => $costoEnvio,
+                'descuento' => $descuento,
+                'total' => $total,
+                'direccionEnvio' => $direccionEnvio,
+                'notificaciones' => $notificaciones,
+                'carritoCount' => $carritoCount,
+                'success' => 'Tu pedido ha sido registrado exitosamente. La factura fue enviada a tu correo.'
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
 
             Notificacion::create([
                 'usuario_id' => $usuario,
-                'titulo'     => 'Error al procesar pedido',
-                'mensaje'    => 'Hubo un error al generar tu pedido/factura. Inténtalo nuevamente.',
-                'leido'      => false,
+                'titulo' => 'Error al procesar pedido',
+                'mensaje' => 'Hubo un error al generar tu pedido/factura. Inténtalo nuevamente.',
+                'leido' => false,
             ]);
 
             return redirect()->route('carrito.index')->with('error', 'Error al procesar el pedido: ' . $e->getMessage());
@@ -237,10 +249,10 @@ class FormaPagoController extends Controller
      */
     public function pagarPayU(Request $request)
     {
-        $apiKey      = env('PAYU_API_KEY');
-        $merchantId  = env('PAYU_MERCHANT_ID');
-        $accountId   = env('PAYU_ACCOUNT_ID');
-        $url         = env('PAYU_API_URL');
+        $apiKey = env('PAYU_API_KEY');
+        $merchantId = env('PAYU_MERCHANT_ID');
+        $accountId = env('PAYU_ACCOUNT_ID');
+        $url = env('PAYU_API_URL');
 
         $usuario = Auth::id();
         $carrito = CarritoCompra::where('usuario', $usuario)->with('producto')->get();
@@ -258,7 +270,7 @@ class FormaPagoController extends Controller
         $totalProductos = CarritoCompra::where('usuario', $usuario)
             ->sum(DB::raw('(subtotal + impuesto_calculado) - descuento'));
 
-        $amount   = $totalProductos + $costoEnvio;
+        $amount = $totalProductos + $costoEnvio;
         $currency = "COP";
         $referenceCode = "REF" . time();
 

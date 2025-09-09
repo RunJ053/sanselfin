@@ -119,6 +119,7 @@ Route::middleware(['auth'])->group(function () {
     // * Ruta para el metodo de pago
     Route::GET('/metodo_de_pago', [FormaPagoController::class, 'index'])->name('forma_de_pago');
     Route::GET('/checkout/efectivo', [FormaPagoController::class, 'pagarEfectivo'])->name('checkout.efectivo')->middleware('verificar.envio');
+
     // ! Pago con PayU
     Route::POST('/checkout/payu', [FormaPagoController::class, 'pagarPayU'])->name('checkout.payu')->middleware('verificar.envio');
     // ! Vista de respuesta al usuario
