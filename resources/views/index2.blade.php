@@ -6,7 +6,7 @@
     @php
     $notificaciones = $notificaciones ?? collect();
     $promociones = $promociones ?? collect();
-    $carritoCount = $carritoCount ?? collect();
+    $carritoCount = $carritoCount ?? 0;
     @endphp
 <x-navbar :notificaciones="$notificaciones" :carritoCount="$carritoCount" />
 <main>
