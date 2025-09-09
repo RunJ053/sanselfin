@@ -62,6 +62,7 @@ h1, h2, h3, h5 {
   width: 100%;
 }
 
+
 /* === TABLAS === */
 .table th {
   text-transform: uppercase;
@@ -199,6 +200,7 @@ h1, h2, h3, h5 {
 .newsletter-form button:hover {
   background-color: #27692b;
 }
+
 
 /* === FOOTER BOTTOM === */
 .footer-bottom {

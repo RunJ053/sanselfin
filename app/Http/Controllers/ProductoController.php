@@ -107,6 +107,8 @@ class ProductoController extends Controller
     {
         $userId = auth()->id();
         $notificaciones = Notificacion::where('usuario_id', $userId)->orderBy('created_at', 'desc')->get();
+        $carritoCount = CarritoCompra::where('usuario', $userId)->count('cantidad'); 
+
         try {
             $perPage = 12;
 
@@ -175,12 +177,12 @@ class ProductoController extends Controller
             $productosPaginados->setCollection($productosMapeados);
 
             $categorias = Categoria::all();
+
             $carritoCount = CarritoCompra::where('usuario', $userId)->count('cantidad'); 
 
 
             if ($request->ajax()) {
-                $htmlProductos = view('partials.productos_l
-                ist', [
+                $htmlProductos = view('partials.productos_list', [
                     'productos' => $productosPaginados->items(),
                     'searchTerm' => $request->search,
                     'currentFilter' => $request->categoria

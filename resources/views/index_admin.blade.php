@@ -124,21 +124,24 @@
 </head>
 
 <body>
+
 <!-- HEADER -->
-<header class="header-bar">
-  <div class="d-flex align-items-center header-brand">
+<!-- HEADER -->
+<header class="header-bar d-flex align-items-center px-3">
+  <!-- Logo -->
+  <div class="header-brand d-flex align-items-center">
     <a href="{{ route('admin.dashboard') }}" class="d-flex align-items-center text-decoration-none">
       <img src="{{ asset('img/logo/icon.png') }}" alt="Logo">
       <span class="brand-text">Finca al Día</span>
     </a>
   </div>
 
-  <!-- toggler móvil -->
-  <button class="navbar-toggler ms-3 d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#topNav">
-    <span class="navbar-toggler-icon" style="filter: invert(1)"></span>
+  <!-- Toggler móvil -->
+  <button class="navbar-toggler ms-3 d-md-none text-white" type="button" data-bs-toggle="collapse" data-bs-target="#topNav">
+    <span class="navbar-toggler-icon"></span>
   </button>
 
-  <!-- enlaces -->
+  <!-- Menú -->
   <nav class="ms-4 me-auto collapse d-md-flex nav-links" id="topNav">
     <ul class="navbar-nav d-flex flex-row gap-3">
       <li class="nav-item"><a class="nav-link" href="{{ route('admin.dashboard') }}"><i class="fas fa-home me-1"></i> Inicio</a></li>
@@ -148,40 +151,40 @@
     </ul> 
   </nav>
 
-  <!-- usuario -->
-  <div class="user-area ms-auto">
+  <!-- Usuario -->
+  <div class="user-area ms-auto d-flex align-items-center gap-3">
     @auth
-      <div class="d-flex align-items-center gap-3">
-        <div class="user-welcome">
-          <i class="fas fa-user-circle me-1"></i>
-          {{ session('nombre_usuario') ?? Auth::user()->nombre ?? Auth::user()->nomb_usu ?? 'Administrador' }}
-        </div>
+      <div class="user-welcome text-white">
+        <i class="fas fa-user-circle me-1"></i>
+        {{ session('nombre_usuario') ?? Auth::user()->nombre ?? Auth::user()->nomb_usu ?? 'Administrador' }}
+      </div>
 
-        <!-- campana al lado del usuario -->
+      <!-- Campana -->
       <a href="{{ route('admin.noti_admin') }}" class="btn btn-link text-white position-relative p-0" style="font-size: 1rem;">
         <i class="fas fa-bell"></i>
         @if(!empty($notificaciones) && count($notificaciones) > 0)
           <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-              {{ count($notificaciones) }}
+            {{ count($notificaciones) }}
           </span>
         @endif
       </a>
 
-        <!-- botón salir -->
-        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:inline;">
-          @csrf
-          <button type="submit" class="logout-btn">
-            <i class="fas fa-sign-out-alt"></i> Salir
-          </button>
-        </form>
-      </div>
+      <!-- Botón salir (amarillo) -->
+      <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:inline;">
+        @csrf
+        <button type="submit" class="btn btn-warning fw-bold">
+          <i class="fas fa-sign-out-alt"></i> Salir
+        </button>
+      </form>
     @else
-      <a href="{{ route('login') }}" class="logout-btn">
+      <a href="{{ route('login') }}" class="btn btn-warning fw-bold">
         <i class="fas fa-exclamation-circle"></i> Login
       </a>
     @endauth
   </div>
 </header>
+
+
 
 
   <!-- CONTENIDO PRINCIPAL -->
@@ -349,49 +352,60 @@
           </div>
         </div>
 
-        <!-- Productos recientes -->
-        <div class="table-card">
-          <h5 class="mb-3">🆕 Productos Recientes</h5>
-          <div class="table-responsive">
-            <table class="table table-striped table-hover align-middle">
-              <thead class="table-success">
-                <tr>
-                  <th>Imagen</th>
-                  <th>Nombre</th>
-                  <th>Descripción</th>
-                  <th>Precio</th>
-                  <th>Categoría</th>
-                  <th>Fecha</th>
-                </tr>
-              </thead>
-              <tbody>
-                @foreach($productosRecientes as $producto)
-                <tr>
-                  <td>
-                    @if ($producto->imagen)
-                      <img src="{{ asset('img/product/' . $producto->imagen) }}" width="45" height="45" style="object-fit:cover; border-radius:6px;">
-                    @else
-                      Sin imagen
-                    @endif
-                  </td>
-                  <td>{{ $producto->nombre_producto }}</td>
-                  <td>{{ $producto->descripccion }}</td>
-                  <td>${{ number_format($producto->precio_unitario ?? 0, 0, ',', '.') }}</td>
-                  <td>{{ $producto->categorias->nombre ?? 'Sin categoría' }}</td>
-                  <td>{{ \Carbon\Carbon::parse($producto->created_at)->format('Y-m-d') }}</td>
-                </tr>
-                @endforeach
-              </tbody>
-            </table>
-            <div class="paginador d-flex justify-content-center">
-              {{ $productosRecientes->links() }}
+        <footer data-aos="fade-up"
+        data-aos-duration="100"
+        class="footer">
+        <div class="footer-top">
+            <div class="container">
+                <div class="footer-grid">
+                    <!-- Sección de información de la empresa -->
+                    <div class="footer-section">
+                        <img src="{{asset('img/logo/icon.png')}}" alt="Logo Finca al Día" class="footer-logo">
+                        <p class="company-description">Llevamos los productos más frescos del campo a tu mesa, garantizando calidad y frescura en cada entrega.</p>
+                        <div class="social-links">
+                            <a href="" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                            <a href="" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                            <a href="" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                        </div>
+                    </div>
+                    <!-- Sección de enlaces rápidos -->
+                    <div class="footer-section">
+                        <h3>Enlaces Rápidos</h3>
+                        <ul class="footer-links">
+                            <li><a href="{{route('producto')}}">Nuestros Productos</a></li>
+                            <li><a href="{{route('servicio')}}">Sobre Nosotros</a></li>
+                            <li><a href="{{route('acerca_de')}}">FAQ</a></li>
+                        </ul>
+                    </div>
+                    <!-- Sección de contacto -->
+                    <div class="footer-section">
+                        <h3>Contacto</h3>
+                        <div class="contact-info">
+                            <p><i class="fas fa-clock"></i> Lunes a Sábados, 8:00 a.m a 6:00 p.m</p>
+                            <p><i class="fas fa-map-marker-alt"></i>
+                                <a style="color: gray; text-decoration: none;" href="https://share.google/uCjgbp9lKkg6hyuRB" target="_blank" rel="noopener noreferrer"> Tv. 94 L #88-08, Bogotá</a>
+                            </p>
+                            <p><i class="fas fa-envelope"></i> fincaaldia25@gmail.com</p>
+                            <p><i class="fas fa-phone"></i> 300 123 4567</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
+        <!-- Footer Bottom -->
+        <div class="footer-bottom">
+            <div class="container">
+                <p>&copy; 2024 Finca al Día. Todos los derechos reservados.</p>
+                <div class="payment-methods">
+                    <img src="{{asset('img/logo/visa.png')}}" alt="Visa">
+                    <img src="{{asset('img/logo/logo-Mastercard.png')}}" alt="Mastercard">
+                    <img src="{{asset('img/logo/nequi.png')}}" alt="Nequi">
+                </div>
+            </div>
+        </div>
+    </footer>
 
-      </section>
-    </div>
-  </main>
+      
 
   <!-- Chart.js Scripts -->
   <script>
@@ -469,7 +483,31 @@
     }
     @endif
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="{{ asset('js/hamburguesa.js') }}"></script>
+    <script src="{{ asset('js/acerca_de.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        @if(session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: '¡Éxito!',
+            text: '{{ session('
+            success ') }}',
+            confirmButtonColor: '#198754'
+        });
+        @endif
 
+        @if(session('error'))
+        Swal.fire({
+            icon: 'error',
+            title: '¡Oops!',
+            text: '{{ session('
+            error ') }}',
+            confirmButtonColor: '#d33'
+        });
+        @endif
+  
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
