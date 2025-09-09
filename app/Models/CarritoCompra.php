@@ -15,7 +15,6 @@ class CarritoCompra extends Model
         'cantidad',
         'precio_unitario',
         'subtotal',
-        'impuesto_calculado',
         'descuento',
         'total_item',
         'usuario',

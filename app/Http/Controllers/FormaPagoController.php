@@ -38,7 +38,6 @@ class FormaPagoController extends Controller
 
         // Inicializar acumuladores
         $subtotal = 0;
-        $impuestos = 0;
         $descuento = 0;
         $total = 0;
         $sub = 0;
@@ -46,10 +45,8 @@ class FormaPagoController extends Controller
         // Recorrer items del carrito y sumar lo que ya está calculado en la BD
         foreach ($itemsCarrito as $item) {
             $subtotal += $item->subtotal;                 // subtotal ya viene con precio_unitario * cantidad
-            $impuestos += $item->impuesto_calculado;      // lo calculaste en add/update
             $descuento += $item->descuento;               // lo calculaste en add/update
             $total += $item->total_item;             // subtotal - descuento + impuesto
-            $sub = $subtotal + $impuestos;
         }
         $totalEnvio = $total + $costoEnvio;
 
@@ -67,7 +64,6 @@ class FormaPagoController extends Controller
                 'totalEnvio',
                 'notificaciones',
                 'descuento',
-                'sub',
                 'carritoCount'
             )
         );
@@ -100,21 +96,18 @@ class FormaPagoController extends Controller
 
         // Inicializar acumuladores
         $subtotal = 0;
-        $impuestos = 0;
         $descuento = 0;
         $total = 0;
         $sub = 0;
 
         foreach ($carrito as $item) {
             $subtotal += $item->subtotal;
-            $impuestos += $item->impuesto_calculado;
             $descuento += $item->descuento;
             $total += $item->total_item;
-            $sub = $subtotal + $impuestos;
         }
 
         $totalProductos = CarritoCompra::where('usuario', auth()->id())
-            ->sum(DB::raw('(subtotal + impuesto_calculado) - descuento'));
+            ->sum('total_item');
 
         $total = $totalProductos + $costoEnvio;
 
@@ -134,9 +127,8 @@ class FormaPagoController extends Controller
             // 2. Crear detalles de pedido
             foreach ($carrito as $item) {
                 $subtotalProducto = $item->precio_unitario * $item->cantidad;
-                $precio = $subtotalProducto + $item->impuesto_calculado;
                 $descuentoProducto = $item->descuento;
-                $totalProducto = $subtotalProducto - $descuentoProducto + $item->impuesto_calculado;
+                $totalProducto = $subtotalProducto - $descuentoProducto;
 
                 DetallePedido::create([
                     'cantidad' => $item->cantidad,
@@ -164,16 +156,15 @@ class FormaPagoController extends Controller
             // 4. Crear detalles de la factura
             foreach ($carrito as $item) {
                 $subtotalProducto = $item->precio_unitario * $item->cantidad;
-                $precio = $subtotalProducto + $item->impuesto_calculado;
                 $descuentoProducto = $item->descuento;
-                $totalProducto = $subtotalProducto - $descuentoProducto + $item->impuesto_calculado;
+                $totalProducto = $subtotalProducto - $descuentoProducto;
 
                 FacturaDetalle::create([
                     'factura_cabecera_id' => $facturaCabecera->id,
                     'producto_id' => $item->producto_id,
                     'cantidad' => $item->cantidad,
-                    'precio_unitario' => $subtotalProducto,
-                    'subTotal' => $precio,
+                    'precio_unitario' => $item->precio_unitario,
+                    'subTotal' => $subtotalProducto,
                     'descuento' => $descuentoProducto,
                     'envio' => $costoEnvio,
                     'montoTotal' => $totalProducto,
@@ -183,8 +174,8 @@ class FormaPagoController extends Controller
             // 5. Generar PDF
             $pdf = Pdf::loadView('facturacion.pdf', [
                 'factura' => $facturaCabecera->load('usuario', 'estado', 'formaPago', 'detalles.producto'),
-                'precio' => $precio ?? 0,
-                'sub' => $sub,
+                'precio' => $precio_unitario ?? 0,
+                'sub' => $subtotalProducto,
                 'costoEnvio' => $costoEnvio,
                 'descuento' => $descuento,
                 'total' => $total,
@@ -221,7 +212,6 @@ class FormaPagoController extends Controller
             return view('facturacion.respuestaEfectivo')->with([
                 'pedido' => $pedido,
                 'subtotal' => $subtotal,
-                'impuestos' => $impuestos,
                 'costoEnvio' => $costoEnvio,
                 'descuento' => $descuento,
                 'total' => $total,

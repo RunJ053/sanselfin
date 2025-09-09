@@ -31,7 +31,6 @@ class OpcionEntregaController extends Controller
 
         // Inicializar acumuladores
         $subtotal = 0;
-        $impuestos = 0;
         $descuento = 0;
         $total = 0;
         $sub = 0;
@@ -39,10 +38,8 @@ class OpcionEntregaController extends Controller
         // Recorrer items del carrito y sumar lo que ya está calculado en la BD
         foreach ($itemsCarrito as $item) {
             $subtotal += $item->subtotal;                 // subtotal ya viene con precio_unitario * cantidad
-            $impuestos += $item->impuesto_calculado;      // lo calculaste en add/update
             $descuento += $item->descuento;               // lo calculaste en add/update
-            $total += $item->total_item;             // subtotal - descuento + impuesto
-            $sub = $subtotal + $impuestos;
+            $total += $item->total_item;             // subtotal - descuento
         }
         // * Mostar notificaciones pendientes
         $notificaciones = Notificacion::where('usuario_id', auth()->id())->orderBy('created_at', 'desc')->get();
@@ -56,7 +53,6 @@ class OpcionEntregaController extends Controller
                 'destino',
                 'direccionUsuario',
                 'subtotal',
-                'impuestos',
                 'total',
                 'notificaciones',
                 'carritoCount'
@@ -74,7 +70,7 @@ class OpcionEntregaController extends Controller
 
         // Total de productos calculado desde el carrito
         $totalProductos = CarritoCompra::where('usuario', auth()->id())
-            ->sum(DB::raw('(subtotal - COALESCE(descuento,0)) + impuesto_calculado'));
+            ->sum('total_item');
 
         $total = $totalProductos + $destino->costo;
 

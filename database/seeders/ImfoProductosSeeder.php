@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Categoria;
-use App\Models\Impuesto;
 use App\Models\Promocion;
 use App\Models\Estado;
 use App\Models\FormaPago;
@@ -19,23 +18,6 @@ class ImfoProductosSeeder extends Seeder
      */
     public function run()
     {
-        Impuesto::insert([
-            [
-                'nombre_impuesto' => 'IVA 16%',
-                'porcentaje' => 16.00,
-                'descripcion' => 'Impuesto al valor agregado del 16%',
-                'created_at' => now(),
-                'updated_at' => now()
-            ],
-            [
-                'nombre_impuesto' => 'IVA 8%',
-                'porcentaje' => 8.00,
-                'descripcion' => 'Impuesto al valor agregado del 8%',
-                'created_at' => now(),
-                'updated_at' => now()
-            ]
-        ]);
-
         Estado::insert([
             ['id' => 1, 'desc_estado' => 'Activo', 'created_at' => now(), 'updated_at' => now()],
             ['id' => 2, 'desc_estado' => 'Inactivo', 'created_at' => now(), 'updated_at' => now()],

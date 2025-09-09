@@ -27,7 +27,7 @@
                         </div>
                         <div class="p-4 rounded-lg shadow bg-white">
                             <h2 class="text-lg font-bold">Resumen de la compra</h2>
-                            <p><strong>Subtotal: $</strong> {{ number_format($sub, 0, ',', '.') }}</p>
+                            <p><strong>Subtotal: $</strong> {{ number_format($subtotal, 0, ',', '.') }}</p>
                             <p style="color: red;"><strong>Descuento: - $</strong> {{ number_format($descuento, 0, ',', '.') }}</p>
                             <p>Envío: ${{ number_format($costoEnvio, 0, ',', '.') }}</p>
                             <hr>

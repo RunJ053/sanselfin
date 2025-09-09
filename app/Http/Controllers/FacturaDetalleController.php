@@ -24,10 +24,7 @@ class FacturaDetalleController extends Controller
         $costoEnvio = (float) optional($detalles->first())->envio ?? 0;
         $total = $totalProductos + $costoEnvio;
 
-        // impuestos = totalProductos - (sub - descuento)
-        $impuestos = $totalProductos - ($sub - $descuento);
-
-        return compact('sub', 'descuento', 'totalProductos', 'costoEnvio', 'total', 'impuestos');
+        return compact('sub', 'descuento', 'totalProductos', 'costoEnvio', 'total');
     }
 
     public function verFactura($pedidoId)

@@ -38,7 +38,6 @@
 
     <div class="mt-6 flex justify-between space-x-6">
         <div>
-            <p><strong>Impuestos:</strong> Impuesto segun el Producto</p>
             <p><strong>Subtotal:</strong> ${{ number_format($sub ?? 0, 0, ',', '.') }}</p>
             <p><strong>Descuento:</strong> ${{ number_format($descuento ?? 0, 0, ',', '.') }}</p>
             <p><strong>Envío:</strong> ${{ number_format($costoEnvio ?? 0, 0, ',', '.') }}</p>

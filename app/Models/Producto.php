@@ -17,7 +17,6 @@ class Producto extends Model
     protected $table = 'productos';
 
     protected $fillable = [
-        'impuesto_id',
         'descuento_id',
         'categoria_id',
         'estado_id',
@@ -27,12 +26,7 @@ class Producto extends Model
         'precio_unitario',
     ];
 
-    // Relaciones (opcional pero recomendado para el futuro)
-    public function impuestos()
-    {
-        return $this->belongsTo(Impuesto::class, 'impuesto_id');
-    }
-
+    // Relaciones
     public function promociones()
     {
         return $this->belongsTo(Promocion::class, 'descuento_id');

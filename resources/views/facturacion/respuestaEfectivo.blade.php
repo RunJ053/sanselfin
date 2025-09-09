@@ -33,10 +33,6 @@
                     <!-- Información básica -->
                     <div class="space-y-3">
                         <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                            <span class="font-medium text-gray-700">Número de Pedido:</span>
-                            <span class="text-gray-900 font-semibold">#{{ $pedido->id ?? 'PED-' . time() }}</span>
-                        </div>
-                        <div class="flex justify-between items-center py-2 border-b border-gray-100">
                             <span class="font-medium text-gray-700">Fecha:</span>
                             <span class="text-gray-900">{{ now()->format('d/m/Y H:i') }}</span>
                         </div>
@@ -64,10 +60,6 @@
                         <div class="flex justify-between text-sm">
                             <span class="text-gray-600">Subtotal:</span>
                             <span class="text-gray-900">${{ number_format($subtotal ?? 0, 2) }}</span>
-                        </div>
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-600">Impuestos:</span>
-                            <span class="text-gray-900">${{ number_format($impuestos ?? 0, 2) }}</span>
                         </div>
                         <div class="flex justify-between text-sm">
                             <span class="text-gray-600">Envío:</span>
