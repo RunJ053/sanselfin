@@ -123,100 +123,160 @@
                         </svg>
                     </button>
                 </form>
+
+                <!-- OVERLAY DE LOADING MEJORADO -->
+                <div id="loading-overlay"
+                    class="hidden fixed inset-0 bg-gradient-to-br from-black via-gray-900 to-black bg-opacity-80 backdrop-blur-sm flex flex-col items-center justify-center z-50">
+
+                    <!-- Contenedor principal con glassmorphism -->
+                    <div class="relative bg-white bg-opacity-10 backdrop-blur-md rounded-3xl p-12 border border-white border-opacity-20 shadow-2xl max-w-sm mx-auto">
+
+                        <!-- Anillos de pulso en el fondo -->
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-32 h-32 rounded-full border-2 border-green-400 border-opacity-30 animate-pulse-ring"></div>
+                            <div class="absolute w-32 h-32 rounded-full border-2 border-emerald-400 border-opacity-40 animate-pulse-ring" style="animation-delay: 0.5s;"></div>
+                            <div class="absolute w-32 h-32 rounded-full border-2 border-green-300 border-opacity-20 animate-pulse-ring" style="animation-delay: 1s;"></div>
+                        </div>
+
+                        <!-- Contenedor del ícono con efectos -->
+                        <div class="relative z-10 text-center">
+                            <!-- Círculo de fondo con gradiente -->
+                            <div class="relative mx-auto mb-8 w-24 h-24">
+                                <div class="absolute inset-0 bg-gradient-to-br from-green-400 via-emerald-500 to-green-600 rounded-full animate-pulse shadow-lg shadow-green-500/30"></div>
+                                <div class="absolute inset-0 bg-gradient-to-br from-green-400 via-emerald-500 to-green-600 rounded-full animate-float opacity-80"></div>
+
+                                <!-- Carrito animado -->
+                                <div class="relative z-10 flex items-center justify-center h-full">
+                                    <svg class="w-12 h-12 text-white animate-bounce"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9h12l-2-9M9 21h.01M15 21h.01" />
+                                    </svg>
+                                </div>
+
+                                <!-- Partículas flotantes -->
+                                <div class="absolute -top-2 -right-2 w-3 h-3 bg-yellow-400 rounded-full animate-ping"></div>
+                                <div class="absolute -bottom-1 -left-1 w-2 h-2 bg-blue-400 rounded-full animate-ping" style="animation-delay: 0.5s;"></div>
+                                <div class="absolute top-1 -left-3 w-1.5 h-1.5 bg-purple-400 rounded-full animate-ping" style="animation-delay: 1s;"></div>
+                            </div>
+
+                            <!-- Texto principal con efectos -->
+                            <div class="space-y-3">
+                                <h3 class="text-2xl font-bold text-white mb-2 animate-float" style="animation-delay: 0.2s;">
+                                    Procesando...
+                                </h3>
+                                <p class="text-gray-200 text-base leading-relaxed animate-float" style="animation-delay: 0.4s;">
+                                    Procesando tu compra, por favor espera...
+                                </p>
+
+                                <!-- Barra de progreso animada -->
+                                <div class="mt-6 w-full bg-gray-700 bg-opacity-50 rounded-full h-2 overflow-hidden">
+                                    <div class="h-full bg-gradient-to-r from-green-400 to-emerald-500 rounded-full animate-shimmer"></div>
+                                </div>
+
+                                <!-- Puntos de carga -->
+                                <div class="flex justify-center space-x-2 mt-4">
+                                    <div class="w-2 h-2 bg-green-400 rounded-full animate-bounce"></div>
+                                    <div class="w-2 h-2 bg-green-400 rounded-full animate-bounce" style="animation-delay: 0.1s;"></div>
+                                    <div class="w-2 h-2 bg-green-400 rounded-full animate-bounce" style="animation-delay: 0.2s;"></div>
+                                    <div class="w-2 h-2 bg-green-400 rounded-full animate-bounce" style="animation-delay: 0.3s;"></div>
+                                </div>
+
+                                <!-- Texto adicional -->
+                                <p class="text-gray-400 text-sm mt-4 animate-pulse">
+                                    No cierres esta ventana
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
             </div>
+
+            <!-- PayU -->
+            <form method="POST" action="{{ route('checkout.payu') }}" class="group relative overflow-hidden bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100">
+
+                <!-- Efecto de brillo -->
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500"></div>
+
+                <!-- Contenido -->
+                <div class="p-8 text-center relative">
+                    <!-- Icono de fondo -->
+                    <div class="absolute top-4 right-4 opacity-10">
+                        <svg class="w-24 h-24 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4zM18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" />
+                        </svg>
+                    </div>
+
+                    <!-- Icono principal -->
+                    <div class="relative">
+                        <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                            </svg>
+                        </div>
+                        <div class="absolute -top-2 -right-2 w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center animate-bounce-subtle">
+                            <span class="text-xs font-bold text-white">🔒</span>
+                        </div>
+                    </div>
+
+                    <h3 class="text-2xl font-bold text-gray-800 mb-3 group-hover:text-blue-600 transition-colors">
+                        Pagar con PayU
+                    </h3>
+                    <p class="text-gray-600 mb-6 leading-relaxed">
+                        Utiliza tu tarjeta de crédito, débito o transferencia bancaria de forma segura
+                    </p>
+
+                    <!-- Características -->
+                    <div class="space-y-2 mb-6">
+                        <div class="flex items-center justify-center text-sm text-blue-600">
+                            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" />
+                            </svg>
+                            Encriptación SSL 256-bit
+                        </div>
+                        <div class="flex items-center justify-center text-sm text-blue-600">
+                            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" />
+                            </svg>
+                            Múltiples medios de pago
+                        </div>
+                    </div>
+
+                    <!-- Botón -->
+                    <button type="submit" class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-6 rounded-full font-semibold group-hover:from-purple-600 group-hover:to-blue-700 transition-all duration-300 shadow-lg">
+                        Continuar
+                        <svg class="w-5 h-5 ml-2 inline-block group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                        </svg>
+                    </button>
+                </div>
+            </form>
         </div>
 
-        <!-- PayU -->
-        <form method="POST" action="{{ route('checkout.payu') }}" class="group relative overflow-hidden bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100">
-
-            <!-- Efecto de brillo -->
-            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500"></div>
-
-            <!-- Contenido -->
-            <div class="p-8 text-center relative">
-                <!-- Icono de fondo -->
-                <div class="absolute top-4 right-4 opacity-10">
-                    <svg class="w-24 h-24 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4zM18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" />
-                    </svg>
-                </div>
-
-                <!-- Icono principal -->
-                <div class="relative">
-                    <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                        <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                        </svg>
-                    </div>
-                    <div class="absolute -top-2 -right-2 w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center animate-bounce-subtle">
-                        <span class="text-xs font-bold text-white">🔒</span>
-                    </div>
-                </div>
-
-                <h3 class="text-2xl font-bold text-gray-800 mb-3 group-hover:text-blue-600 transition-colors">
-                    Pagar con PayU
-                </h3>
-                <p class="text-gray-600 mb-6 leading-relaxed">
-                    Utiliza tu tarjeta de crédito, débito o transferencia bancaria de forma segura
-                </p>
-
-                <!-- Características -->
-                <div class="space-y-2 mb-6">
-                    <div class="flex items-center justify-center text-sm text-blue-600">
-                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" />
-                        </svg>
-                        Encriptación SSL 256-bit
-                    </div>
-                    <div class="flex items-center justify-center text-sm text-blue-600">
-                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" />
-                        </svg>
-                        Múltiples medios de pago
-                    </div>
-                </div>
-
-                <!-- Botón -->
-                <button type="submit" class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-6 rounded-full font-semibold group-hover:from-purple-600 group-hover:to-blue-700 transition-all duration-300 shadow-lg">
-                    Continuar
-                    <svg class="w-5 h-5 ml-2 inline-block group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                    </svg>
-                </button>
+        <!-- Sección de seguridad -->
+        <div class="mt-16 text-center">
+            <div class="inline-flex items-center bg-white rounded-full px-6 py-3 shadow-lg">
+                <svg class="w-6 h-6 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" />
+                </svg>
+                <span class="text-gray-700 font-medium">Pagos 100% seguros y protegidos</span>
             </div>
-        </form>
-    </div>
-
-    <!-- Sección de seguridad -->
-    <div class="mt-16 text-center">
-        <div class="inline-flex items-center bg-white rounded-full px-6 py-3 shadow-lg">
-            <svg class="w-6 h-6 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" />
-            </svg>
-            <span class="text-gray-700 font-medium">Pagos 100% seguros y protegidos</span>
         </div>
-    </div>
 </main>
 <script>
-    document.getElementById("efectivo-form").addEventListener("submit", function (e) {
-        // Mostrar la alerta justo antes de enviar
-        Swal.fire({
-            title: 'Procesando tu pago',
-            html: `<div class="cart-loader">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor" class="cart-icon">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9h12l-2-9M9 21h.01M15 21h.01" />
-                </svg>
-            </div>
-            <p class="mt-3">Por favor espera...</p>`,
-            allowOutsideClick: false,
-            showConfirmButton: false,
-            didOpen: () => {
-                // spinner ya activo
-            }
-        });
-        // No bloqueamos el envío, dejamos que continúe normal
+    document.addEventListener("DOMContentLoaded", () => {
+        const overlay = document.getElementById("loading-overlay");
+
+        const form = document.getElementById("efectivo-form");
+
+        if (form) {
+            form.addEventListener("submit", () => {
+                overlay.classList.remove("hidden"); // mostramos overlay
+            });
+        }
     });
 </script>
+
 @endsection

@@ -119,7 +119,14 @@ Route::middleware(['auth'])->group(function () {
     // * Ruta para el metodo de pago
     Route::GET('/metodo_de_pago', [FormaPagoController::class, 'index'])->name('forma_de_pago');
     Route::GET('/checkout/efectivo', [FormaPagoController::class, 'pagarEfectivo'])->name('checkout.efectivo')->middleware('verificar.envio');
+    // ! Pago con PayU
     Route::POST('/checkout/payu', [FormaPagoController::class, 'pagarPayU'])->name('checkout.payu')->middleware('verificar.envio');
+    // ! Vista de respuesta al usuario
+    Route::get('/checkout/payu/response', function () {
+        return view('facturacion.respuestaPayu');
+    })->name('checkout.payu.response');
+    // ! Confirmación backend de PayU
+    Route::post('/checkout/payu/confirmation', [FormaPagoController::class, 'confirmarPayU'])->name('checkout.payu.confirmation');
 
     // ! Rutas para ver la factura en PDF/Vista dedicada
     Route::get('/factura/{pedido}', [FacturaDetalleController::class, 'verFactura'])->name('facturacion.verFactura');
@@ -182,7 +189,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/tarjetas/productos', [AdminController::class, 'tarjetaProducto'])->name('tarjeta.Producto');
         Route::post('/tarjetas/stock', [AdminController::class, 'tarjetaStock'])->name('tarjeta.Stock');
         Route::post('/tarjetas/pedidos', [AdminController::class, 'tarjetaPedido'])->name('tarjeta.Pedido');
-        
+
         //Vistas de las tarjetas
         //usuarios
         Route::get('/usuarios', [AdminController::class, 'index'])->name('usuario.index');

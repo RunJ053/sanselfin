@@ -42,20 +42,20 @@
                 this.nextButton = document.querySelector('.carousel-controls.next');
                 this.indicators = document.querySelector('.carousel-indicators');
                 this.products = document.querySelectorAll('.product-item');
-                
+
                 this.currentIndex = 0;
                 this.itemsPerView = this.getItemsPerView();
                 this.maxIndex = Math.max(0, this.products.length - this.itemsPerView);
-                
+
                 this.init();
             }
-            
+
             init() {
                 this.createIndicators();
                 this.bindEvents();
                 this.updateCarousel();
                 this.startAutoPlay();
-                
+
                 // Actualizar en resize
                 window.addEventListener('resize', () => {
                     this.itemsPerView = this.getItemsPerView();
@@ -64,17 +64,17 @@
                     this.updateCarousel();
                 });
             }
-            
+
             getItemsPerView() {
                 const containerWidth = this.carousel.offsetWidth;
                 const itemWidth = 280 + 16; // ancho del item + gap
                 return Math.floor(containerWidth / itemWidth) || 1;
             }
-            
+
             createIndicators() {
                 const indicatorCount = this.maxIndex + 1;
                 this.indicators.innerHTML = '';
-                
+
                 for (let i = 0; i < indicatorCount; i++) {
                     const indicator = document.createElement('div');
                     indicator.className = 'indicator';
@@ -82,36 +82,36 @@
                     this.indicators.appendChild(indicator);
                 }
             }
-            
+
             bindEvents() {
                 this.prevButton.addEventListener('click', () => this.prevSlide());
                 this.nextButton.addEventListener('click', () => this.nextSlide());
-                
+
                 // Touch/swipe support
                 let startX = 0;
                 let startY = 0;
                 let isDragging = false;
-                
+
                 this.track.addEventListener('touchstart', (e) => {
                     startX = e.touches[0].clientX;
                     startY = e.touches[0].clientY;
                     isDragging = true;
                     this.pauseAutoPlay();
                 });
-                
+
                 this.track.addEventListener('touchmove', (e) => {
                     if (!isDragging) return;
                     e.preventDefault();
                 });
-                
+
                 this.track.addEventListener('touchend', (e) => {
                     if (!isDragging) return;
-                    
+
                     const endX = e.changedTouches[0].clientX;
                     const endY = e.changedTouches[0].clientY;
                     const diffX = startX - endX;
                     const diffY = startY - endY;
-                    
+
                     // Solo si el movimiento es más horizontal que vertical
                     if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
                         if (diffX > 0) {
@@ -120,31 +120,31 @@
                             this.prevSlide();
                         }
                     }
-                    
+
                     isDragging = false;
                     this.startAutoPlay();
                 });
-                
+
                 // Pausar autoplay al hover
                 this.carousel.addEventListener('mouseenter', () => this.pauseAutoPlay());
                 this.carousel.addEventListener('mouseleave', () => this.startAutoPlay());
             }
-            
+
             updateCarousel() {
                 const translateX = -(this.currentIndex * (280 + 16)); // ancho + gap
                 this.track.style.transform = `translateX(${translateX}px)`;
-                
+
                 // Actualizar indicadores
                 const indicatorElements = this.indicators.querySelectorAll('.indicator');
                 indicatorElements.forEach((indicator, index) => {
                     indicator.classList.toggle('active', index === this.currentIndex);
                 });
-                
+
                 // Actualizar estado de los botones
                 this.prevButton.style.opacity = this.currentIndex === 0 ? '0.5' : '1';
                 this.nextButton.style.opacity = this.currentIndex === this.maxIndex ? '0.5' : '1';
             }
-            
+
             nextSlide() {
                 if (this.currentIndex < this.maxIndex) {
                     this.currentIndex++;
@@ -153,7 +153,7 @@
                 }
                 this.updateCarousel();
             }
-            
+
             prevSlide() {
                 if (this.currentIndex > 0) {
                     this.currentIndex--;
@@ -162,19 +162,19 @@
                 }
                 this.updateCarousel();
             }
-            
+
             goToSlide(index) {
                 this.currentIndex = Math.max(0, Math.min(index, this.maxIndex));
                 this.updateCarousel();
             }
-            
+
             startAutoPlay() {
                 this.pauseAutoPlay(); // Limpiar cualquier intervalo existente
                 this.autoPlayInterval = setInterval(() => {
                     this.nextSlide();
                 }, 4000); // Cambiar cada 4 segundos
             }
-            
+
             pauseAutoPlay() {
                 if (this.autoPlayInterval) {
                     clearInterval(this.autoPlayInterval);
@@ -182,18 +182,18 @@
                 }
             }
         }
-        
+
         // Inicializar el carrusel cuando el DOM esté listo
         document.addEventListener('DOMContentLoaded', () => {
             new ProductCarousel();
         });
-        
+
         // Animación de aparición progresiva
         const observerOptions = {
             threshold: 0.1,
             rootMargin: '0px 0px -50px 0px'
         };
-        
+
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -202,7 +202,7 @@
                 }
             });
         }, observerOptions);
-        
+
         // Observar elementos cuando se carga la página
         document.addEventListener('DOMContentLoaded', () => {
             const animatedElements = document.querySelectorAll('.animate-fade-in-up');

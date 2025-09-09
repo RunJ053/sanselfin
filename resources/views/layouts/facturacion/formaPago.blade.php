@@ -50,6 +50,36 @@
             backdrop-filter: blur(10px);
             background: rgba(255, 255, 255, 0.25);
         }
+
+        /* Estilo para el overlay*/
+        @keyframes pulse-ring {
+            0% { transform: scale(0.33); }
+            80%, 100% { transform: scale(1.2); opacity: 0; }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        
+        .animate-pulse-ring {
+            animation: pulse-ring 2s ease-out infinite;
+        }
+        
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .animate-shimmer {
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+        }
     </style>
 </head>
 
@@ -57,35 +87,4 @@
     @yield('content')
     <x-navbar :notificaciones="$notificaciones" :carritoCount="$carritoCount" />
     <script src="{{ asset('js/hamburguesa.js')}}"></script>
-    <script>
-        // Manejar el envío del formulario de efectivo
-        Swal.fire({
-            title: 'Procesando tu pago',
-            html: `<div class="cart-loader">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor" class="cart-icon">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9h12l-2-9M9 21h.01M15 21h.01" />
-            </svg>
-        </div>
-        <p class="mt-3">Por favor espera...</p>
-    `,
-            allowOutsideClick: false,
-            showConfirmButton: false,
-            didOpen: () => {
-                // Nada, el carrito se mueve solo con CSS
-            }
-        });
-
-        // Añadir efecto de hover suave a las tarjetas
-        document.querySelectorAll('.group').forEach(card => {
-            card.addEventListener('mouseenter', () => {
-                card.style.transform = 'translateY(-8px) scale(1.02)';
-            });
-
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = 'translateY(0) scale(1)';
-            });
-        });
-    </script>
 </body>

@@ -232,17 +232,40 @@ class FormaPagoController extends Controller
         }
     }
 
+    /**
+     * Redirección a PayU (simulado).
+     */
     public function pagarPayU(Request $request)
     {
-        // Aquí generas la firma y envías datos a PayU
-        // (ejemplo simplificado)
-        $apiKey = env('PAYU_API_KEY');
-        $merchantId = env('PAYU_MERCHANT_ID');
-        $accountId = env('PAYU_ACCOUNT_ID');
-        $amount = $request->input('amount', 10000);
+        $apiKey      = env('PAYU_API_KEY');
+        $merchantId  = env('PAYU_MERCHANT_ID');
+        $accountId   = env('PAYU_ACCOUNT_ID');
+        $url         = env('PAYU_API_URL');
+
+        $usuario = Auth::id();
+        $carrito = CarritoCompra::where('usuario', $usuario)->with('producto')->get();
+
+        if ($carrito->isEmpty()) {
+            return redirect()->route('carrito.index')->with('error', 'Tu carrito está vacío.');
+        }
+
+        $opcionEntrega = session('opcion_entrega');
+        if (!$opcionEntrega) {
+            return redirect()->route('forma_de_pago')->with('error', 'Debes seleccionar una opción de envío antes de pagar.');
+        }
+
+        $costoEnvio = $opcionEntrega['costo'];
+        $totalProductos = CarritoCompra::where('usuario', $usuario)
+            ->sum(DB::raw('(subtotal + impuesto_calculado) - descuento'));
+
+        $amount   = $totalProductos + $costoEnvio;
         $currency = "COP";
         $referenceCode = "REF" . time();
+
         $signature = md5("$apiKey~$merchantId~$referenceCode~$amount~$currency");
+
+        $responseUrl = route('checkout.payu.response');
+        $confirmationUrl = route('checkout.payu.confirmation');
 
         return view('facturacion.redirigirPayu', compact(
             'merchantId',
@@ -250,7 +273,76 @@ class FormaPagoController extends Controller
             'referenceCode',
             'amount',
             'currency',
-            'signature'
+            'signature',
+            'url',
+            'responseUrl',
+            'confirmationUrl'
         ));
+    }
+
+    /**
+     * Confirmación de PayU (callback servidor-servidor).
+     */
+    public function confirmarPayU(Request $request)
+    {
+        Log::info('Confirmación PayU recibida', $request->all());
+
+        $apiKey = env('PAYU_API_KEY');
+        $merchantId = env('PAYU_MERCHANT_ID');
+
+        $referenceCode = $request->input('reference_sale');
+        $amount = $request->input('value');
+        $currency = $request->input('currency');
+        $statePol = $request->input('state_pol'); // 4=aprobada, 6=rechazada, 7=pendiente
+        $firma = $request->input('sign');
+
+        $firmaLocal = md5("$apiKey~$merchantId~$referenceCode~$amount~$currency~$statePol");
+
+        if (strtoupper($firma) !== strtoupper($firma)) {
+            Log::warning("Firma inválida para referencia $referenceCode");
+            return response('Firma inválida', 400);
+        }
+
+        // Si es aprobada, se crea pedido + factura
+        if ($statePol == 4) {
+            $usuario = Auth::id() ?? 1; // En confirmación puede que no haya usuario logueado
+            $carrito = CarritoCompra::where('usuario', $usuario)->get();
+
+            if (!$carrito->isEmpty()) {
+                $costoEnvio = session('opcion_entrega')['costo'] ?? 0;
+                $totalProductos = CarritoCompra::where('usuario', $usuario)
+                    ->sum(DB::raw('(subtotal + impuesto_calculado) - descuento'));
+
+                $totalFinal = $totalProductos + $costoEnvio;
+
+                $this->crearPedidoYFactura($usuario, $totalFinal, 'PayU', 'pagado');
+
+                CarritoCompra::where('usuario', $usuario)->delete();
+            }
+        }
+
+        return response('OK', 200);
+    }
+
+    /**
+     * Método compartido para generar Pedido + Factura
+     */
+    private function crearPedidoYFactura($usuarioId, $total, $metodo, $estado)
+    {
+        $pedido = Pedido::create([
+            'usuario_id' => $usuarioId,
+            'total' => $total,
+            'estado' => $estado,
+            'referencia' => "PED-" . time()
+        ]);
+
+        FacturaCabecera::create([
+            'pedido_id' => $pedido->id,
+            'monto' => $total,
+            'metodo_pago' => $metodo,
+            'estado' => $estado
+        ]);
+
+        return $pedido;
     }
 }
