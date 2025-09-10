@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Producto;
 use App\Models\Categoria;
-use App\Models\Impuesto;
 use App\Models\Estado;
 use App\Models\CarritoCompra;
 use App\Models\Notificacion;
@@ -25,10 +24,9 @@ class ProductoController extends Controller
             ->paginate(10);
         $totalProductos = Producto::count();
         $categorias = Categoria::all();
-        $impuestos = Impuesto::all();
         $promociones = Promocion::all();
 
-        return view('admin.inventario', compact('inventarios', 'categorias', 'totalProductos', 'impuestos', 'promociones'));
+        return view('admin.inventario', compact('inventarios', 'categorias', 'totalProductos','promociones'));
     } catch (\Exception $e) {
         return redirect()->back()->with('error', 'Ocurrió un problema al cargar los inventarios.');
     }
@@ -37,11 +35,10 @@ class ProductoController extends Controller
 
     public function create()
     {
-        $inventarios = Producto::all(); // O el modelo que corresponda
+        $inventarios = Producto::all();
         $categorias = Categoria::all();
-        $impuestos = Impuesto::all();
         $promociones = Promocion::all();
-        return view('admin.new_producto', compact('inventarios', 'categorias', 'impuestos', 'promociones'));
+        return view('admin.new_producto', compact('inventarios', 'categorias','promociones'));
     }
 
     /**
@@ -59,7 +56,6 @@ class ProductoController extends Controller
             'descripcion' => 'required|string',
             'valor_unitario' => 'required|numeric',
             'cantidad' => 'required|integer|min:1',
-            'Impuesto' => 'required|integer',
             'Promocion' => 'required|integer',
             'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
@@ -72,7 +68,6 @@ class ProductoController extends Controller
         $prod->descripccion = $request->descripcion;
         $prod->stock = $request->cantidad;
         $prod->precio_unitario = $request->valor_unitario;
-        $prod->impuesto_id = $request->Impuesto;
         $prod->descuento_id = $request->Promocion;
         $prod->estado_id = 1;
 
@@ -93,9 +88,8 @@ class ProductoController extends Controller
         $categorias = Categoria::all();
         $producto = Producto::findOrFail($producto->id);
         $estado = Estado::where('id', $producto->estado_id)->first();
-        $impuestos = Impuesto::all();
         $promociones = Promocion::all();
-        return view('admin.edit_produc', compact('producto', 'categorias', 'impuestos', 'promociones', 'estado'));
+        return view('admin.edit_produc', compact('producto', 'categorias', 'promociones', 'estado'));
     }
     /**
      * Display a listing of the resource for users.
@@ -267,7 +261,6 @@ class ProductoController extends Controller
             'Categoria' => 'required|integer',
             'descripcion' => 'required|string',
             'valor_unitario' => 'required|numeric',
-            'Impuesto' => 'required|integer',
             'Promocion' => 'required|integer',
             'cantidad' => 'required|integer|min:1',
             'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -279,7 +272,6 @@ class ProductoController extends Controller
         $producto->precio_unitario = $request->valor_unitario;
         $producto->categoria_id = $request->Categoria;
         $producto->stock = $request->cantidad;
-        $producto->impuesto_id = $request->Impuesto;
         $producto->descuento_id = $request->Promocion;
 
         // Subir imagen si existe

@@ -95,26 +95,6 @@
       <!-- Accordion Item 4 -->
       <div class="bg-white border border-gray-300 rounded-lg p-4 shadow-md">
         <h2 class="m-0 text-xl cursor-pointer text-gray-800 hover:text-green-500 transition-colors duration-200"
-          onclick="toggleAccordion('collapseCuatro')">
-          <button class="flex items-center w-full text-left focus:outline-none"
-            aria-expanded="false" aria-controls="collapseCuatro">
-            <h5 class="m-0 flex items-center gap-3">
-              <i class="fa-solid fa-heart text-red-500"></i>
-              Asesoramiento Nutricional
-            </h5>
-            <i class="fas fa-chevron-down ml-auto transform transition-transform duration-200" id="icon-collapseCuatro"></i>
-          </button>
-        </h2>
-        <div id="collapseCuatro" class="mt-4 transition-all duration-300 ease-in-out max-h-0 overflow-hidden">
-          <div class="text-gray-700 leading-relaxed">
-            <p>Recibe consejos de expertos sobre cómo incorporar más verduras en tu dieta y recomendaciones personalizadas.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Accordion Item 5 -->
-      <div class="bg-white border border-gray-300 rounded-lg p-4 shadow-md">
-        <h2 class="m-0 text-xl cursor-pointer text-gray-800 hover:text-green-500 transition-colors duration-200"
           onclick="toggleAccordion('collapseQuinto')">
           <button class="flex items-center w-full text-left focus:outline-none"
             aria-expanded="false" aria-controls="collapseQuinto">
@@ -132,7 +112,7 @@
         </div>
       </div>
 
-      <!-- Accordion Item 6 -->
+      <!-- Accordion Item 5 -->
       <div class="bg-white border border-gray-300 rounded-lg p-4 shadow-md">
         <h2 class="m-0 text-xl cursor-pointer text-gray-800 hover:text-green-500 transition-colors duration-200"
           onclick="toggleAccordion('collapseSeis')">
@@ -152,7 +132,7 @@
         </div>
       </div>
 
-      <!-- Accordion Item 7 -->
+      <!-- Accordion Item 6 -->
       <div class="bg-white border border-gray-300 rounded-lg p-4 shadow-md">
         <h2 class="m-0 text-xl cursor-pointer text-gray-800 hover:text-green-500 transition-colors duration-200"
           onclick="toggleAccordion('collapseSiete')">

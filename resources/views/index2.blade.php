@@ -156,7 +156,7 @@
                         </button>
                     </h2>
                     <div id="flush-collapseThree" class="accordion-collapse collapse" aria-labelledby="flush-headingThree" data-bs-parent="#accordionFlushExample">
-                        <div class="accordion-body">El tiempo de entrega es de 1 a 2 días hábiles, dependiendo de tu ubicación.</div>
+                        <div class="accordion-body">El tiempo de entrega es de 24 horas a 36 horas hábiles, dependiendo de tu ubicación.</div>
                     </div>
                 </div>
                 <div class="accordion-item">
@@ -168,26 +168,6 @@
                     <div id="flush-collapseFour" class="accordion-collapse collapse" aria-labelledby="flush-headingFour" data-bs-parent="#accordionFlushExample">
                         <div class="accordion-body">La mayoria de ofertas se realizan en eventos especiales.</div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <section data-aos="fade-up" class="blog">
-        <div class="container">
-            <h2>Últimos Artículos del Blog</h2>
-            <hr>
-            <div data-aos="fade-up"
-                data-aos-delay="100"
-                class="blog-grid">
-                <div class="blog-item">
-                    <img src="{{asset('img/verduras_frutas_y_hortalizas_5.webp')}}" alt="">
-                    <h3><a href="https://www.google.com/search?q=beneficios+de+comer+frutas&rlz=1C1GCEA_enCO1117CO1126&oq=beneficios+de+comer+frutas&gs_lcrp=EgZjaHJvbWUyCQgAEEUYORiABDIHCAEQABiABDIHCAIQABiABDIHCAMQABiABDIHCAQQABiABDIHCAUQABiABDIHCAYQABiABDIHCAcQABiABDIHCAgQABiABDIHCAkQABiABNIBCTExMzYyajBqN6gCALACAA&sourceid=chrome&ie=UTF-8">Beneficios de Comer Frutas Frescas</a></h3>
-                    <p>Descubre por qué las frutas son esenciales para una dieta saludable.</p>
-                </div>
-                <div class="blog-item">
-                    <img src="{{asset('img/verduras_frutas_y_hortalizas_6.webp')}}" alt="">
-                    <h3><a href="https://www.google.com/search?q=10+beneficios+de+comer+verduras&sca_esv=c7459735fc04b658&rlz=1C1GCEA_enCO1117CO1126&sxsrf=AHTn8zrwI3Q-HQ8hEHg0TjzndM5w2BrFWg%3A1738192710510&ei=RreaZ53tHoaawbkPq9nduAY&oq=10+benfios+de+comer+verdu&gs_lp=Egxnd3Mtd2l6LXNlcnAiGTEwIGJlbmZpb3MgZGUgY29tZXIgdmVyZHUqAggAMgcQABiABBgNMgYQABgWGB4yBhAAGBYYHkiwLlAAWP0ncAF4AZABAJgBuAGgAd4ZqgEEMC4yNbgBA8gBAPgBAZgCGqACkhuoAhTCAgcQIxgnGOoCwgITEAAYgAQYQxi0AhiKBRjqAtgBAcICChAjGIAEGCcYigXCAgoQABiABBhDGIoFwgIFEAAYgATCAgsQABiABBixAxiDAcICCBAAGIAEGLEDwgILEC4YgAQYsQMY1ALCAgoQABiABBgUGIcCwgIIEAAYFhgKGB7CAgUQIRigAZgDF_EFlltSxCNuiXe6BgYIARABGAGSBwQxLjI1oAetrwE&sclient=gws-wiz-serp">Recetas Deliciosas con Verduras</a></h3>
-                    <p>Explora recetas fáciles y deliciosas para incorporar más verduras en tu dieta.</p>
                 </div>
             </div>
         </div>
