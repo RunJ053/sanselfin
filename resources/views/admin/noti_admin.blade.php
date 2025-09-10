@@ -1,41 +1,12 @@
-@extends('layouts.index_admin')
+@extends('layouts.noti_admin')
 
 @section('title', 'Notificaciones')
 
 @section('content')
+<br><br>
 <div class="container py-4">
     <h2 class="mb-4 text-center">📢 Centro de Notificaciones</h2>
 
-    {{-- Tarjeta: Nuevos usuarios --}}
-    <div class="card mb-4 shadow-sm">
-        <div class="card-header bg-primary text-white">
-            <i class="fas fa-users"></i> Nuevos Usuarios Registrados
-        </div>
-        <div class="card-body">
-            @if($nuevosUsuarios->isEmpty())
-                <p class="text-muted">No hay usuarios recientes.</p>
-            @else
-                <div class="row">
-                    @foreach($nuevosUsuarios as $usuario)
-                        <div class="col-md-6 col-lg-4 mb-3">
-                            <div class="card h-100 border-primary">
-                                <div class="card-body">
-                                    <h5 class="card-title">{{ $usuario->nombre ?? 'Sin nombre' }}</h5>
-                                    <p class="card-text">
-                                        <strong>Email:</strong> {{ $usuario->email ?? 'N/A' }}<br>
-                                        <strong>Teléfono:</strong> {{ $usuario->telefono ?? 'N/A' }}
-                                    </p>
-                                </div>
-                                <div class="card-footer small text-muted">
-                                    Registrado: {{ $usuario->created_at }}
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            @endif
-        </div>
-    </div>
 
     {{-- Tarjeta: Pedidos recientes --}}
     <div class="card mb-4 shadow-sm">
