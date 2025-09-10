@@ -1,7 +1,7 @@
 @extends('layouts.facturacion.showLayout')
 
 @section('content')
-<x-navbar :notificaciones="$notificaciones" :carritoCount="$carritoCount" />
+<x-usuario-navbar :notificaciones="$notificaciones" :carritoCount="$carritoCount" />
 <div class="max-w-4xl mx-auto bg-white p-6 shadow-md rounded-lg">
     <h2 class="text-2xl font-bold mb-4">Factura {{ $factura->numero_factura }}</h2>
     <div class="mt-6 flex justify-between items-start">
@@ -38,7 +38,6 @@
 
     <div class="mt-6 flex justify-between space-x-6">
         <div>
-            <p><strong>Impuestos:</strong> Impuesto segun el Producto</p>
             <p><strong>Subtotal:</strong> ${{ number_format($sub ?? 0, 0, ',', '.') }}</p>
             <p><strong>Descuento:</strong> ${{ number_format($descuento ?? 0, 0, ',', '.') }}</p>
             <p><strong>Envío:</strong> ${{ number_format($costoEnvio ?? 0, 0, ',', '.') }}</p>

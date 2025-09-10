@@ -69,7 +69,7 @@
                                     <p class="flex items-center justify-center lg:justify-start text-gray-600">
                                         💲 Precio:
                                         <span class="font-semibold text-green-600 ml-1">
-                                            ${{ number_format($item->precioConImpuesto, 0, ',', '.') }}
+                                            ${{ number_format($item->precio_unitario, 0, ',', '.') }}
                                         </span>
                                     </p>
                                     <p class="flex items-center justify-center lg:justify-start text-gray-600">
@@ -123,7 +123,7 @@
                         <div class="flex justify-between items-center p-4 bg-gray-50 rounded-xl">
                             <span class="text-gray-700 font-medium">Subtotal:</span>
                             <span class="font-bold text-gray-800">
-                                ${{ number_format($sub, 0, ',', '.') }}
+                                ${{ number_format($subtotal, 0, ',', '.') }}
                             </span>
                         </div>
 

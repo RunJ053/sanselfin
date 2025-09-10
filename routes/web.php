@@ -125,7 +125,9 @@ Route::middleware(['auth'])->group(function () {
     Route::POST('/checkout/payu', [FormaPagoController::class, 'pagarPayU'])->name('checkout.payu')->middleware('verificar.envio');
     // ! Vista de respuesta al usuario
     Route::get('/checkout/payu/response', function () {
-        return view('facturacion.respuestaPayu');
+        $notificaciones = Notificacion::where('usuario_id', auth()->id())->orderBy('created_at', 'desc')->get();
+        $carritoCount = CarritoCompra::where('usuario', auth()->id())->count();
+        return view('facturacion.respuestaPayu', compact('notificaciones','carritoCount'));
     })->name('checkout.payu.response');
     // ! Confirmación backend de PayU
     Route::post('/checkout/payu/confirmation', [FormaPagoController::class, 'confirmarPayU'])->name('checkout.payu.confirmation');
