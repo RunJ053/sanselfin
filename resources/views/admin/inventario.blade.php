@@ -403,7 +403,6 @@
                 <td style="color: darkgreen; font-weight: bold;">{{ $item->stock ?? 'Sin stock' }}</td>
                 @endif
                 <td>${{ number_format($item->precio_unitario, 0, ',', '.') }}</td>
-                <td>{{ $item->impuestos->nombre_impuesto ?? 'Sin impuesto' }}</td>
                 <td>
                   <a href="{{ route('producto.edit', $item->id) }}" class="btn btn-sm btn-warning mb-1">
                     <i class="fas fa-edit"></i>

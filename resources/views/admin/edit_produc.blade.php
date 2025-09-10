@@ -71,19 +71,6 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="Impuesto" class="form-label">Impuesto *</label>
-                    <select name="Impuesto" id="Impuesto" class="form-input form-select" required>
-                        <option value="">Seleccione el Impuesto</option>
-                        @foreach ($impuestos as $impuesto)
-                        <option value="{{ $impuesto->id }}"
-                            {{ old('Impuesto', $producto->impuesto_id) == $impuesto->id ? 'selected' : '' }}>
-                            {{ $impuesto->descripcion }}
-                        </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div class="form-group">
                     <label for="Promocion" class="form-label">Promoción *</label>
                     <select name="Promocion" id="Promocion" class="form-input form-select">
                         <option value="">Seleccione una promoción</option>
