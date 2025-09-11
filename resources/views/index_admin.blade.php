@@ -124,7 +124,6 @@
 </head>
 
 <body>
-<!-- HEADER -->
 <header class="header-bar">
   <div class="d-flex align-items-center header-brand">
     <a href="{{ route('admin.dashboard') }}" class="d-flex align-items-center text-decoration-none">
@@ -158,14 +157,14 @@
         </div>
 
         <!-- campana al lado del usuario -->
-      <a href="{{ route('admin.noti_admin') }}" class="btn btn-link text-white position-relative p-0" style="font-size: 1rem;">
-        <i class="fas fa-bell"></i>
-        @if(!empty($notificaciones) && count($notificaciones) > 0)
-          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-              {{ count($notificaciones) }}
-          </span>
-        @endif
-      </a>
+    <a href="{{ route('admin.noti_admin') }}" class="btn btn-link text-white position-relative p-0" style="font-size: 1rem;">
+      <i class="fas fa-bell"></i>
+      @if(!empty($notificaciones) && count($notificaciones) > 0)
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            {{ count($notificaciones) }}
+        </span>
+      @endif
+    </a>
 
         <!-- botón salir -->
         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:inline;">

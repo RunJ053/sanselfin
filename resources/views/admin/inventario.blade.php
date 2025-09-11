@@ -317,6 +317,14 @@
         <i class="fas fa-user-circle me-1"></i>
         {{ session('nombre_usuario') ?? Auth::user()->nombre ?? Auth::user()->nomb_usu ?? 'Administrador' }}
       </div>
+          <a href="{{ route('admin.noti_admin') }}" class="btn btn-link text-white position-relative p-0" style="font-size: 1rem;">
+      <i class="fas fa-bell"></i>
+      @if(!empty($notificaciones) && count($notificaciones) > 0)
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            {{ count($notificaciones) }}
+        </span>
+      @endif
+    </a>
       <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:inline;">
         @csrf
         <button type="submit" class="logout-btn">

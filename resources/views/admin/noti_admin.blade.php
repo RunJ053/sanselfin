@@ -9,29 +9,40 @@
 
 
     {{-- Tarjeta: Pedidos recientes --}}
-    <div class="card mb-4 shadow-sm">
-        <div class="card-header bg-success text-white">
-            <i class="fas fa-shopping-cart"></i> Pedidos Recientes
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                <span>
+                    <i class="fas fa-shopping-cart"></i> Pedidos Recientes
+                </span>
+
+                {{-- Flecha solo si hay pedidos --}}
+                @if(!$pedidosRecientes->isEmpty())
+                    <a href="{{ route('pedidos.index') }}" class="text-white" title="Ver todos los pedidos">
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                @endif
+            </div>
+
+            <div class="card-body">
+                @if($pedidosRecientes->isEmpty())
+                    <p class="text-muted">No hay pedidos recientes.</p>
+                @else
+                    <ul class="list-group">
+                        @foreach($pedidosRecientes as $pedido)
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>
+                                    <strong>#{{ $pedido->id }}</strong> - {{ $pedido->direccion_envio }}
+                                </span>
+                                <span class="badge bg-success rounded-pill">
+                                    ${{ number_format($pedido->total, 2) }}
+                                </span>
+                            </li>
+                        @endforeach
+                    </ul>
+                @endif
+            </div>
         </div>
-        <div class="card-body">
-            @if($pedidosRecientes->isEmpty())
-                <p class="text-muted">No hay pedidos recientes.</p>
-            @else
-                <ul class="list-group">
-                    @foreach($pedidosRecientes as $pedido)
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <span>
-                                <strong>#{{ $pedido->id }}</strong> - {{ $pedido->direccion_envio }}
-                            </span>
-                            <span class="badge bg-success rounded-pill">
-                                ${{ number_format($pedido->total, 2) }}
-                            </span>
-                        </li>
-                    @endforeach
-                </ul>
-            @endif
-        </div>
-    </div>
+
 
     {{-- Tarjeta: Productos con stock bajo --}}
     <div class="card mb-4 shadow-sm">
