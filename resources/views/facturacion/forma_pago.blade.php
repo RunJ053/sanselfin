@@ -2,7 +2,10 @@
 
 @section('content')
 <main class="container mx-auto py-12 px-4 max-w-6xl">
-
+    @php
+    $notificaciones = $notificaciones ?? collect();
+    $carritoCount = $carritoCount ?? 0;
+    @endphp
     <!-- Resumen con diseño mejorado -->
     <div class="relative mb-12">
         <div class="absolute inset-0 bg-gradient-to-r from-green-400 to-blue-500 rounded-2xl blur-xl opacity-20"></div>
@@ -24,7 +27,7 @@
                         </div>
                         <div class="p-4 rounded-lg shadow bg-white">
                             <h2 class="text-lg font-bold">Resumen de la compra</h2>
-                            <p><strong>Subtotal: $</strong> {{ number_format($sub, 0, ',', '.') }}</p>
+                            <p><strong>Subtotal: $</strong> {{ number_format($subtotal, 0, ',', '.') }}</p>
                             <p style="color: red;"><strong>Descuento: - $</strong> {{ number_format($descuento, 0, ',', '.') }}</p>
                             <p>Envío: ${{ number_format($costoEnvio, 0, ',', '.') }}</p>
                             <hr>
@@ -127,8 +130,7 @@
         </div>
 
         <!-- PayU -->
-        <form method="POST" action="{{ route('checkout.payu') }}" class="group relative overflow-hidden bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100">
-
+        <div class="group relative overflow-hidden bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100">
             <!-- Efecto de brillo -->
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500"></div>
 
@@ -177,12 +179,15 @@
                 </div>
 
                 <!-- Botón -->
-                <button type="submit" class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-6 rounded-full font-semibold group-hover:from-purple-600 group-hover:to-blue-700 transition-all duration-300 shadow-lg">
-                    Continuar
-                    <svg class="w-5 h-5 ml-2 inline-block group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                    </svg>
-                </button>
+                <form id="efectivo-form" method="POST" action="{{ route('checkout.payu') }}">
+                    @csrf
+                    <button type="submit" class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-6 rounded-full font-semibold group-hover:from-purple-600 group-hover:to-blue-700 transition-all duration-300 shadow-lg">
+                        Continuar
+                        <svg class="w-5 h-5 ml-2 inline-block group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                        </svg>
+                    </button>
+                </form>
             </div>
         </form>
     </div>
@@ -196,27 +201,29 @@
             <span class="text-gray-700 font-medium">Pagos 100% seguros y protegidos</span>
         </div>
     </div>
+
+    <!-- Sección de seguridad -->
+    <div class="mt-16 text-center">
+        <div class="inline-flex items-center bg-white rounded-full px-6 py-3 shadow-lg">
+            <svg class="w-6 h-6 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" />
+            </svg>
+            <span class="text-gray-700 font-medium">Pagos 100% seguros y protegidos</span>
+        </div>
+    </div>
 </main>
 <script>
-    document.getElementById("efectivo-form").addEventListener("submit", function (e) {
-        // Mostrar la alerta justo antes de enviar
-        Swal.fire({
-            title: 'Procesando tu pago',
-            html: `<div class="cart-loader">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor" class="cart-icon">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9h12l-2-9M9 21h.01M15 21h.01" />
-                </svg>
-            </div>
-            <p class="mt-3">Por favor espera...</p>`,
-            allowOutsideClick: false,
-            showConfirmButton: false,
-            didOpen: () => {
-                // spinner ya activo
-            }
-        });
-        // No bloqueamos el envío, dejamos que continúe normal
+    document.addEventListener("DOMContentLoaded", () => {
+        const overlay = document.getElementById("loading-overlay");
+
+        const form = document.getElementById("efectivo-form");
+
+        if (form) {
+            form.addEventListener("submit", () => {
+                overlay.classList.remove("hidden"); // mostramos overlay
+            });
+        }
     });
 </script>
+
 @endsection

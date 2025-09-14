@@ -15,6 +15,9 @@ class CarritoCompra extends Model
         'cantidad',
         'precio_unitario',
         'subtotal',
+        'descuento',
+        'total_item',
+        'usuario',
         'impuesto_calculado',
         'descuento',
         'total_item',
@@ -25,6 +28,7 @@ class CarritoCompra extends Model
     // Relaciones
     public function producto()
     {
+        return $this->belongsTo(Producto::class);
         return $this->belongsTo(Producto::class);
     }
 
