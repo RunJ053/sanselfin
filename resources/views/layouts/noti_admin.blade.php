@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Panel de Administración')</title>
+     <link rel="shortcut icon" href="{{ asset('img/logo/icon.png') }}" type="image/x-icon" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 </head>
 <body>
 
 <style>
-
     /* HEADER estilo similar a la primera imagen */
     .header-bar {
       position: fixed;
@@ -31,20 +31,20 @@
     .nav-links .nav-link {
       color: rgba(255,255,255,0.95);
       font-weight: 600;
-      text-decoration: none; /* quita la raya */
+      text-decoration: none;
     }
 
     .nav-links .nav-link:hover {
       color: #f8f9fa;
-      text-decoration: none; /* no mostrar raya al pasar el mouse */
+      text-decoration: none;
     }
-
 
     .user-area { display:flex; align-items:center; gap:12px; }
     .user-welcome { color: #fff; font-weight:600; margin-right:6px; }
     .logout-btn { background: #ffda3a; color: #1a1a1a; border-radius:22px; padding:6px 11px; font-weight:600; box-shadow: 0 2px 6px rgba(0,0,0,0.12); border: none; }
 </style>
-  <!-- HEADER -->
+
+<!-- HEADER -->
 <header class="header-bar">
   <div class="d-flex align-items-center header-brand">
     <a href="{{ route('admin.dashboard') }}" class="d-flex align-items-center text-decoration-none">
@@ -78,37 +78,38 @@
         </div>
 
         <!-- campana al lado del usuario -->
-            <a href="{{ route('admin.noti_admin') }}" class="btn btn-link text-white position-relative p-0" style="font-size: 1rem;">
-            <i class="fas fa-bell"></i>
-            @if(!empty($notificaciones) && count($notificaciones) > 0)
-                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                    {{ count($notificaciones) }}
-                </span>
-            @endif
-            </a>
+        <a href="{{ route('admin.noti_admin') }}" class="btn btn-link text-white position-relative p-0" style="font-size: 1rem;">
+          <i class="fas fa-bell"></i>
+          @if(!empty($notificaciones) && count($notificaciones) > 0)
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                  {{ count($notificaciones) }}
+              </span>
+          @endif
+        </a>
 
         <!-- botón salir -->
         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:inline;">
-          @csrf
-          <button type="submit" class="logout-btn">
-            <i class="fas fa-sign-out-alt"></i> Salir
-          </button>
+            @csrf
+            <button type="submit" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i> Salir
+            </button>
         </form>
       </div>
-    @else
-      <a href="{{ route('login') }}" class="logout-btn">
-        <i class="fas fa-exclamation-circle"></i> Login
-      </a>
     @endauth
+
+    @guest
+      <a href="{{ route('login') }}" class="logout-btn">
+          <i class="fas fa-exclamation-circle"></i> Login
+      </a>
+    @endguest
   </div>
 </header>
 
-        <!-- Contenido -->
-        <div class="flex-grow-1 p-4">
-            @yield('content')
-        </div>
-    </div>
+<!-- Contenido -->
+<div class="flex-grow-1 p-4">
+    @yield('content')
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
