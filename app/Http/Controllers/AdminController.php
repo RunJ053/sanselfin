@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Usuario;
+use app\Models\DatoUsuario;
 use App\Models\TipoDocumento;
 use App\Models\Genero;
 use App\Models\Localidad;
@@ -17,7 +17,7 @@ class AdminController extends Controller
      */
     public function index()
     {
-        $usuarios = Usuario::with(['tipoDocumento', 'genero', 'localidad'])
+        $usuarios =DatoUsuario ::with(['tipoDocumento', 'genero', 'datoslocalidad'])
                            ->paginate(10);
 
         $inventarios = Producto::all(); 
@@ -52,6 +52,7 @@ class AdminController extends Controller
             'tipo_de_genero' => 'required|integer|exists:generos,id',
             'documento'      => 'required|string|max:50|unique:datos_usuario,documento',
             'edad'           => 'required|date',
+            'role'=>'required|integer|in:1,2', // 1: Usuario, 2: Admin
             'telefono'       => 'nullable|string|max:20',
             'email'          => 'required|email|unique:datos_usuario,email',
             'localidad'      => 'required|integer|exists:localidades,id',
@@ -64,7 +65,7 @@ class AdminController extends Controller
             $data['user_img'] = $request->file('user_img')->store('usuarios', 'public');
         }
 
-        Usuario::create($data);
+        DatoUsuario::create($data);
 
         return redirect()->route('usuario.index')->with('success', 'Usuario creado correctamente');
     }
@@ -74,7 +75,7 @@ class AdminController extends Controller
      */
     public function edit($id)
     {
-        $usuario       = Usuario::findOrFail($id);
+        $usuario       = DatoUsuario::findOrFail($id);
         $tiposDocumentos = TipoDocumento::all();
         $generos       = Genero::all();
         $localidades   = Localidad::all();
@@ -87,7 +88,7 @@ class AdminController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $usuario = Usuario::findOrFail($id);
+        $usuario = DatoUsuario::findOrFail($id);
 
         $request->validate([
             'nombre'         => 'required|string|max:255',
@@ -119,7 +120,7 @@ class AdminController extends Controller
      */
     public function destroy($id)
     {
-        $usuario = Usuario::findOrFail($id);
+        $usuario = DatoUsuario::findOrFail($id);
         $usuario->delete();
 
         return redirect()->route('usuario.index')->with('success', 'Usuario eliminado correctamente');

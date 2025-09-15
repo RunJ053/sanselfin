@@ -347,47 +347,6 @@
             </div>
           </div>
         </div>
-
-        <!-- Productos recientes -->
-        <div class="table-card">
-          <h5 class="mb-3">🆕 Productos Recientes</h5>
-          <div class="table-responsive">
-            <table class="table table-striped table-hover align-middle">
-              <thead class="table-success">
-                <tr>
-                  <th>Imagen</th>
-                  <th>Nombre</th>
-                  <th>Descripción</th>
-                  <th>Precio</th>
-                  <th>Categoría</th>
-                  <th>Fecha</th>
-                </tr>
-              </thead>
-              <tbody>
-                @foreach($productosRecientes as $producto)
-                <tr>
-                  <td>
-                    @if ($producto->imagen)
-                      <img src="{{ asset('img/product/' . $producto->imagen) }}" width="45" height="45" style="object-fit:cover; border-radius:6px;">
-                    @else
-                      Sin imagen
-                    @endif
-                  </td>
-                  <td>{{ $producto->nombre_producto }}</td>
-                  <td>{{ $producto->descripccion }}</td>
-                  <td>${{ number_format($producto->precio_unitario ?? 0, 0, ',', '.') }}</td>
-                  <td>{{ $producto->categorias->nombre ?? 'Sin categoría' }}</td>
-                  <td>{{ \Carbon\Carbon::parse($producto->created_at)->format('Y-m-d') }}</td>
-                </tr>
-                @endforeach
-              </tbody>
-            </table>
-            <div class="paginador d-flex justify-content-center">
-              {{ $productosRecientes->links() }}
-            </div>
-          </div>
-        </div>
-
       </section>
     </div>
   </main>

@@ -310,33 +310,60 @@
       </ul>
     </nav>
 
-    <!-- usuario -->
-    <div class="user-area ms-auto">
-      @auth
-      <div class="user-welcome">
-        <i class="fas fa-user-circle me-1"></i>
-        {{ session('nombre_usuario') ?? Auth::user()->nombre ?? Auth::user()->nomb_usu ?? 'Administrador' }}
-      </div>
-          <a href="{{ route('admin.noti_admin') }}" class="btn btn-link text-white position-relative p-0" style="font-size: 1rem;">
+<!-- usuario -->
+<div class="user-area ms-auto">
+  @auth
+  <div class="user-welcome">
+    <i class="fas fa-user-circle me-1"></i>
+    {{ session('nombre_usuario') ?? Auth::user()->nombre ?? Auth::user()->nomb_usu ?? 'Administrador' }}
+  </div>
+
+  <!-- campana de notificaciones -->
+  <div class="dropdown d-inline-block">
+    <a href="#" class="btn btn-link text-white position-relative p-0" style="font-size: 1rem;" 
+       id="notiDropdown" data-bs-toggle="dropdown" aria-expanded="false">
       <i class="fas fa-bell"></i>
       @if(!empty($notificaciones) && count($notificaciones) > 0)
-        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-            {{ count($notificaciones) }}
-        </span>
+      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+        {{ count($notificaciones) }}
+      </span>
       @endif
     </a>
-      <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:inline;">
-        @csrf
-        <button type="submit" class="logout-btn">
-          <i class="fas fa-sign-out-alt"></i> Salir
-        </button>
-      </form>
-      @else
-      <a href="{{ route('login') }}" class="logout-btn">
-        <i class="fas fa-exclamation-circle"></i> Login
-      </a>
-      @endauth
-    </div>
+
+    <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="notiDropdown">
+      <li><h6 class="dropdown-header">Notificaciones</h6></li>
+      <li>
+        <a class="dropdown-item d-flex align-items-center" href="{{ route('pedidos.index') }}">
+          <i class="fas fa-shopping-cart me-2 text-primary"></i> Pedidos Recientes
+        </a>
+      </li>
+      <li>
+        <a class="dropdown-item d-flex align-items-center" href="{{ route('producto.index') }}">
+          <i class="fas fa-box-open me-2 text-warning"></i> Stock Bajo
+        </a>
+      </li>
+      <li>
+        <a class="dropdown-item d-flex align-items-center" href="{{ route('admin.dashboard') }}">
+          <i class="fas fa-tasks me-2 text-success"></i> Tareas Pendientes
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- botón logout -->
+  <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:inline;">
+    @csrf
+    <button type="submit" class="logout-btn">
+      <i class="fas fa-sign-out-alt"></i> Salir
+    </button>
+  </form>
+
+  @else
+  <a href="{{ route('login') }}" class="logout-btn">
+    <i class="fas fa-exclamation-circle"></i> Login
+  </a>
+  @endauth
+</div>
   </header>
 
   <!-- Contenido principal -->

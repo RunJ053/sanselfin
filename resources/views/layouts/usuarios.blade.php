@@ -261,26 +261,34 @@
   <div class="table-responsive">
     <table class="table table-striped table-hover">
       <thead class="table-dark">
-        <tr>
-          <th>ID</th>
-          <th>Nombre</th>
-          <th>Apellido</th>
-          <th>Dirección</th>
-          <th>Correo</th>
-          <th>Teléfono</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        @foreach ($usuarios as $user)
-        <tr>
-          <td>{{ $user->id }}</td>
-          <td>{{ $user->nombre }}</td>
-          <td>{{ $user->apellidos }}</td>
-          <td>{{ $user->direccion }}</td>
-          <td>{{ $user->email }}</td>
-          <td>{{ $user->telefono }}</td>
-          <td>
+    <tr>
+        <th>#</th>
+        <th>Nombre</th>
+        <th>Apellidos</th>
+        <th>Dirección</th>
+        <th>Tipo de documento</th>
+        <th>Género</th>
+        <th>Teléfono</th>
+        <th>Correo</th>
+        <th>Localidad</th>
+        <th>Rol</th>
+        <th>Acciones</th>
+    </tr>
+</thead>
+<tbody>
+    @foreach ($usuarios as $user)
+    <tr>
+        <td>{{ $user->id }}</td>
+        <td>{{ $user->nombre }}</td>
+        <td>{{ $user->apellidos }}</td>
+        <td>{{ $user->direccion }}</td>
+        <td>{{ $user->tipoDocumento->descripcion ?? 'N/A' }}</td>
+        <td>{{ $user->genero->descripcion_gen ?? 'N/A' }}</td>
+        <td>{{ $user->telefono }}</td>
+        <td>{{ $user->email }}</td>
+        <td>{{ $user->datoslocalidad->descripcion ?? 'N/A' }}</td>
+        <td>{{ $user->tipos_clientes->role ?? 'N/A' }}</td>
+        <td>
                 <!-- Botón Editar -->
                 <a href="{{ route('usuario.edit', $user->id)}}" 
                 class="btn btn-sm btn-warning mb-1">

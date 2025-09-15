@@ -17,16 +17,17 @@ class ProductoController extends Controller
      * Display a listing of the resource.
      *
      */
-    public function index()
-{
+public function index() {
     try {
-        $inventarios = Producto::with(['categorias', 'impuestos', 'promociones'])
+        $inventarios = Producto::with(['categorias', 'promociones'])
+            ->orderBy('stock', 'asc') // ordenar de menor a mayor
             ->paginate(10);
+
         $totalProductos = Producto::count();
         $categorias = Categoria::all();
         $promociones = Promocion::all();
 
-        return view('admin.inventario', compact('inventarios', 'categorias', 'totalProductos','promociones'));
+        return view('admin.inventario', compact('inventarios', 'categorias', 'totalProductos', 'promociones'));
     } catch (\Exception $e) {
         return redirect()->back()->with('error', 'Ocurrió un problema al cargar los inventarios.');
     }

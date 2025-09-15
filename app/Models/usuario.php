@@ -49,4 +49,10 @@ class Usuario extends Model
     {
         return $this->belongsTo(Localidad::class, 'localidad', 'id');
     }
+
+        // Relación con roles/tipos_clientes
+    public function tipos_clientes()
+    {
+        return $this->belongsTo(TipoCliente::class, 'role', 'id');
+    }
 }

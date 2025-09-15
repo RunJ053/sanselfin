@@ -20,6 +20,9 @@
                         <th>#</th>
                         <th>Nombre</th>
                         <th>Correo</th>
+                        <th>Dirección</th>
+                        <th>Tipo de documento</th>
+                        <th>Genero</th>
                         <th>Teléfono</th>
                         <th>Rol</th>
                         <th>Acciones</th>

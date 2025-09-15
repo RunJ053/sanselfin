@@ -22,6 +22,9 @@
         <form action="{{ route('usuario.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
+            <input type="text" name="role" value="1" hidden>
+            
+
             <div class="form-group">
                 <label for="nombre" class="form-label">Nombre *</label>
                 <input type="text" name="nombre" id="nombre" class="form-input" required>
@@ -57,7 +60,7 @@
                 <select name="tipo_de_genero" id="tipo_de_genero" class="form-input form-select" required>
                     <option value="">Seleccione género</option>
                     @foreach ($generos as $genero)
-                        <option value="{{ $genero->id }}">{{ $genero->nombre }}</option>
+                        <option value="{{ $genero->id }}">{{ $genero->descripcion_gen }}</option>
                     @endforeach
                 </select>
             </div>
@@ -82,7 +85,7 @@
                 <select name="localidad" id="localidad" class="form-input form-select" required>
                     <option value="">Seleccione localidad</option>
                     @foreach ($localidades as $loc)
-                        <option value="{{ $loc->id }}">{{ $loc->nombre }}</option>
+                        <option value="{{ $loc->id }}">{{ $loc->descripcion }}</option>
                     @endforeach
                 </select>
             </div>
