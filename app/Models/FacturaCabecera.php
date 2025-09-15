@@ -46,6 +46,6 @@ class FacturaCabecera extends Model
 
     public function pedido()
     {
-        return $this->belongsTo(Pedido::class, 'pedido_id'); // 👈 relación directa
+        return $this->belongsTo(Pedido::class, 'pedido_id');
     }
 }

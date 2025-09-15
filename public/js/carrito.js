@@ -11,15 +11,14 @@ document.addEventListener("DOMContentLoaded", () => {
             ).value;
 
             try {
-                let response = await fetch(`/update/${itemId}`, {
+                let url = window.routes.update.replace(':id', itemId);
+                let response = await fetch(url, {
                     method: "PATCH",
                     headers: {
                         "Content-Type": "application/json",
                         "X-CSRF-TOKEN": token,
                     },
-                    body: JSON.stringify({
-                        cantidad,
-                    }),
+                    body: JSON.stringify({ cantidad }),
                 });
 
                 let data = await response.json();
@@ -76,7 +75,8 @@ document.addEventListener("DOMContentLoaded", () => {
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     try {
-                        let response = await fetch(`/remove/${itemId}`, {
+                        let url = window.routes.remove.replace(':id', itemId);
+                        let response = await fetch(url, {
                             method: "DELETE",
                             headers: {
                                 "X-CSRF-TOKEN": token,

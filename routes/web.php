@@ -50,7 +50,8 @@ Route::POST('/logout', [AuthController::class, 'logout'])->name('logout')->middl
 
 // Esta es la ruta que tu controlador de registro necesita
 Route::GET('/check-email', [VerificationController::class, 'checkEmail'])->name('user.checkEmail');
-
+// Reenvio del tokent
+Route::post('/resend-verification', [VerificationController::class, 'resendVerification'])->name('verification.resend');
 // Esta es la ruta a la que el usuario hará clic en el correo
 Route::GET('/verify/{token}', [VerificationController::class, 'verifyUser'])->name('verification.verify');
 
@@ -76,11 +77,11 @@ Route::middleware(['auth'])->group(function () {
     // Notificaciones
     Route::get('/notificaciones', [NotificacionController::class, 'index'])->name('notificaciones.index');
     Route::post('/notificaciones', [NotificacionController::class, 'store'])->name('notificaciones.store');
-    // Acciones globales (van antes de {id})
+    // Acciones globales
     Route::patch('/notificaciones/marcar-todas-leidas', [NotificacionController::class, 'marcarTodasLeidas'])->name('notificaciones.marcarTodasLeidas');
     Route::delete('/notificaciones/eliminar-todas', [NotificacionController::class, 'eliminarTodas'])->name('notificaciones.eliminarTodas');
     Route::delete('/notificaciones/eliminar-seleccionadas', [NotificacionController::class, 'eliminarSeleccionadas'])->name('notificaciones.eliminarSeleccionadas');
-    // Acciones por ID (van al final)
+    // Acciones por ID
     Route::patch('/notificaciones/{id}/leida', [NotificacionController::class, 'marcarLeida'])->name('notificaciones.leida');
     Route::delete('/notificaciones/{id}', [NotificacionController::class, 'destroy'])->name('notificaciones.destroy');
 
@@ -132,7 +133,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/checkout/payu/confirmation', [FormaPagoController::class, 'confirmarPayU'])->name('checkout.payu.confirmation');
 
     // ! Rutas para ver la factura en PDF/Vista dedicada
-    Route::get('/factura/{pedido}', [FacturaDetalleController::class, 'verFactura'])->name('facturacion.verFactura');
+    Route::get('/factura/{pedido}', [FacturaDetalleController::class, 'verFactura'])->name('facturacion.verFacturaCompra');
     Route::get('/factura/{pedido}/pdf', [FacturaDetalleController::class, 'verFacturaPdf'])->name('facturacion.verFacturaPdf');
 
     // ! Rutas para crear las reseñas y hacer la puntuacion de los productos

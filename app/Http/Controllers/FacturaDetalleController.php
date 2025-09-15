@@ -37,10 +37,9 @@ class FacturaDetalleController extends Controller
         $pedido = Pedido::with('detalles.producto')->findOrFail($pedidoId);
 
         // Buscar la factura vinculada. Si planeas añadir pedido_id (recomendado), cámbialo aquí:
-        $factura = FacturaCabecera::where('cliente_id', $pedido->usuario)
-            ->latest()
-            ->with('detalles.producto', 'formaPago', 'usuario')
-            ->firstOrFail();
+$factura = FacturaCabecera::where('pedido_id', $pedido->id)
+    ->with('detalles.producto', 'formaPago', 'usuario')
+    ->firstOrFail();
 
         $totales = $this->computeFacturaTotals($factura);
 
@@ -62,10 +61,9 @@ class FacturaDetalleController extends Controller
     {
         $pedido = Pedido::with('detalles.producto')->findOrFail($pedidoId);
 
-        $factura = FacturaCabecera::where('cliente_id', $pedido->usuario)
-            ->latest()
-            ->with('detalles.producto', 'formaPago', 'usuario')
-            ->firstOrFail();
+        $factura = FacturaCabecera::where('pedido_id', $pedido->id)
+    ->with('detalles.producto', 'formaPago', 'usuario')
+    ->firstOrFail();
 
         $totales = $this->computeFacturaTotals($factura);
 

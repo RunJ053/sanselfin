@@ -19,9 +19,9 @@ body {
     background-size: cover;
     background-repeat: no-repeat;
     background-size: contain;
-    background-position: top left; 
+    background-position: top left;
     /*background-position: bottom right;*/
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif !important;
 }
 
 /* Mejoras sutiles al contenedor principal */
@@ -121,7 +121,7 @@ body {
     position: relative;
     overflow: hidden;
     width: 100%; /* Asegura que el botón siempre ocupe el 100% del contenedor */
-    min-width: 120px; /* Opcional: ancho mínimo para evitar que se haga muy pequeño */
+    min-width: 120px;
     box-sizing: border-box; /* Asegura que el padding no aumente el ancho */
 }
 
@@ -140,7 +140,6 @@ body {
     );
     transition: left 0.5s;
 }
-
 
 .btn-primary-custom:hover::before {
     left: 100%;

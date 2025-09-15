@@ -322,7 +322,11 @@
          */
         async function showProductModal(productId) {
             try {
-                const response = await fetch(`/productos/${productId}/details`);
+                const url = `{{ url('productos') }}/${productId}/details`;
+                const response = await fetch(url);
+                //const url = `{{ route('productos.details', ['id' => 'ID']) }}`.replace('ID', productId);
+
+                //const response = await fetch(url);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }

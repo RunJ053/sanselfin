@@ -54,11 +54,6 @@
                                 <div class="form-floating mb-4 fade-in-3">
                                     <input type="password" class="form-control form-control-lg @error('password') is-invalid @enderror" id="loginPassword" name="password" placeholder="Contraseña" required>
                                     <label for="loginPassword"><i class="fas fa-lock me-2"></i>Contraseña</label>
-                                    @error('password')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                    @enderror
                                 </div>
                                 <div class="pt-1 mb-4 fade-in-4">
                                     <button class="btn btn-primary-custom w-100" type="submit">
@@ -94,33 +89,19 @@
                                             <input type="hidden" name="tipo_usuario" value="1">
                                             <input type="text" class="form-control form-control-lg @error('apellido') is-invalid @enderror" id="apellido" name="apellido" value="{{ old('apellido') }}" required>
                                             <label for="apellido"><i class="fas fa-user me-2"></i>Apellido</label>
-                                            @error('apellido')
-                                            <div class="invalid-feedback">
-                                                {{ $message }}
-                                            </div>
-                                            @enderror
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-floating">
                                             <input type="text" class="form-control form-control-lg @error('nombre') is-invalid @enderror" id="registerNombre" name="nombre" value="{{ old('nombre') }}" required>
                                             <label for="registerNombre"><i class="fas fa-user me-2"></i>Nombre</label>
-                                            @error('nombre')
-                                            <div class="invalid-feedback">
-                                                {{ $message }}
-                                            </div>
-                                            @enderror
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="form-floating mb-4 fade-in-4">
                                     <input type="text" class="form-control form-control-lg @error('direccion') is-invalid @enderror" id="direccion" name="direccion" value="{{ old('direccion') }}" required>
-                                    <label for="direccion"><i class="fas fa-location-dot me-2"></i>Dirección</label> @error('direccion')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                    @enderror
+                                    <label for="direccion"><i class="fas fa-location-dot me-2"></i>Dirección</label>
                                 </div>
 
                                 <div class="row mb-4 fade-in-4">
@@ -128,21 +109,12 @@
                                         <div class="form-floating">
                                             <input type="email" class="form-control form-control-lg @error('email') is-invalid @enderror" id="registerEmail" name="email" placeholder="correo@ejemplo.com" value="{{ old('email') }}" required>
                                             <label for="registerEmail"><i class="fas fa-envelope me-2"></i>Correo electrónico</label>
-                                            @error('email')
-                                            <div class="invalid-feedback">
-                                                {{ $message }}
-                                            </div>
-                                            @enderror
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-floating">
                                             <input type="date" class="form-control form-control @error('fecha_nac') is-invalid @enderror" id="fecha_nac" name="fecha_nac" value="{{ old('fecha_nac') }}" required>
-                                            <label for="fecha_nac"><i class="fas fa-calendar-alt me-2"></i>Fecha de Nacimiento</label> @error('fecha_nac')
-                                            <div class="invalid-feedback">
-                                                {{ $message }}
-                                            </div>
-                                            @enderror
+                                            <label for="fecha_nac"><i class="fas fa-calendar-alt me-2"></i>Fecha de Nacimiento</label>
                                         </div>
                                     </div>
                                 </div>
@@ -152,22 +124,12 @@
                                         <div class="form-floating">
                                             <input type="password" class="form-control form-control-lg @error('password') is-invalid @enderror" id="registerPassword" name="password" placeholder="Contraseña" required>
                                             <label for="registerPassword"><i class="fas fa-lock me-2"></i>Contraseña</label>
-                                            @error('password')
-                                            <div class="invalid-feedback">
-                                                {{ $message }}
-                                            </div>
-                                            @enderror
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-floating">
                                             <input type="password" class="form-control form-control @error('password_confirmation') is-invalid @enderror" id="confirmRegisterPassword" name="password_confirmation" required>
                                             <label for="confirmRegisterPassword"><i class="fas fa-lock me-2"></i>Confirmar Contraseña</label>
-                                            @error('password_confirmation')
-                                            <div class="invalid-feedback">
-                                                {{ $message }}
-                                            </div>
-                                            @enderror
                                         </div>
                                     </div>
                                 </div>

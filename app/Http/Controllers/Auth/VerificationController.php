@@ -7,6 +7,9 @@ use App\Models\UserVerificationCode;
 use App\Models\DatoUsuario;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\UserVerificationMail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 
@@ -37,7 +40,7 @@ class VerificationController extends Controller
         // Si el token es inválido o ha expirado
         if (!$verificationEntry || Carbon::now()->greaterThan($verificationEntry->expires_at)) {
             $error_message = 'El enlace de verificación es inválido o ha expirado. Por favor, solicita un nuevo enlace si es necesario.';
-            
+
             // Retorna la vista de error
             return view('errors.verification-error', [
                 'error_message' => $error_message,
@@ -51,7 +54,7 @@ class VerificationController extends Controller
         if ($user->is_verified) {
             $verificationEntry->delete();
             $error_message = 'Tu cuenta ya está verificada. Por favor, inicia sesión para continuar.';
-            
+
             // Retorna la vista de error
             return view('errors.verification-error', [
                 'error_message' => $error_message,
@@ -67,5 +70,36 @@ class VerificationController extends Controller
 
         // Redirige al dashboard del usuario con un mensaje de éxito
         return redirect()->route('user.dashboard')->with('success', '¡Tu correo ha sido verificado exitosamente! Bienvenido.');
+    }
+
+    public function resendVerification(Request $request)
+    {
+        $user = Auth::user() ?? DatoUsuario::where('email', $request->email)->first();
+
+        if (!$user) {
+            return back()->withErrors(['email' => 'No se encontró el usuario.']);
+        }
+
+        if ($user->is_verified) {
+            return back()->with('message', 'Tu cuenta ya está verificada. Puedes iniciar sesión.');
+        }
+
+        // Eliminar token anterior
+        UserVerificationCode::where('user_id', $user->id)->delete();
+
+        // Crear nuevo token
+        $token = Str::random(60);
+        $expiresAt = now()->addMinutes(10);
+
+        UserVerificationCode::create([
+            'user_id'    => $user->id,
+            'token'      => $token,
+            'expires_at' => $expiresAt,
+        ]);
+
+        // Reenviar correo
+        Mail::to($user->email)->send(new UserVerificationMail($token, $user->nombre));
+
+        return back()->with('message', 'Se ha enviado un nuevo correo de verificación.');
     }
 }

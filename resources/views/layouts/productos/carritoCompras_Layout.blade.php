@@ -70,6 +70,12 @@
 <body>
     @yield('content')
     <x-navbar :notificaciones="$notificaciones" :carritoCount="$carritoCount" />
+    <script>
+        window.routes = {
+            update: @json(route('carrito.update', ['itemId' => ':id'])),
+            remove: @json(route('carrito.remove', ['itemId' => ':id'])),
+        };
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ asset('js/hamburguesa.js') }}"></script>
     <script src="{{ asset('js/carrito.js') }}"></script>

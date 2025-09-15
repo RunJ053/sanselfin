@@ -121,7 +121,6 @@
                     timer: 3000
                 });
             } else if (sessionMessage) { // Para mensajes de notificación general
-                // Solo muestra si no es un mensaje del modal de admin (que se abrirá por JS)
                 if (!openAdminModal) { // Evita duplicar el mensaje si el modal ya se está abriendo
                     Swal.fire({
                         icon: 'info', // O 'success' si es un mensaje positivo
@@ -132,7 +131,6 @@
                     });
                 }
             }
-
 
             // Mensajes de error
             if (hasAnyErrors) {

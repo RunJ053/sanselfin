@@ -1,6 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
-
-    // --- Selectores de Elementos del DOM ---
+document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('registerForm');
     const nombreInput = document.getElementById('registerNombre');
     const apellidoInput = document.getElementById('apellido');
@@ -10,54 +8,39 @@ document.addEventListener('DOMContentLoaded', function() {
     const passwordInput = document.getElementById('registerPassword');
     const passwordConfirmInput = document.getElementById('confirmRegisterPassword');
 
-    // Mapeo de IDs a sus nombres de campo para mensajes de error
-    const fieldNames = {
-        'registerNombre': 'Nombre',
-        'apellido': 'Apellido',
-        'direccion': 'Dirección',
-        'registerEmail': 'Correo electrónico',
-        'fecha_nac': 'Fecha de Nacimiento',
-        'registerPassword': 'Contraseña',
-        'confirmRegisterPassword': 'Confirmar Contraseña'
-    };
-
-    /**
-     * Función para mostrar/ocultar el feedback de validación de Bootstrap.
-     * @param {HTMLElement} inputElement - El elemento de input.
-     * @param {boolean} isValid - Verdadero si el campo es válido, falso si no lo es.
-     * @param {string} message - El mensaje de error a mostrar.
-     */
+    // --- Mostrar errores debajo de cada input ---
     function showValidationFeedback(inputElement, isValid, message = '') {
-        const feedbackElement = inputElement.parentElement.querySelector('.invalid-feedback');
+        let feedbackElement = inputElement.parentElement.querySelector('.invalid-feedback');
+        if (!feedbackElement) {
+            feedbackElement = document.createElement('div');
+            feedbackElement.classList.add('invalid-feedback');
+            inputElement.parentElement.appendChild(feedbackElement);
+        }
+
         if (isValid) {
             inputElement.classList.remove('is-invalid');
-            if (feedbackElement) {
-                feedbackElement.textContent = '';
-            }
+            feedbackElement.textContent = '';
         } else {
             inputElement.classList.add('is-invalid');
-            if (feedbackElement) {
-                feedbackElement.textContent = message;
-            }
+            feedbackElement.textContent = message;
         }
     }
 
-    // --- Funciones de Validación Individuales (Mejoradas) ---
-
+    // --- Validaciones ---
     function validateNombre() {
+        nombreInput.value = nombreInput.value.replace(/[^A-Za-záéíóúÁÉÍÓÚüÜñÑ\s]/g, ''); // limpia números
         const value = nombreInput.value.trim();
-        const regex = /^[A-Za-záéíóúÁÉÍÓÚüÜñÑ\s´]{3,35}$/;
-        const isValid = regex.test(value);
-        const message = 'El nombre debe tener entre 3 y 35 caracteres y solo contener letras.';
+        const isValid = value.length >= 3;
+        const message = '';
         showValidationFeedback(nombreInput, isValid, message);
         return isValid ? '' : message;
     }
 
     function validateApellido() {
+        apellidoInput.value = apellidoInput.value.replace(/[^A-Za-záéíóúÁÉÍÓÚüÜñÑ\s]/g, ''); // limpia números
         const value = apellidoInput.value.trim();
-        const regex = /^[A-Za-záéíóúÁÉÍÓÚüÜñÑ\s´]{3,35}$/;
-        const isValid = regex.test(value);
-        const message = 'El apellido debe tener entre 3 y 35 caracteres y solo contener letras.';
+        const isValid = value.length >= 3;
+        const message = '';
         showValidationFeedback(apellidoInput, isValid, message);
         return isValid ? '' : message;
     }
@@ -65,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function validateDireccion() {
         const value = direccionInput.value.trim();
         const isValid = value.length >= 7 && value.length <= 50;
-        const message = 'La dirección debe tener entre 7 y 50 caracteres.';
+        const message = '';
         showValidationFeedback(direccionInput, isValid, message);
         return isValid ? '' : message;
     }
@@ -74,8 +57,27 @@ document.addEventListener('DOMContentLoaded', function() {
         const value = emailInput.value.trim();
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const isValid = regex.test(value);
-        const message = 'Por favor, ingresa un correo electrónico válido.';
+        const message = '';
         showValidationFeedback(emailInput, isValid, message);
+        return isValid ? '' : message;
+    }
+
+    function validateFechaNac() {
+        const value = fechaNacInput.value;
+        if (!value) {
+            showValidationFeedback(fechaNacInput, false, 'La fecha de nacimiento es obligatoria.');
+            return 'La fecha de nacimiento es obligatoria.';
+        }
+        const birthDate = new Date(value);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        const isValid = age >= 18;
+        const message = 'Debes ser mayor de 18 años.';
+        showValidationFeedback(fechaNacInput, isValid, message);
         return isValid ? '' : message;
     }
 
@@ -85,26 +87,23 @@ document.addEventListener('DOMContentLoaded', function() {
         const hasUpper = /[A-Z]/.test(value);
         const hasLower = /[a-z]/.test(value);
         const hasNumber = /\d/.test(value);
-        const hasSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(value);
-        
+        const hasSpecial = /[@$!%*#?&.]/.test(value);
+
         const isValid = hasMinLength && hasUpper && hasLower && hasNumber && hasSpecial;
+
         let message = '';
-        if (!isValid) {
-            message = 'La contraseña debe tener al menos 8 caracteres, incluyendo una mayúscula, una minúscula, un número y un símbolo.';
-        }
         showValidationFeedback(passwordInput, isValid, message);
         return isValid ? '' : message;
     }
 
     function validatePasswordConfirmation() {
-        const isValid = passwordConfirmInput.value === passwordInput.value;
+        const isValid = passwordConfirmInput.value === passwordInput.value && passwordConfirmInput.value !== '';
         const message = 'Las contraseñas no coinciden.';
         showValidationFeedback(passwordConfirmInput, isValid, message);
         return isValid ? '' : message;
     }
 
-
-    // --- Event Listeners para Validación en Tiempo Real ---
+    // --- Eventos en tiempo real ---
     nombreInput.addEventListener('input', validateNombre);
     apellidoInput.addEventListener('input', validateApellido);
     direccionInput.addEventListener('input', validateDireccion);
@@ -116,9 +115,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     passwordConfirmInput.addEventListener('input', validatePasswordConfirmation);
 
-    // --- Manejo del Envío del Formulario ---
-    form.addEventListener('submit', function(event) {
-        // Ejecutamos todas las validaciones y recogemos los errores
+    // --- Envío del formulario ---
+    form.addEventListener('submit', function (event) {
         const errors = [
             validateNombre(),
             validateApellido(),
@@ -127,31 +125,17 @@ document.addEventListener('DOMContentLoaded', function() {
             validateFechaNac(),
             validatePassword(),
             validatePasswordConfirmation()
-        ].filter(error => error !== ''); // Filtra los mensajes vacíos (campos válidos)
+        ].filter(msg => msg !== '');
 
-        // Si hay errores, prevenimos el envío y mostramos SweetAlert2
         if (errors.length > 0) {
             event.preventDefault();
 
-            // Construir el HTML de la lista de errores
-            const errorsHtml = '<ul style="text-align: left; list-style-position: inside;">' + 
-                               errors.map(msg => `<li>${msg}</li>`).join('') + 
-                               '</ul>';
-
-            // Mostrar el SweetAlert2
             Swal.fire({
                 icon: 'error',
                 title: '¡Verifica tu información!',
-                html: errorsHtml,
+                html: `<ul style="text-align:left; list-style-position: inside;">${errors.map(e => `<li>${e}</li>`).join('')}</ul>`,
                 confirmButtonText: 'Entendido',
             });
         }
-    });
-
-    // Validamos el formulario al cargarse si hay errores de Laravel
-    document.querySelectorAll('.is-invalid').forEach(element => {
-        // Dispara el evento 'input' para que se muestre el feedback en tiempo real
-        const event = new Event('input');
-        element.dispatchEvent(event);
     });
 });

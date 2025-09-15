@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash; 
+use Illuminate\Support\Facades\Hash;
 
 use App\Models\DatoUsuario;
 use App\Models\Genero;
@@ -28,22 +28,38 @@ class DatoUsuarioController extends Controller
     {
         $request->validate([
             'current_password' => 'required',
-            'new_password' => 'required|min:8|confirmed',
+            'new_password' => [
+                'required',
+                'string',
+                'min:8',
+                'confirmed',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/'
+            ],
+        ], [
+            'new_password.regex' => 'La contraseña debe tener al menos 8 caracteres, incluir una mayúscula, una minúscula, un número y un símbolo especial.',
         ]);
 
-        $user = Auth::user();
+        try {
+            $user = Auth::user();
 
-        // Verificar la contraseña actual
-        if (!Hash::check($request->current_password, $user->password)) {
-            return redirect()->back()->withErrors(['current_password' => 'La contraseña actual es incorrecta.']);
+            if (!Hash::check($request->current_password, $user->password)) {
+                return redirect()->back()->withErrors(['current_password' => 'La contraseña actual es incorrecta.']);
+            }
+
+            if (Hash::check($request->new_password, $user->password)) {
+                return redirect()->back()->withErrors(['new_password' => 'La nueva contraseña no puede ser igual a la actual.']);
+            }
+
+            $user->password = Hash::make($request->new_password);
+            $user->save();
+
+            return redirect()->route('myProfile')->with('success', 'Contraseña actualizada exitosamente. ✅');
+        } catch (\Exception $e) {
+            \Log::error('Error al cambiar contraseña: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Ocurrió un problema al cambiar la contraseña. Intenta de nuevo más tarde.');
         }
-
-        // Actualizar la contraseña
-        $user->password = Hash::make($request->new_password);
-        $user->save();
-
-        return redirect()->route('myProfile')->with('success', 'Contraseña actualizada exitosamente.');
     }
+
 
     public function edit($id)
     {

@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Database\QueryException;
 use App\Mail\PasswordResetRequestMail;
-use App\Mail\UserVerificationMail; // NUEVO: Importa la clase de correo para restablecimiento
+use App\Mail\UserVerificationMail;
 
 use App\Models\DatoUsuario;
 use App\Models\TipoCliente;
@@ -14,7 +14,7 @@ use App\Models\UserVerificationCode;
 use App\Models\Producto;
 
 
-use Illuminate\Support\Facades\DB; //Para interactuar con la tabla password_resets
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -82,68 +82,96 @@ class AuthController extends Controller
         }
     }
 
-    protected function registerUser(RegisterUserRequest $request)
+    protected function registerUser(Request $request)
     {
-        $data = $request->validated();
+        // ✅ Validación directa en el controlador
+        $request->validate([
+            'nombre'     => 'required|string|min:3|max:50',
+            'apellido'   => 'required|string|min:3|max:50',
+            'direccion'  => 'required|string|min:7|max:255',
+            'email'      => 'required|email|max:100|unique:datos_usuario,email',
+            'fecha_nac'  => 'required|date|before:today',
+            'password'   => [
+                'required',
+                'string',
+                'min:8',
+                'confirmed',       // requiere el campo password_confirmation
+                'regex:/[A-Z]/',   // al menos una mayúscula
+                'regex:/[a-z]/',   // al menos una minúscula
+                'regex:/[0-9]/',   // al menos un número
+                'regex:/[@$!%*#?&.]/' // al menos un carácter especial
+            ],
+        ], [
+            // ✅ Mensajes personalizados
+            'nombre.required' => 'El nombre es obligatorio.',
+            'apellido.required' => 'El apellido es obligatorio.',
+            'direccion.required' => 'La dirección es obligatoria.',
+            'email.required' => 'El correo electrónico es obligatorio.',
+            'email.email' => 'El correo electrónico no es válido.',
+            'email.unique' => 'El correo electrónico ya está registrado.',
+            'fecha_nac.required' => 'La fecha de nacimiento es obligatoria.',
+            'password.required' => 'La contraseña es obligatoria.',
+            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
+            'password.confirmed' => 'Las contraseñas no coinciden.',
+            'password.regex' => 'La contraseña debe incluir al menos:
+            <ul style="text-align:left; margin:0; padding-left:18px;">
+                <li>Una mayúscula</li>
+                <li>Una minúscula</li>
+                <li>Un número</li>
+                <li>Un carácter especial (@ $ ! % * # ? & .)</li>
+            </ul>',
+        ]);
 
         try {
-            // Verificamos si el email ya existe para evitar duplicados
-            if (DatoUsuario::where('email', $data['email'])->exists()) {
+            // ✅ Si llega aquí, ya pasó la validación
+            if (DatoUsuario::where('email', $request->email)->exists()) {
                 return back()->withErrors(['email' => 'El correo electrónico ya está registrado.']);
             }
 
-            // Creamos el usuario con is_verified en false
             $datoUsuario = DatoUsuario::create([
-                'nombre' => $data['nombre'],
-                'apellidos' => $data['apellido'],
-                'direccion' => $data['direccion'],
-                'email' => $data['email'],
-                'edad' => $data['fecha_nac'],
-                'password' => Hash::make($data['password']),
-                'role' => 1, 
-                'is_verified' => false, // IMPORTANTE: El usuario no está verificado al inicio
-                'localidad' => 15,
-                'tipo_docu' => 1,
+                'nombre'     => $request->nombre,
+                'apellidos'  => $request->apellido,
+                'direccion'  => $request->direccion,
+                'email'      => $request->email,
+                'edad'       => $request->fecha_nac,
+                'password'   => Hash::make($request->password),
+                'role'       => 1,
+                'is_verified' => false,
+                'localidad'  => 15,
+                'tipo_docu'  => 1,
                 'tipo_de_genero' => 4,
-                'documento' => null,
-                'telefono' => null,
-                'nom_imgs' => null,
-                'user_img' => null,
+                'documento'  => null,
+                'telefono'   => null,
+                'nom_imgs'   => null,
+                'user_img'   => null,
             ]);
 
             if (!$datoUsuario) {
                 return back()->withInput()->withErrors(['database_error' => 'No se pudo crear el usuario.']);
             }
-            
-            // Generamos un token único de 60 caracteres
-            $token = Str::random(60); 
-            $expiresAt = Carbon::now()->addMinutes(10); // El token expira en 30 minutos
 
-            // Guardamos el token en la base de datos
+            $token = Str::random(60);
+            $expiresAt = Carbon::now()->addMinutes(10);
+
             $verificationCodeEntry = UserVerificationCode::create([
-                'user_id' => $datoUsuario->id,
-                'token' => $token,
+                'user_id'    => $datoUsuario->id,
+                'token'      => $token,
                 'expires_at' => $expiresAt,
             ]);
 
             if (!$verificationCodeEntry) {
-                // Si falla, eliminamos el usuario para evitar cuentas "zombies"
                 $datoUsuario->delete();
                 return back()->withInput()->withErrors(['database_error' => 'No se pudo guardar el token de verificación.']);
             }
-            
-            // Enviamos el correo de verificación al email del usuario
+
             Mail::to($datoUsuario->email)->send(new UserVerificationMail($token, $datoUsuario->nombre));
 
-            // Redirigimos al usuario a una página de confirmación
             return redirect()->route('user.checkEmail')->with([
                 'message' => '¡Registro exitoso! Por favor, revisa tu correo para verificar tu cuenta.',
             ]);
-
         } catch (QueryException $e) {
-            return back()->withInput()->withErrors(['database_error' => 'Hubo un error al intentar registrarte. Por favor, inténtalo de nuevo más tarde.']);
+            return back()->withInput()->withErrors(['database_error' => 'Hubo un error al intentar registrarte.']);
         } catch (\Exception $e) {
-            // Si el error ocurre después de crear el usuario pero antes de enviar el correo, lo eliminamos.
             if (isset($datoUsuario) && $datoUsuario->exists) {
                 $datoUsuario->delete();
             }
@@ -174,7 +202,7 @@ class AuthController extends Controller
         }
 
         // Generar un token único
-        $token = Str::random(10); // Token más largo para mayor seguridad
+        $token = Str::random(35); // Token más largo para mayor seguridad
         $expiresAt = Carbon::now()->addMinutes(60); // El token expira en 60 minutos
 
         try {
@@ -210,7 +238,7 @@ class AuthController extends Controller
         // El email se flashea desde sendResetToken, o se usa old() si hay errores
         $email = session('email') ?? old('email');
 
-        // Opcional: Validar si viene con un token en la URL, pero no es estrictamente necesario si se maneja por sesión/entrada de usuario
+        // Validar si viene con un token en la URL, pero no es estrictamente necesario si se maneja por sesión/entrada de usuario
         return view('auth.reset-password', compact('email')); // Crearemos esta vista
     }
 

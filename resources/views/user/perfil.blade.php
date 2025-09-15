@@ -160,7 +160,7 @@
                             </span>
                         </div>
                         <p><strong>Total de la compra:</strong> ${{ number_format($pedido->total, '0', ',') }}</p>
-                        <a href="{{ route('facturacion.verFactura', $pedido->id) }}" class="view-invoice-btn">Ver Factura</a>
+                        <a href="{{ route('facturacion.verFacturaCompra', $pedido->id) }}" class="view-invoice-btn">Ver Factura</a>
                     </div>
                     @empty
                     <p class="empty-message">Aquí verás tus pedidos cuando realices compras</p>

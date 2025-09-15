@@ -80,7 +80,6 @@
                             </div>
 
                             <!-- Controles -->
-                            <!-- Input cantidad -->
                             <input type="number" value="{{ $item->cantidad }}" min="1" max="{{ $item->producto->stock }}"
                                 class="cantidad-input w-16 text-center border-3 border-gray-800 rounded-lg" data-id="{{ $item->id }}">
                             <!-- Botón actualizar -->

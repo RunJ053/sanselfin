@@ -74,7 +74,7 @@ class ImfoProductosSeeder extends Seeder
                 'codigo_promocion' => 'AMOR2025',
                 'nombre_promocion' => 'Amor y Amistad',
                 'descripcion' => 'Promoción del amor y la amistad',
-                'descuento' => 0.00,
+                'descuento' => 5.00,
                 'fecha_inicio' => null,
                 'fecha_fin' => null,
                 'created_at' => now(),
@@ -85,7 +85,7 @@ class ImfoProductosSeeder extends Seeder
                 'codigo_promocion' => 'MADRE2025',
                 'nombre_promocion' => 'Día de la Madre',
                 'descripcion' => 'Promoción día madre',
-                'descuento' => 0.00,
+                'descuento' => 8.00,
                 'fecha_inicio' => null,
                 'fecha_fin' => null,
                 'created_at' => now(),
@@ -96,7 +96,7 @@ class ImfoProductosSeeder extends Seeder
                 'codigo_promocion' => 'PADRE2025',
                 'nombre_promocion' => 'Día del Padre',
                 'descripcion' => 'Promoción día padre',
-                'descuento' => 0.00,
+                'descuento' => 8.00,
                 'fecha_inicio' => null,
                 'fecha_fin' => null,
                 'created_at' => now(),
@@ -107,15 +107,13 @@ class ImfoProductosSeeder extends Seeder
                 'codigo_promocion' => 'NAVIDAD2025',
                 'nombre_promocion' => 'Navidad',
                 'descripcion' => 'Promoción de navidad',
-                'descuento' => 0.00,
+                'descuento' => 10.00,
                 'fecha_inicio' => null,
                 'fecha_fin' => null,
                 'created_at' => now(),
                 'updated_at' => now()
             ]
         ]);
-
-
 
         Categoria::insert([
             [
@@ -152,8 +150,7 @@ class ImfoProductosSeeder extends Seeder
 
         // Insertar datos en la tabla opciones_entrega
         OpcionEntrega::insert([
-            ['nombre_opcion' => 'Envío Estándar', 'costo' => 10000, 'descripcion' => 'Entrega en 2-3 días hábiles', 'estado_id' => 1, 'created_at' => now(), 'updated_at' => now()],
-            ['nombre_opcion' => 'Envío Adomicilio', 'costo' => 15000, 'descripcion' => 'Entrega directo a tu casa', 'estado_id' => 1, 'created_at' => now(), 'updated_at' => now()],
+            ['nombre_opcion' => 'Envío Adomicilio', 'costo' => 8000, 'descripcion' => 'Entrega directo a tu casa', 'estado_id' => 1, 'created_at' => now(), 'updated_at' => now()],
             ['nombre_opcion' => 'Recogida en Tienda', 'costo' => 0, 'descripcion' => 'Recoge tu pedido en nuestra tienda física', 'estado_id' => 1, 'created_at' => now(), 'updated_at' => now()],
         ]);
     }
