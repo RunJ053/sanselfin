@@ -2,13 +2,8 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Models\Producto;
 use App\Models\Categoria;
-use App\Models\Estado;
-use App\Models\CarritoCompra;
-use App\Models\Notificacion;
-use App\Models\Impuesto;
 use App\Models\Estado;
 use App\Models\CarritoCompra;
 use App\Models\Notificacion;
@@ -28,24 +23,13 @@ class ProductoController extends Controller
         $inventarios = Producto::with(['categorias', 'impuestos', 'promociones'])
             ->paginate(10);
         $totalProductos = Producto::count();
-{
-    try {
-        $inventarios = Producto::with(['categorias', 'impuestos', 'promociones'])
-            ->paginate(10);
-        $totalProductos = Producto::count();
         $categorias = Categoria::all();
         $promociones = Promocion::all();
 
         return view('admin.inventario', compact('inventarios', 'categorias', 'totalProductos','promociones'));
     } catch (\Exception $e) {
         return redirect()->back()->with('error', 'Ocurrió un problema al cargar los inventarios.');
-
-        return view('admin.inventario', compact('inventarios', 'categorias', 'totalProductos', 'impuestos', 'promociones'));
-    } catch (\Exception $e) {
-        return redirect()->back()->with('error', 'Ocurrió un problema al cargar los inventarios.');
     }
-}
-
 }
 
 
@@ -72,8 +56,6 @@ class ProductoController extends Controller
             'descripcion' => 'required|string',
             'valor_unitario' => 'required|numeric',
             'cantidad' => 'required|integer|min:1',
-            'cantidad' => 'required|integer|min:1',
-            'Impuesto' => 'required|integer',
             'Promocion' => 'required|integer',
             'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
@@ -85,10 +67,8 @@ class ProductoController extends Controller
         $prod->categoria_id = $request->Categoria;
         $prod->descripccion = $request->descripcion;
         $prod->stock = $request->cantidad;
-        $prod->stock = $request->cantidad;
         $prod->precio_unitario = $request->valor_unitario;
         $prod->descuento_id = $request->Promocion;
-        $prod->estado_id = 1;
         $prod->estado_id = 1;
 
         if ($request->hasFile('imagen')) {
@@ -108,11 +88,8 @@ class ProductoController extends Controller
         $categorias = Categoria::all();
         $producto = Producto::findOrFail($producto->id);
         $estado = Estado::where('id', $producto->estado_id)->first();
-        $estado = Estado::where('id', $producto->estado_id)->first();
-        $impuestos = Impuesto::all();
         $promociones = Promocion::all();
         return view('admin.edit_produc', compact('producto', 'categorias', 'promociones', 'estado'));
-        return view('admin.edit_produc', compact('producto', 'categorias', 'impuestos', 'promociones', 'estado'));
     }
     /**
      * Display a listing of the resource for users.
@@ -127,29 +104,12 @@ class ProductoController extends Controller
         $carritoCount = CarritoCompra::where('usuario', $userId)->count('cantidad'); 
         try {
             $perPage = 12;
-    {
-        $userId = auth()->id();
-        $notificaciones = Notificacion::where('usuario_id', $userId)->orderBy('created_at', 'desc')->get();
-        try {
-            $perPage = 12;
 
             $query = Producto::with(['categorias', 'promociones'])
                 ->whereHas('estados', function ($q) {
                     $q->where('desc_estado', 'Activo');
                 })->where('stock', '>', 5); // Solo productos con más de 5 disponibles
-            $query = Producto::with(['categorias', 'promociones'])
-                ->whereHas('estados', function ($q) {
-                    $q->where('desc_estado', 'Activo');
-                })->where('stock', '>', 5); // Solo productos con más de 5 disponibles
 
-            // --- Filtrar por categoría ---
-            if ($request->has('categoria') && $request->categoria !== 'all') {
-                $categoriaNombre = $request->categoria;
-                $categoria = Categoria::where('nombre', $categoriaNombre)->first();
-                if ($categoria) {
-                    $query->where('categoria_id', $categoria->id);
-                }
-            }
             // --- Filtrar por categoría ---
             if ($request->has('categoria') && $request->categoria !== 'all') {
                 $categoriaNombre = $request->categoria;
@@ -167,22 +127,10 @@ class ProductoController extends Controller
                         ->orWhere('descripccion', 'like', '%' . $searchTerm . '%');
                 });
             }
-            // --- Buscar por nombre o descripción ---
-            if ($request->has('search') && !empty($request->search)) {
-                $searchTerm = $request->search;
-                $query->where(function ($q) use ($searchTerm) {
-                    $q->where('nombre_producto', 'like', '%' . $searchTerm . '%')
-                        ->orWhere('descripccion', 'like', '%' . $searchTerm . '%');
-                });
-            }
 
             // --- APLICAR LA PAGINACIÓN ---
             $productosPaginados = $query->paginate($perPage);
-            // --- APLICAR LA PAGINACIÓN ---
-            $productosPaginados = $query->paginate($perPage);
 
-            $productosMapeados = $productosPaginados->getCollection()->map(function ($producto) {
-                $precioUnitario = $producto->precio_unitario;
             $productosMapeados = $productosPaginados->getCollection()->map(function ($producto) {
                 $precioUnitario = $producto->precio_unitario;
 
@@ -192,27 +140,10 @@ class ProductoController extends Controller
                 if ($producto->promociones && $producto->promociones->descuento > 0) {
                     $precioUnitario = $precioUnitario * (1 - ($producto->promociones->descuento / 100));
                 }
-                // Obtener el impueto que tiene cada producto
-                $impuesto = $producto->impuestos ? $producto->impuestos->porcentaje : 0;
-
-                if ($producto->promociones && $producto->promociones->descuento > 0) {
-                    $precioUnitario = $precioUnitario * (1 - ($producto->promociones->descuento / 100));
-                }
 
                 $imagenPath = 'img/product/' . $producto->imagen;
                 $imagenUrl = asset($imagenPath);
-                $imagenPath = 'img/product/' . $producto->imagen;
-                $imagenUrl = asset($imagenPath);
 
-                if (empty($producto->imagen) || !file_exists(public_path($imagenPath))) {
-                    $imagenUrl = asset('img/es_de_frutas_y_verduas_1.webp');
-                }
-
-                // calcular el precio con impuesto incluido
-                $productoTotal = $producto->precio_unitario + ($producto->precio_unitario * $impuesto / 100);
-
-                // Calificación real: promedio de reseñas
-                $promedioResenas = round($producto->resenas()->avg('calificacion')) ?? 0;
                 if (empty($producto->imagen) || !file_exists(public_path($imagenPath))) {
                     $imagenUrl = asset('img/es_de_frutas_y_verduas_1.webp');
                 }
@@ -235,26 +166,10 @@ class ProductoController extends Controller
                     'descuento_porcentaje' => $producto->promociones ? $producto->promociones->porcentaje_descuento : 0,
                 ];
             });
-                return [
-                    'id' => $producto->id,
-                    'nombre' => $producto->nombre_producto,
-                    'descripcion' => $producto->descripccion,
-                    'valor' => number_format($productoTotal, 0, ',', '.'),
-                    'precio_base' => $producto->precio_unitario,
-                    'imagen' => $imagenUrl,
-                    'rating' => $promedioResenas,
-                    'descuento' => $producto->promociones && $producto->promociones->porcentaje_descuento > 0,
-                    'descuento_porcentaje' => $producto->promociones ? $producto->promociones->porcentaje_descuento : 0,
-                ];
-            });
 
-            $productosPaginados->setCollection($productosMapeados);
             $productosPaginados->setCollection($productosMapeados);
 
             $categorias = Categoria::all();
-            $categorias = Categoria::all();
-            $carritoCount = CarritoCompra::where('usuario', $userId)->count('cantidad'); 
-
 
             if ($request->ajax()) {
                 $htmlProductos = view('partials.productos_list', [
@@ -262,13 +177,6 @@ class ProductoController extends Controller
                     'searchTerm' => $request->search,
                     'currentFilter' => $request->categoria
                 ])->render();
-            if ($request->ajax()) {
-                $htmlProductos = view('partials.productos_l
-                ist', [
-                    'productos' => $productosPaginados->items(),
-                    'searchTerm' => $request->search,
-                    'currentFilter' => $request->categoria
-                ])->render();
 
                 return response()->json([
                     'html' => $htmlProductos,
@@ -276,26 +184,6 @@ class ProductoController extends Controller
                     'pagination' => (string) $productosPaginados->links()
                 ]);
             }
-                return response()->json([
-                    'html' => $htmlProductos,
-                    'productCount' => $productosPaginados->total(),
-                    'pagination' => (string) $productosPaginados->links()
-                ]);
-            }
-
-            return view('producto', [
-                'productos' => $productosPaginados,
-                'categoriaId' => $categorias,
-                'currentCategory' => $request->categoria ?? 'all',
-                'searchTerm' => $request->search ?? '',
-                'notificaciones' => $notificaciones,
-                'carritoCount' => $carritoCount
-            ]);
-        } catch (\Exception $e) {
-            // Si algo falla, retornamos la vista vacía con mensaje
-            return back()->with('error', 'Error al cargar los productos: ' . $e->getMessage());
-        }
-    }
 
             return view('producto', [
                 'productos' => $productosPaginados,
@@ -343,34 +231,20 @@ class ProductoController extends Controller
         // Calificación real: promedio de reseñas
         $promedioResenas = round($producto->resenas()->avg('calificacion')) ?? 0;
 
-
-        // Obtener el impueto que tiene cada producto
-        $impuesto = $producto->impuestos ? $producto->impuestos->porcentaje : 0;
-
-        // calcular el precio con impuesto incluido
-        $productoTotal = $producto->precio_unitario + ($producto->precio_unitario * $impuesto / 100);
-
-        // Calificación real: promedio de reseñas
-        $promedioResenas = round($producto->resenas()->avg('calificacion')) ?? 0;
-
         return [
             'id' => $producto->id,
             'nombre' => $producto->nombre_producto,
             'descripcion' => $producto->descripccion,
             'valor' => '$' . number_format($productoTotal, 0, ',', '.'),
-            'valor' => '$' . number_format($productoTotal, 0, ',', '.'),
             'precio_base' => $producto->precio_unitario,
             'imagen' => $imagenUrl,
             'stock' => $producto->stock,
-            'stock' => $producto->stock,
             'categoria' => $producto->categoria ? $producto->categoria->nombre : 'Sin Categoría',
-            'rating' => $promedioResenas,
             'rating' => $promedioResenas,
             'descuento' => $producto->descuento_id !== null,
             'descuento_porcentaje' => $producto->descuento ? $producto->descuento->porcentaje_descuento : 0,
         ];
     }
-
 
 
     /**
@@ -379,7 +253,6 @@ class ProductoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, Producto $producto)
     public function update(Request $request, Producto $producto)
     {
         // Validación de los datos del formulario
@@ -390,7 +263,6 @@ class ProductoController extends Controller
             'valor_unitario' => 'required|numeric',
             'Promocion' => 'required|integer',
             'cantidad' => 'required|integer|min:1',
-            'cantidad' => 'required|integer|min:1',
             'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
@@ -400,8 +272,6 @@ class ProductoController extends Controller
         $producto->precio_unitario = $request->valor_unitario;
         $producto->categoria_id = $request->Categoria;
         $producto->stock = $request->cantidad;
-        $producto->stock = $request->cantidad;
-        $producto->impuesto_id = $request->Impuesto;
         $producto->descuento_id = $request->Promocion;
 
         // Subir imagen si existe

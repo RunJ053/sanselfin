@@ -13,7 +13,7 @@ class PedidoController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        return view('pedidos.index', compact('pedidos'));
+        return view('admin.pedidos', compact('pedidos'));
     }
 
     public function show($id)
@@ -21,7 +21,8 @@ class PedidoController extends Controller
         $pedido = Pedido::with(['usuario', 'detalles.producto'])
             ->findOrFail($id);
 
-        return view('admin.pedidos', compact('pedido'));
+        return view('admin.ver_pedido', compact('pedido'));
     }
+
 }
 

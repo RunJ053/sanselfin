@@ -32,10 +32,11 @@ class Usuario extends Model
     ];
 
     // Relación con tipo de documento
-    public function tipoDocumento()
+    public function tipos_documentos()
     {
         return $this->belongsTo(TipoDocumento::class, 'tipo_docu', 'id');
     }
+
 
     // Relación con genero
     public function genero()
