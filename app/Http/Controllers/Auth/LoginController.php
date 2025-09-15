@@ -62,10 +62,16 @@ class LoginController extends Controller
         $notificaciones = Notificacion::where('usuario_id', $usuarioId)
             ->orderBy('created_at', 'desc')
             ->get();
-        
-        $carritoCount = CarritoCompra::where('usuario', $usuarioId)->count('cantidad'); 
+
+        $carritoCount = CarritoCompra::where('usuario', $usuarioId)->count('cantidad');
 
         $detallePedidos = DetallePedido::whereIn('pedidos', $pedidosUsuario->pluck('id'))->get();
+
+        $ultimosPedidos = Pedido::with(['detalles.producto', 'estado'])
+            ->where('usuario', $usuarioId)
+            ->orderBy('created_at', 'desc')
+            ->take(3)
+            ->get();
 
         return view('user.perfil', compact(
             'usuario',
@@ -74,7 +80,8 @@ class LoginController extends Controller
             'gastoMensual',
             'promedioGasto',
             'pedidosUsuario',
-            'carritoCount'
+            'carritoCount',
+            'ultimosPedidos',
         ));
     }
 }

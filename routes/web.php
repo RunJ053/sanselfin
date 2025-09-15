@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Route;
 use App\Models\Promocion;
 use App\Models\Producto;
 use App\Models\Notificacion;
+use App\Models\ResenaProducto;
 use App\Models\CarritoCompra;
 
 //inicio de paginas
@@ -50,8 +51,7 @@ Route::POST('/logout', [AuthController::class, 'logout'])->name('logout')->middl
 
 // Esta es la ruta que tu controlador de registro necesita
 Route::GET('/check-email', [VerificationController::class, 'checkEmail'])->name('user.checkEmail');
-// Reenvio del tokent
-Route::post('/resend-verification', [VerificationController::class, 'resendVerification'])->name('verification.resend');
+
 // Esta es la ruta a la que el usuario hará clic en el correo
 Route::GET('/verify/{token}', [VerificationController::class, 'verifyUser'])->name('verification.verify');
 
@@ -71,7 +71,10 @@ Route::middleware(['auth'])->group(function () {
         $notificaciones = Notificacion::where('usuario_id', auth()->id())->orderBy('created_at', 'desc')->get();
         $promociones = Promocion::latest()->take(3)->get();
         $carritoCount = CarritoCompra::where('usuario', auth()->id())->count();
-        return view('index2', compact('productos', 'notificaciones', 'promociones', 'carritoCount'));
+        // Traer reseñas más recientes con relación usuario y producto
+        $resenas = ResenaProducto::with('usuario', 'producto')->latest()
+        ->take(10) ->get();
+        return view('index2', compact('productos', 'notificaciones', 'promociones', 'carritoCount', 'resenas'));
     })->name('user.dashboard');
 
     // Notificaciones

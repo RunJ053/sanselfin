@@ -52,6 +52,7 @@ function updateNavigation(activeModuleId) {
         const moduleIds = [
             "overview",
             "orders",
+            "resena",
             "profile",
             "addresses",
         ];
@@ -70,6 +71,7 @@ function updateNavigation(activeModuleId) {
         const moduleIds = [
             "overview",
             "orders",
+            "resena",
             "profile",
             "addresses",
         ];

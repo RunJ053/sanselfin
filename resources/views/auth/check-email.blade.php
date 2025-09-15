@@ -56,13 +56,6 @@
             <div class="mt-4">
                 <p class="text-muted small fw-bold">
                     ¿No lo ves? Revisa tu carpeta de spam
-                <form action="{{ route('verification.resend') }}" method="POST" style="display:inline;">
-                    @csrf
-                    <input type="hidden" name="email" value="{{ session('email') ?? old('email') }}">
-                    <button type="submit" class="btn btn-link p-0 m-0 align-baseline fw-bold text-success">
-                        o reenviar correo
-                    </button>
-                </form>
                 </p>
             </div>
         </div>

@@ -84,7 +84,6 @@ class AuthController extends Controller
 
     protected function registerUser(Request $request)
     {
-        // ✅ Validación directa en el controlador
         $request->validate([
             'nombre'     => 'required|string|min:3|max:50',
             'apellido'   => 'required|string|min:3|max:50',
@@ -102,7 +101,6 @@ class AuthController extends Controller
                 'regex:/[@$!%*#?&.]/' // al menos un carácter especial
             ],
         ], [
-            // ✅ Mensajes personalizados
             'nombre.required' => 'El nombre es obligatorio.',
             'apellido.required' => 'El apellido es obligatorio.',
             'direccion.required' => 'La dirección es obligatoria.',
@@ -123,7 +121,6 @@ class AuthController extends Controller
         ]);
 
         try {
-            // ✅ Si llega aquí, ya pasó la validación
             if (DatoUsuario::where('email', $request->email)->exists()) {
                 return back()->withErrors(['email' => 'El correo electrónico ya está registrado.']);
             }

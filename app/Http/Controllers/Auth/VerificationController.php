@@ -71,35 +71,4 @@ class VerificationController extends Controller
         // Redirige al dashboard del usuario con un mensaje de éxito
         return redirect()->route('user.dashboard')->with('success', '¡Tu correo ha sido verificado exitosamente! Bienvenido.');
     }
-
-    public function resendVerification(Request $request)
-    {
-        $user = Auth::user() ?? DatoUsuario::where('email', $request->email)->first();
-
-        if (!$user) {
-            return back()->withErrors(['email' => 'No se encontró el usuario.']);
-        }
-
-        if ($user->is_verified) {
-            return back()->with('message', 'Tu cuenta ya está verificada. Puedes iniciar sesión.');
-        }
-
-        // Eliminar token anterior
-        UserVerificationCode::where('user_id', $user->id)->delete();
-
-        // Crear nuevo token
-        $token = Str::random(60);
-        $expiresAt = now()->addMinutes(10);
-
-        UserVerificationCode::create([
-            'user_id'    => $user->id,
-            'token'      => $token,
-            'expires_at' => $expiresAt,
-        ]);
-
-        // Reenviar correo
-        Mail::to($user->email)->send(new UserVerificationMail($token, $user->nombre));
-
-        return back()->with('message', 'Se ha enviado un nuevo correo de verificación.');
-    }
 }
