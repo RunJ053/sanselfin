@@ -2,22 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Pedido;
+
 use App\Models\FacturaCabecera;
 use App\Models\Notificacion;
 use App\Models\DatoUsuario;
 use App\Models\CarritoCompra;
 use App\Models\Pedido;
-use App\Models\FacturaCabecera;
-use App\Models\Notificacion;
-use App\Models\DatoUsuario;
-use App\Models\CarritoCompra;
 use App\Models\FacturaDetalle;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
-use Barryvdh\DomPDF\Facade\Pdf;
+
 
 class FacturaDetalleController extends Controller
 {

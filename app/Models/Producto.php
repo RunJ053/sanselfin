@@ -22,7 +22,7 @@ class Producto extends Model
         'estado_id',
         'nombre_producto',
         'stock',
-        'descripccion',
+        'unidad_medida_id',
         'precio_unitario',
     ];
 
@@ -40,6 +40,14 @@ class Producto extends Model
     public function estados()
     {
         return $this->belongsTo(Estado::class, 'estado_id');
+    }
+
+    /**
+     * Relación con Unidad de Medida.
+     */
+    public function unidadMedida()
+    {
+        return $this->belongsTo(UnidadMedida::class, 'unidad_medida_id');
     }
 
     public function resenas()

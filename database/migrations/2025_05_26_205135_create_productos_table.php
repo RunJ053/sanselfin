@@ -13,6 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
+        Schema::create('unidades_medida', function (Blueprint $table) {
+            $table->id();
+            $table->string('nombre'); // Ej: Kilogramo, Gramo, Litro, Libra
+            $table->string('abreviatura', 10); // Ej: Kg, g, L, lb
+            $table->timestamps();
+        });
+
         Schema::create('productos', function (Blueprint $table) {
             $table->id();
             $table->foreignId('descuento_id')->constrained('promociones')->onDelete('cascade')->nullable();
@@ -20,7 +27,8 @@ return new class extends Migration
             $table->foreignId('estado_id')->constrained('estados')->onDelete('cascade')->default(1);
             $table->string('nombre_producto');
             $table->integer('stock')->default(0);
-            $table->text('descripccion')->nullable();
+            $table->string('descripccion');
+            $table->foreignId('unidad_medida_id')->constrained('unidades_medida')->onDelete('cascade');
             $table->string('imagen')->nullable();
             $table->decimal('precio_unitario',10,2)->default(0.00);
             $table->timestamps();
@@ -34,6 +42,9 @@ return new class extends Migration
      */
     public function down()
     {
+        
+
         Schema::dropIfExists('productos');
+    Schema::dropIfExists('unidades_medida');
     }
 };
