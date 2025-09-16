@@ -12,6 +12,8 @@ use App\Models\DatoUsuario;
 use App\Models\TipoCliente;
 use App\Models\UserVerificationCode;
 use App\Models\Producto;
+use App\Models\UserVerificationCode;
+use App\Models\Producto;
 
 
 use Illuminate\Support\Facades\DB;
@@ -19,6 +21,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Log;
 
 use App\Http\Requests\RegisterUserRequest;
@@ -77,6 +80,8 @@ class AuthController extends Controller
             Auth::login($user);
             $request->session()->regenerate();
             session(['usuario_id' => $user->id, 'nombre_usuario' => $user->nombre, 'nombre_img' => $user->user_img]);
+            $productos = Producto::latest()->take(22)->get();
+            return view('index2', compact('productos'));
             $productos = Producto::latest()->take(22)->get();
             return view('index2', compact('productos'));
         }

@@ -18,17 +18,11 @@ class ProductoController extends Controller
      *
      */
     public function index()
-{
-    try {
-        $inventarios = Producto::with(['categorias', 'impuestos', 'promociones'])
-            ->paginate(10);
-        $totalProductos = Producto::count();
+    {
+        $inventarios = Producto::with(['categorias', 'impuestos', 'promociones'])->get();
         $categorias = Categoria::all();
         $promociones = Promocion::all();
-
-        return view('admin.inventario', compact('inventarios', 'categorias', 'totalProductos','promociones'));
-    } catch (\Exception $e) {
-        return redirect()->back()->with('error', 'Ocurrió un problema al cargar los inventarios.');
+        return view('admin.inventario', compact('inventarios', 'categorias', 'impuestos', 'promociones'));
     }
 }
 

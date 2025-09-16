@@ -11,6 +11,12 @@ use App\Models\CarritoCompra;
 use Carbon\Carbon;
 use App\Models\Pedido;
 use App\Models\DetallePedido;
+use App\Models\DatoUsuario;
+use App\Models\Notificacion;
+use App\Models\CarritoCompra;
+use Carbon\Carbon;
+use App\Models\Pedido;
+use App\Models\DetallePedido;
 
 class LoginController extends Controller
 {
@@ -20,11 +26,14 @@ class LoginController extends Controller
             return redirect()->route('user.dashboard');
         }
 
+
         return view("auth.login");
     }
 
     public function myProfile()
+    public function myProfile()
     {
+        if (!Auth::check()) {
         if (!Auth::check()) {
             return redirect()->route('login')->withErrors(['login_error' => 'Debe iniciar sesión primero']);
         }

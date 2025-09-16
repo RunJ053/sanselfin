@@ -61,6 +61,11 @@ class DatoUsuario extends Model implements Authenticatable // Implementa la inte
         return $this->hasMany(Notificacion::class, 'usuario_id');
     }
 
+    public function tipos_clientes()
+    {
+        return $this->belongsTo(TipoCliente::class, 'role', 'id');
+    } 
+
     /**
      * Define la relación con el código de verificación.
      * Un usuario tiene un código de verificación (o puede tener uno).

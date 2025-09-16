@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Usuario;
+use app\Models\DatoUsuario;
 use App\Models\TipoDocumento;
 use App\Models\Genero;
 use App\Models\Localidad;
@@ -13,29 +13,30 @@ use Illuminate\Http\Request;
 class AdminController extends Controller
 {
     /**
-     * Mostrar listado de usuarios
+     * Mostrar listado de usuarios con paginación
      */
-        public function index()
-        {
-            $usuarios = Usuario::with(['tipoDocumento', 'genero', 'localidad'])->get();
-            $inventarios = Producto::all(); 
-            $categorias = Categoria::all();
+    public function index()
+    {
+        $usuarios =DatoUsuario ::with(['tipoDocumento', 'genero', 'datoslocalidad'])
+                           ->paginate(10);
 
-            return view('admin.usuarios', compact('usuarios', 'inventarios', 'categorias'));
-        }
+        $inventarios = Producto::all(); 
+        $categorias = Categoria::all();
 
+        return view('admin.usuarios', compact('usuarios', 'inventarios', 'categorias'));
+    }
 
     /**
      * Mostrar formulario de crear usuario
      */
     public function create()
     {
-        $tiposDocumentos = TipoDocumento::all();
-        $generos = Genero::all();
+        $tipos_doc   = TipoDocumento::all();
+        $generos     = Genero::all();
         $localidades = Localidad::all();
         $inventarios = Producto::all();
 
-        return view('admin.usuarios_create', compact('tiposDocumentos', 'generos', 'localidades', 'inventarios'));
+        return view('admin.new_usuario', compact('tipos_doc', 'generos', 'localidades', 'inventarios'));
     }
 
     /**
@@ -44,28 +45,27 @@ class AdminController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nombre'        => 'required|string|max:255',
-            'apellidos'     => 'required|string|max:255',
-            'direccion'     => 'required|string|max:255',
-            'tipo_docu'     => 'required|integer|exists:tipo_docu,id',
-            'tipo_de_genero'=> 'required|integer|exists:generos,id',
-            'documento'     => 'required|string|max:50|unique:datos_usuario,documento',
-            'edad'          => 'required|nullable|date',
-            'telefono'      => 'nullable|string|max:20',
-            'email'         => 'required|email|unique:datos_usuario,email',
-            'localidad'     => 'required|integer|exists:localidades,id',
-            'password'      => 'required|string|min:6|confirmed',
-            'user_img'      => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
+            'nombre'         => 'required|string|max:255',
+            'apellidos'      => 'required|string|max:255',
+            'direccion'      => 'required|string|max:255',
+            'tipo_docu'      => 'required|integer|exists:tipos_documentos,id',
+            'tipo_de_genero' => 'required|integer|exists:generos,id',
+            'documento'      => 'required|string|max:50|unique:datos_usuario,documento',
+            'edad'           => 'required|date',
+            'role'=>'required|integer|in:1,2', // 1: Usuario, 2: Admin
+            'telefono'       => 'nullable|string|max:20',
+            'email'          => 'required|email|unique:datos_usuario,email',
+            'localidad'      => 'required|integer|exists:localidades,id',
+            'user_img'       => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
         ]);
 
         $data = $request->all();
-        $data['password'] = bcrypt($request->password);
 
         if ($request->hasFile('user_img')) {
             $data['user_img'] = $request->file('user_img')->store('usuarios', 'public');
         }
 
-        Usuario::create($data);
+        DatoUsuario::create($data);
 
         return redirect()->route('usuario.index')->with('success', 'Usuario creado correctamente');
     }
@@ -75,10 +75,10 @@ class AdminController extends Controller
      */
     public function edit($id)
     {
-        $usuario = Usuario::findOrFail($id);
+        $usuario       = DatoUsuario::findOrFail($id);
         $tiposDocumentos = TipoDocumento::all();
-        $generos = Genero::all();
-        $localidades = Localidad::all();
+        $generos       = Genero::all();
+        $localidades   = Localidad::all();
 
         return view('admin.usuarios_edit', compact('usuario', 'tiposDocumentos', 'generos', 'localidades'));
     }
@@ -88,29 +88,23 @@ class AdminController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $usuario = Usuario::findOrFail($id);
+        $usuario = DatoUsuario::findOrFail($id);
 
         $request->validate([
-            'nombre'        => 'required|string|max:255',
-            'apellidos'     => 'required|string|max:255',
-            'direccion'     => 'required|string|max:255',
-            'tipo_docu'     => 'required|integer|exists:tipos_documentos,id',
-            'tipo_de_genero'=> 'required|integer|exists:generos,id',
-            'documento'     => 'required|string|max:50|unique:datos_usuario,documento,' . $usuario->id,
-            'edad'          => 'required|nullable|date',
-            'telefono'      => 'nullable|string|max:20',
-            'email'         => 'required|email|unique:datos_usuario,email,' . $usuario->id,
-            'localidad'     => 'required|integer|exists:localidades,id',
-            'password'      => 'nullable|string|min:6|confirmed',
-            'user_img'      => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
+            'nombre'         => 'required|string|max:255',
+            'apellidos'      => 'required|string|max:255',
+            'direccion'      => 'required|string|max:255',
+            'tipo_docu'      => 'required|integer|exists:tipos_documentos,id',
+            'tipo_de_genero' => 'required|integer|exists:generos,id',
+            'documento'      => 'required|string|max:50|unique:datos_usuario,documento,' . $usuario->id,
+            'edad'           => 'required|date',
+            'telefono'       => 'nullable|string|max:20',
+            'email'          => 'required|email|unique:datos_usuario,email,' . $usuario->id,
+            'localidad'      => 'required|integer|exists:localidades,id',
+            'user_img'       => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
         ]);
 
         $data = $request->all();
-        if ($request->filled('password')) {
-            $data['password'] = bcrypt($request->password);
-        } else {
-            unset($data['password']);
-        }
 
         if ($request->hasFile('user_img')) {
             $data['user_img'] = $request->file('user_img')->store('usuarios', 'public');
@@ -126,7 +120,7 @@ class AdminController extends Controller
      */
     public function destroy($id)
     {
-        $usuario = Usuario::findOrFail($id);
+        $usuario = DatoUsuario::findOrFail($id);
         $usuario->delete();
 
         return redirect()->route('usuario.index')->with('success', 'Usuario eliminado correctamente');

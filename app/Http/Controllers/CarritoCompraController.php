@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CarritoCompra;
 use App\Models\Producto;
+use App\Models\Notificacion;
 use Illuminate\Http\Request;
 use App\Models\Notificacion;
 use Illuminate\Support\Facades\Auth;
@@ -14,6 +15,7 @@ class CarritoCompraController extends Controller
     public function index()
     {
         if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'Debes iniciar sesión para ver tu carrito.');
             return redirect()->route('login')->with('error', 'Debes iniciar sesión para ver tu carrito.');
         }
 
@@ -75,7 +77,9 @@ class CarritoCompraController extends Controller
         }
 
         $userId     = Auth::id();
+        $userId     = Auth::id();
         $productoId = $request->input('producto_id');
+        $cantidad   = $request->input('cantidad');
         $cantidad   = $request->input('cantidad');
 
         try {
@@ -85,7 +89,10 @@ class CarritoCompraController extends Controller
             }
 
             // Ítem existente en carrito
+            // Ítem existente en carrito
             $itemExistente = CarritoCompra::where('usuario', $userId)
+                ->where('producto_id', $productoId)
+                ->first();
                 ->where('producto_id', $productoId)
                 ->first();
 
@@ -142,10 +149,13 @@ class CarritoCompraController extends Controller
 
             return response()->json([
                 'message'    => 'Producto añadido al carrito exitosamente.',
+                'message'    => 'Producto añadido al carrito exitosamente.',
                 'cart_count' => $cartCount,
+                'status'     => 'success',
                 'status'     => 'success',
             ]);
         } catch (\Exception $e) {
+            return response()->json(['message' => 'Error al añadir el producto al carrito.'], 500);
             return response()->json(['message' => 'Error al añadir el producto al carrito.'], 500);
         }
     }
@@ -158,14 +168,21 @@ class CarritoCompraController extends Controller
     public function getCartCount()
     {
         if (!Auth::check()) {
-            return response()->json(['cart_count' => 0]); // O podrías devolver 401 si prefieres
+            return response()->json(['cart_count' => 0]);
         }
         $userId = Auth::id();
         $cartCount = CarritoCompra::where('usuario', $userId)->sum('cantidad');
         return response()->json(['cart_count' => $cartCount]);
     }
 
+
     public function update(Request $request, $itemId)
+    {
+        $request->validate([
+            'cantidad' => 'required|integer|min:1'
+        ], [
+            'cantidad.min' => 'La cantidad debe ser al menos 1.'
+        ]);
     {
         $request->validate([
             'cantidad' => 'required|integer|min:1'
@@ -176,7 +193,13 @@ class CarritoCompraController extends Controller
         $item = CarritoCompra::where('id', $itemId)
             ->where('usuario', Auth::id())
             ->first();
+        $item = CarritoCompra::where('id', $itemId)
+            ->where('usuario', Auth::id())
+            ->first();
 
+        if (!$item) {
+            return response()->json(['message' => 'Producto en el carrito no encontrado.'], 404);
+        }
         if (!$item) {
             return response()->json(['message' => 'Producto en el carrito no encontrado.'], 404);
         }
@@ -246,6 +269,8 @@ class CarritoCompraController extends Controller
             $cartCount = CarritoCompra::where('usuario', Auth::id())->sum('cantidad');
 
             return response()->json([
+                'message' => 'Producto eliminado del carrito 🗑️',
+                'cart_count' => $cartCount
                 'message' => 'Producto eliminado del carrito 🗑️',
                 'cart_count' => $cartCount
             ]);
