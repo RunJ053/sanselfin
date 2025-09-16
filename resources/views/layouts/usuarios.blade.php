@@ -9,6 +9,8 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="{{ asset('css/INVENTARIO.CSS') }}">
   <link rel="stylesheet" href="{{ asset('css/footer.css') }}">
+  <!-- DataTables -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
 </head>
 <body>
 
@@ -159,9 +161,6 @@
   margin: 0 auto 12px auto;
 }
   </style>
-</head>
-
-<body>
   <!-- HEADER -->
   <header class="header-bar">
     <div class="d-flex align-items-center header-brand">
@@ -170,11 +169,6 @@
         <span class="brand-text">Finca al Día</span>
       </a>
     </div>
-
-    <!-- toggler móvil -->
-    <button class="nav-toggler ms-3 d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#topNav">
-      <span class="nav-toggler-icon" style="filter: invert(1)"></span>
-    </button>
 
     <!-- enlaces -->
     <nav class="ms-4 me-auto collapse d-md-flex nav-links" id="topNav">
@@ -193,16 +187,38 @@
           <i class="fas fa-user-circle me-1"></i>
           {{ session('nombre_usuario') ?? Auth::user()->nombre ?? Auth::user()->nomb_usu ?? 'Administrador' }}
         </div>
-
-      <a href="{{ route('admin.noti_admin') }}" class="btn btn-link text-white position-relative p-0" style="font-size: 1rem;">
-      <i class="fas fa-bell"></i>
-      @if(!empty($notificaciones) && count($notificaciones) > 0)
-        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+<!-- campana de notificaciones -->
+      <div class="dropdown d-inline-block">
+        <a href="#" class="btn btn-link text-white position-relative p-0" style="font-size: 1rem;" 
+          id="notiDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="fas fa-bell"></i>
+          @if(!empty($notificaciones) && count($notificaciones) > 0)
+          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
             {{ count($notificaciones) }}
-        </span>
-      @endif
-    </a>
+          </span>
+          @endif
+        </a>
 
+        <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="notiDropdown">
+          <li><h6 class="dropdown-header">Notificaciones</h6></li>
+          <li>
+            <a class="dropdown-item d-flex align-items-center" href="{{ route('pedidos.index') }}">
+              <i class="fas fa-shopping-cart me-2 text-primary"></i> Pedidos Recientes
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item d-flex align-items-center" href="{{ route('producto.index') }}">
+              <i class="fas fa-box-open me-2 text-warning"></i> Stock Bajo
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item d-flex align-items-center" href="{{ route('admin.dashboard') }}">
+              <i class="fas fa-tasks me-2 text-success"></i> Tareas Pendientes
+            </a>
+          </li>
+        </ul>
+      </div>
+      
         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:inline;">
           @csrf
           <button type="submit" class="logout-btn">
@@ -222,89 +238,55 @@
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>Gestión de Usuarios</h2>
     <a href="{{ route('usuario.create') }}" class="btn-nuevo">
-      <i class="fas fa-user-plus"></i>Nuevo Usuario
+      <i class="fas fa-user-plus"></i> Nuevo Usuario
     </a>
-  </div>
-
-  <!-- Estadísticas -->
-  <div class="row mb-4">
-    <div class="col-md-4">
-      <div class="card bg-success text-white shadow">
-        <div class="card-body">
-          <h5><i class="fas fa-users me-2"></i>Total Usuarios</h5>
-          <p class="fs-4">{{ count($usuarios) }}</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-4">
-      <div class="card bg-primary text-white shadow">
-        <div class="card-body">
-          <h5><i class="fas fa-boxes me-2"></i>Productos Totales</h5>
-          <p class="fs-4">{{ count($inventarios ?? []) }}</p>
-
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-4">
-      <div class="card bg-warning text-dark shadow">
-        <div class="card-body">
-          <h5><i class="fas fa-tags me-2"></i>Total Categorías</h5>
-          <p class="fs-4">{{ count($categorias) }}</p>
-        </div>
-      </div>
-    </div>
   </div>
 
   <!-- Tabla de usuarios -->
   <div class="table-responsive">
-    <table class="table table-striped table-hover">
+    <table id="usuariosTable" class="table table-striped table-hover align-middle">
       <thead class="table-dark">
-    <tr>
-        <th>#</th>
-        <th>Nombre</th>
-        <th>Apellidos</th>
-        <th>Dirección</th>
-        <th>Tipo de documento</th>
-        <th>Género</th>
-        <th>Teléfono</th>
-        <th>Correo</th>
-        <th>Localidad</th>
-        <th>Rol</th>
-        <th>Acciones</th>
-    </tr>
-</thead>
-<tbody>
-    @foreach ($usuarios as $user)
-    <tr>
-        <td>{{ $user->id }}</td>
-        <td>{{ $user->nombre }}</td>
-        <td>{{ $user->apellidos }}</td>
-        <td>{{ $user->direccion }}</td>
-        <td>{{ $user->tipoDocumento->descripcion ?? 'N/A' }}</td>
-        <td>{{ $user->genero->descripcion_gen ?? 'N/A' }}</td>
-        <td>{{ $user->telefono }}</td>
-        <td>{{ $user->email }}</td>
-        <td>{{ $user->datoslocalidad->descripcion ?? 'N/A' }}</td>
-        <td>{{ $user->tipos_clientes->role ?? 'N/A' }}</td>
-        <td>
-                <!-- Botón Editar -->
-                <a href="{{ route('usuario.edit', $user->id)}}" 
-                class="btn btn-sm btn-warning mb-1">
-                    <i class="fas fa-edit"></i>
-                </a>
+        <tr>
+          <th>#</th>
+          <th>Nombre</th>
+          <th>Apellidos</th>
+          <th>Dirección</th>
+          <th>Tipo de documento</th>
+          <th>Género</th>
+          <th>Teléfono</th>
+          <th>Correo</th>
+          <th>Localidad</th>
+          <th>Rol</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach ($usuarios as $user)
+        <tr>
+          <td>{{ $user->id }}</td>
+          <td>{{ $user->nombre }}</td>
+          <td>{{ $user->apellidos }}</td>
+          <td>{{ $user->direccion }}</td>
+          <td>{{ $user->tipoDocumento->descripcion ?? 'N/A' }}</td>
+          <td>{{ $user->genero->descripcion_gen ?? 'N/A' }}</td>
+          <td>{{ $user->telefono }}</td>
+          <td>{{ $user->email }}</td>
+          <td>{{ $user->datoslocalidad->descripcion ?? 'N/A' }}</td>
+          <td>{{ $user->tipos_clientes->role ?? 'N/A' }}</td>
+          <td>
+            <!-- Botón Editar -->
+            <a href="{{ route('usuario.edit', $user->id)}}" class="btn btn-sm btn-warning mb-1">
+              <i class="fas fa-edit"></i>
+            </a>
 
-                <!-- Botón Eliminar -->
-                <form action="{{ route('usuario.destroy', $user->id) }}" 
-                    method="POST" style="display:inline;">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-sm btn-danger mb-1" 
-                            onclick="return confirm('¿Estás seguro de eliminar este usuario?');">
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
-                </form>
+            <!-- Botón Eliminar -->
+            <form action="{{ route('usuario.destroy', $user->id) }}" method="POST" class="form-eliminar d-inline">
+              @csrf
+              @method('DELETE')
+              <button type="submit" class="btn btn-sm btn-danger btn-eliminar mb-1">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </form>
           </td>
         </tr>
         @endforeach
@@ -312,62 +294,138 @@
     </table>
   </div>
 
- <!-- Footer -->
-  <footer class="footer mt-5">
-    <div class="container">
-      <div class="footer-grid">
-        <div class="footer-section">
-          <img src="{{asset('img/logo/icon.png')}}" alt="Logo" class="footer-logo">
-          <p>Llevamos los productos más frescos del campo a tu mesa.</p>
-          <div class="social-links">
-            <a href="#"><i class="fab fa-facebook"></i></a>
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-whatsapp"></i></a>
+  <!-- Footer -->
+    <footer class="footer mt-5">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-section">
+            <img src="{{asset('img/logo/icon.png')}}" alt="Logo" class="footer-logo">
+            <p>Llevamos los productos más frescos del campo a tu mesa.</p>
+            <div class="social-links">
+              <a href="#"><i class="fab fa-facebook"></i></a>
+              <a href="#"><i class="fab fa-instagram"></i></a>
+              <a href="#"><i class="fab fa-whatsapp"></i></a>
+            </div>
+          </div>
+
+          <div class="footer-section">
+            <h3>Enlaces Rápidos</h3>
+            <a href="#">Nuestros Productos</a><br>
+            <a href="#">Recetas</a><br>
+            <a href="#">Blog</a><br>
+            <a href="#">Sobre Nosotros</a><br>
+            <a href="#">FAQ</a>
+          </div>
+
+          <div class="footer-section">
+            <h3>Contacto</h3>
+            <p><i class="fas fa-clock"></i> Lunes a Sábados, 8:00 a.m a 6:00 p.m</p>
+            <p><i class="fas fa-map-marker-alt"></i> [Tu dirección aquí]</p>
+            <p><i class="fas fa-envelope"></i> informacion@gmail.com</p>
+            <p><i class="fas fa-phone"></i> 300 123 4567</p>
+          </div>
+
+          <div class="footer-section">
+            <h3>Boletín Informativo</h3>
+            <p>Suscríbete para recibir ofertas y novedades frescas.</p>
+            <form class="newsletter-form">
+              <input type="email" placeholder="Tu correo electrónico" required>
+              <button type="submit" class="btn btn-success mt-2">Suscribirse</button>
+            </form>
           </div>
         </div>
+      </div>
 
-        <div class="footer-section">
-          <h3>Enlaces Rápidos</h3>
-          <a href="#">Nuestros Productos</a><br>
-          <a href="#">Recetas</a><br>
-          <a href="#">Blog</a><br>
-          <a href="#">Sobre Nosotros</a><br>
-          <a href="#">FAQ</a>
-        </div>
-
-        <div class="footer-section">
-          <h3>Contacto</h3>
-          <p><i class="fas fa-clock"></i> Lunes a Sábados, 8:00 a.m a 6:00 p.m</p>
-          <p><i class="fas fa-map-marker-alt"></i> [Tu dirección aquí]</p>
-          <p><i class="fas fa-envelope"></i> informacion@gmail.com</p>
-          <p><i class="fas fa-phone"></i> 300 123 4567</p>
-        </div>
-
-        <div class="footer-section">
-          <h3>Boletín Informativo</h3>
-          <p>Suscríbete para recibir ofertas y novedades frescas.</p>
-          <form class="newsletter-form">
-            <input type="email" placeholder="Tu correo electrónico" required>
-            <button type="submit" class="btn btn-success mt-2">Suscribirse</button>
-          </form>
+      <div class="footer-bottom">
+        <p class="mb-2">&copy; 2024 Finca al Día. Todos los derechos reservados.</p>
+        <div class="payment-methods">
+          <img src="img/logo/visa.png" alt="Visa">
+          <img src="img/logo/logo-Mastercard.png" alt="Mastercard">
+          <img src="img/logo/nequi.png" alt="Nequi">
         </div>
       </div>
-    </div>
+    </footer>
+  </div>
 
-    <div class="footer-bottom">
-      <p class="mb-2">&copy; 2024 Finca al Día. Todos los derechos reservados.</p>
-      <div class="payment-methods">
-        <img src="img/logo/visa.png" alt="Visa">
-        <img src="img/logo/logo-Mastercard.png" alt="Mastercard">
-        <img src="img/logo/nequi.png" alt="Nequi">
-      </div>
-    </div>
-  </footer>
-</div>
 
-<!-- Bootstrap JS -->
+<!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  // Inicializar DataTable
+  $('#usuariosTable').DataTable({
+    "language": {
+      "lengthMenu": "Mostrar _MENU_ registros por página",
+      "zeroRecords": "No se encontraron resultados",
+      "info": "Mostrando página _PAGE_ de _PAGES_",
+      "infoEmpty": "No hay registros disponibles",
+      "infoFiltered": "(filtrado de _MAX_ registros totales)",
+      "search": "Buscar:",
+      "paginate": {
+        "first": "Primero",
+        "last": "Último",
+        "next": "Siguiente",
+        "previous": "Anterior"
+      }
+    },
+    "pageLength": 10,
+    "lengthMenu": [5, 10, 25, 50, 100]
+  });
+
+  // SweetAlert2 para eliminar
+  const forms = document.querySelectorAll('.form-eliminar');
+  forms.forEach(form => {
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      Swal.fire({
+        title: '¿Estás seguro?',
+        text: "Este usuario será eliminado permanentemente.",
+        imageUrl: "{{ asset('img/logo/icon.png') }}", // Logo en alerta
+        imageWidth: 80,
+        imageHeight: 80,
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          form.submit();
+        }
+      });
+    });
+  });
+
+  // Alertas de éxito o error
+  @if(session('success'))
+    Swal.fire({
+      icon: 'success',
+      title: '¡Éxito!',
+      text: '{{ session('success') }}',
+      imageUrl: "{{ asset('img/logo/icon.png') }}",
+      imageWidth: 80,
+      imageHeight: 80,
+      confirmButtonColor: '#28a745'
+    });
+  @endif
+
+  @if(session('error'))
+    Swal.fire({
+      icon: 'error',
+      title: '¡Error!',
+      text: '{{ session('error') }}',
+      imageUrl: "{{ asset('img/logo/icon.png') }}",
+      imageWidth: 80,
+      imageHeight: 80,
+      confirmButtonColor: '#d33'
+    });
+  @endif
+});
+</script>
+</body>
 </html>
