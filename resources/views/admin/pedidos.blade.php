@@ -1,49 +1,76 @@
 @extends('layouts.noti_admin')
 
-@section('title', 'Listado de Pedidos')
-
 @section('content')
-<div class="container">
-    <h2 class="mb-4">
-        <i class="fas fa-shopping-cart text-success"></i> Listado de Pedidos
-    </h2>
+<br><br><br>
+<div class="container mt-4">
+    <h2 class="mb-4 text-center">Pedidos Registrados</h2>
 
-    @if($pedidos->isEmpty())
-        <div class="alert alert-info">
-            <i class="fas fa-info-circle"></i> No hay pedidos registrados aún.
+    <div class="row">
+        <!-- Columna En Proceso -->
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-warning text-white text-center fw-bold">
+                    En Proceso
+                </div>
+                <div class="card-body" style="min-height: 300px;">
+                    @forelse($pedidos->where('estado', 'En Proceso') as $pedido)
+                        <div class="card mb-3 border-start border-warning">
+                            <div class="card-body p-2">
+                                <strong>Pedido #{{ $pedido->id }}</strong><br>
+                                Cliente: {{ $pedido->usuario->nombre ?? 'N/A' }}<br>
+                                Total: ${{ number_format($pedido->total, 2) }}
+                            </div>
+                        </div>
+                    @empty
+                        <p class="text-muted text-center">No hay pedidos en proceso.</p>
+                    @endforelse
+                </div>
+            </div>
         </div>
-    @else
-        <div class="table-responsive shadow-sm">
-            <table class="table table-striped table-hover">
-                <thead class="table-success">
-                    <tr>
-                        <th>#</th>
-                        <th>Cliente</th>
-                        <th>Dirección de Envío</th>
-                        <th>Total</th>
-                        <th>Fecha</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($pedidos as $pedido)
-                        <tr>
-                            <td><strong>#{{ $pedido->id }}</strong></td>
-                            <td>{{ $pedido->cliente->nomb_usu ?? 'Cliente desconocido' }}</td>
-                            <td>{{ $pedido->direccion_envio }}</td>
-                            <td>${{ number_format($pedido->total, 2) }}</td>
-                            <td>{{ $pedido->created_at->format('d/m/Y H:i') }}</td>
-                            <td>
-                                <a href="{{ route('pedidos.show', $pedido->id) }}" 
-                                   class="btn btn-sm btn-outline-success">
-                                    <i class="fas fa-eye"></i> Ver
-                                </a>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
+
+        <!-- Columna En Entrega -->
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-primary text-white text-center fw-bold">
+                    En Entrega
+                </div>
+                <div class="card-body" style="min-height: 300px;">
+                    @forelse($pedidos->where('estado', 'En Entrega') as $pedido)
+                        <div class="card mb-3 border-start border-primary">
+                            <div class="card-body p-2">
+                                <strong>Pedido #{{ $pedido->id }}</strong><br>
+                                Cliente: {{ $pedido->usuario->nombre ?? 'N/A' }}<br>
+                                Total: ${{ number_format($pedido->total, 2) }}
+                            </div>
+                        </div>
+                    @empty
+                        <p class="text-muted text-center">No hay pedidos en entrega.</p>
+                    @endforelse
+                </div>
+            </div>
         </div>
-    @endif
+
+        <!-- Columna Entregado -->
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-success text-white text-center fw-bold">
+                    Entregado
+                </div>
+                <div class="card-body" style="min-height: 300px;">
+                    @forelse($pedidos->where('estado', 'Entregado') as $pedido)
+                        <div class="card mb-3 border-start border-success">
+                            <div class="card-body p-2">
+                                <strong>Pedido #{{ $pedido->id }}</strong><br>
+                                Cliente: {{ $pedido->usuario->nombre ?? 'N/A' }}<br>
+                                Total: ${{ number_format($pedido->total, 2) }}
+                            </div>
+                        </div>
+                    @empty
+                        <p class="text-muted text-center">No hay pedidos entregados.</p>
+                    @endforelse
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 @endsection
