@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\DatoUsuario;
+use App\Models\Pedido;
 use App\Models\Producto;
+use App\Models\MovimientoFinanciero;
 use App\Models\Tarea;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -17,16 +19,16 @@ class InventarioController extends Controller
      */
     public function index(Request $request)
     {
-        
+
 
         $inventarios = Producto::all();
         $numeroUsuarios = DatoUsuario::count();
-        $cantidadMax = Producto::max('stock');
-        $cantidadMin = Producto::min('stock');
+        $productosBajoStock = Producto::where('stock', '<', 10)->count();
+        $pendidos = Pedido::where('estado_id', 3)->count();
 
         $productosRecientes = Producto::with('categorias')
             ->orderBy('created_at', 'desc')
-            ->simplePaginate(3); 
+            ->simplePaginate(3);
 
         // Datos para gráfico: productos por categoría
         $dataCat = DB::table('productos')
@@ -35,7 +37,7 @@ class InventarioController extends Controller
             ->groupBy('categorias.nombre')
             ->pluck('total', 'nombre');
 
-            
+
         // Fechas para filtrar tareas
         $desde = $request->input('desde', now()->subDays(7)->format('Y-m-d'));
         $hasta = $request->input('hasta', now()->format('Y-m-d'));
@@ -62,12 +64,20 @@ class InventarioController extends Controller
             ->groupBy(fn($item) => $item->categorias->nombre ?? 'Sin categoría')
             ->map(fn($items) => count($items));
         // Retornar a la vista con todos los datos
-            return view('index_admin', compact('inventarios', 'cantidadMax', 'cantidadMin','productosRecientes','dataCat', 'pendientes',
+        return view('index_admin', compact(
+            'inventarios',
+            'productosBajoStock',
+            'productosRecientes',
+            'dataCat',
+            'pendientes',
             'hechas',
             'labelsTareas',
             'datosTareas',
             'desde',
-            'hasta',));
+            'numeroUsuarios',
+            'pendidos',
+            'hasta',
+        ));
     }
 
     /**
@@ -97,5 +107,4 @@ class InventarioController extends Controller
 
         return view('admin.dashboard', compact('agrupados'));
     }
-
 }

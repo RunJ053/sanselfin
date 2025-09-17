@@ -24,12 +24,7 @@
 </head>
 
 <body>
-    @php
-        $notificaciones = $notificaciones ?? collect();
-        $promociones = $promociones ?? collect();
-        $carritoCount = $carritoCount ?? 0;
-        $resenas = $resenas ?? collect();
-    @endphp
+    
     @yield('content')    
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

@@ -183,109 +183,55 @@
 
 <body>
   <main>
-  <!-- HEADER -->
-  <header class="header-bar">
-    <div class="d-flex align-items-center header-brand">
-      <a href="{{ route('admin.dashboard') }}" class="d-flex align-items-center text-decoration-none">
-        <img src="{{ asset('img/logo/icon.png') }}" alt="Logo">
-        <span class="brand-text">Finca al Día</span>
-      </a>
-    </div>
-
-    <!-- toggler móvil -->
-    <button class="navbar-toggler ms-3 d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#topNav">
-      <span class="navbar-toggler-icon" style="filter: invert(1)"></span>
-    </button>
-
-    <!-- enlaces -->
-    <nav class="ms-4 me-auto collapse d-md-flex nav-links" id="topNav">
-      <ul class="navbar-nav d-flex flex-row gap-3">
-        <li class="nav-item"><a class="nav-link" href="{{ route('admin.dashboard') }}"><i class="fas fa-home me-1"></i> Inicio</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{ route('producto.index') }}"><i class="fas fa-boxes me-1"></i> Inventario</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{ route('dashboard.index') }}"><i class="fas fa-chart-bar me-1"></i> Reportes</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{ route('usuario.index') }}"><i class="fas fa-users me-1"></i> Usuarios</a></li>
-      </ul>
-    </nav>
-
-    <!-- usuario -->
-    <div class="user-area ms-auto">
-      @auth
-      <div class="user-welcome">
-        <i class="fas fa-user-circle me-1"></i>
-        {{ session('nombre_usuario') ?? Auth::user()->nombre ?? Auth::user()->nomb_usu ?? 'Administrador' }}
+    <x-admin.nav-bar :notificaciones="$notificaciones ?? []" />
+    <!-- Contenido principal -->
+    <div class="main-content container mx-auto px-4">
+      <!-- Encabezado -->
+      <div class="flex flex-col md:flex-row items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">Galería Visual de Productos</h2>
+        <a href="{{ route('galeria.index') }}"
+          class="mt-3 md:mt-0 inline-flex items-center gap-2 border border-green-600 text-green-600 px-4 py-2 rounded-lg hover:bg-green-600 hover:text-white transition">
+          <i class="fas fa-sync-alt"></i> Recargar Galería
+        </a>
       </div>
 
-      <a href="{{ route('admin.noti_admin') }}" class="btn btn-link text-white position-relative p-0" style="font-size: 1rem;">
-      <i class="fas fa-bell"></i>
-      @if(!empty($notificaciones) && count($notificaciones) > 0)
-        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-            {{ count($notificaciones) }}
-        </span>
-      @endif
-    </a>
-
-      <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:inline;">
-        @csrf
-        <button type="submit" class="logout-btn">
-          <i class="fas fa-sign-out-alt"></i> Salir
-        </button>
-      </form>
-      @else
-      <a href="{{ route('login') }}" class="logout-btn">
-        <i class="fas fa-exclamation-circle"></i> Login
-      </a>
-      @endauth
-    </div>
-  </header>
-
-  <!-- Contenido principal -->
-  <div class="main-content container mx-auto px-4">
-    <!-- Encabezado -->
-    <div class="flex flex-col md:flex-row items-center justify-between mb-6">
-      <h2 class="text-2xl font-bold text-gray-800">Galería Visual de Productos</h2>
-      <a href="{{ route('dashboard.index') }}"
-        class="mt-3 md:mt-0 inline-flex items-center gap-2 border border-green-600 text-green-600 px-4 py-2 rounded-lg hover:bg-green-600 hover:text-white transition">
-        <i class="fas fa-sync-alt"></i> Recargar Galería
-      </a>
-    </div>
-
-    @if($agrupados->isNotEmpty())
-    @foreach($agrupados as $categoria => $lista)
-    <!-- Sección por categoría -->
-    <div class="mb-10">
-      <div class="flex items-center gap-2 mb-4 bg-green-50 border-l-4 border-green-500 px-4 py-2 rounded-md">
-        <i class="fas fa-tag text-green-600"></i>
-        <h3 class="text-lg md:text-xl font-semibold text-gray-700">{{ $categoria }}</h3>
-      </div>
-
-      <!-- Grid de productos -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        @foreach($lista as $p)
-        <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition card-hover">
-          <img src="{{ asset('img/product/'.$p->imagen) }}"
-            alt="{{ $p->nombre_producto }}"
-            class="w-full h-40 object-cover">
-          <div class="p-4 text-center">
-            <p class="font-bold text-gray-800">{{ $p->nombre_producto }}</p>
-            <p class="text-gray-500 text-sm mb-2">
-              ${{ number_format($p->precio_unitario, 2, ',', '.') }}
-            </p>
-            <span class="px-3 py-1 rounded-full text-xs font-semibold
-                  {{ $p->stock > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
-              {{ $p->stock > 0 ? 'Stock: '.$p->stock : 'Agotado' }}
-            </span>
-          </div>
+      @if($agrupados->isNotEmpty())
+      @foreach($agrupados as $categoria => $lista)
+      <!-- Sección por categoría -->
+      <div class="mb-10">
+        <div class="flex items-center gap-2 mb-4 bg-green-50 border-l-4 border-green-500 px-4 py-2 rounded-md">
+          <i class="fas fa-tag text-green-600"></i>
+          <h3 class="text-lg md:text-xl font-semibold text-gray-700">{{ $categoria }}</h3>
         </div>
-        @endforeach
+
+        <!-- Grid de productos -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          @foreach($lista as $p)
+          <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition card-hover">
+            <img src="{{ asset('img/product/'.$p->imagen) }}"
+              alt="{{ $p->nombre_producto }}"
+              class="w-full h-40 object-cover">
+            <div class="p-4 text-center">
+              <p class="font-bold text-gray-800">{{ $p->nombre_producto }}</p>
+              <p class="text-gray-500 text-sm mb-2">
+                ${{ number_format($p->precio_unitario, 2, ',', '.') }}
+              </p>
+              <span class="px-3 py-1 rounded-full text-xs font-semibold
+                  {{ $p->stock > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
+                {{ $p->stock > 0 ? 'Stock: '.$p->stock : 'Agotado' }}
+              </span>
+            </div>
+          </div>
+          @endforeach
+        </div>
       </div>
+      @endforeach
+      @else
+      <div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 rounded-md" role="alert">
+        <p>No hay productos con imágenes para mostrar.</p>
+      </div>
+      @endif
     </div>
-    @endforeach
-    @else
-    <div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 rounded-md" role="alert">
-      <p>No hay productos con imágenes para mostrar.</p>
-    </div>
-    @endif
-  </div>
   </main>
   <!-- Footer -->
   <footer class="footer mt-5">

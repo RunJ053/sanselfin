@@ -71,13 +71,13 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="Impuesto" class="form-label">Impuesto *</label>
-                    <select name="Impuesto" id="Impuesto" class="form-input form-select" required>
-                        <option value="">Seleccione el Impuesto</option>
-                        @foreach ($impuestos as $impuesto)
-                        <option value="{{ $impuesto->id }}"
-                            {{ old('Impuesto', $producto->impuesto_id) == $impuesto->id ? 'selected' : '' }}>
-                            {{ $impuesto->descripcion }}
+                    <label for="unidadMedida" class="form-label">Unidad de Medida*</label>
+                    <select name="unidadMedida" id="unidadMedida" class="form-input form-select" required>
+                        <option value="">Seleccione la Unidad</option>
+                        @foreach ($unidadMedida as $unidadM)
+                        <option value="{{ $unidadM->id }}"
+                            {{ old('unidad_medida_id', $producto->unidad_medida_id) == $unidadM->id ? 'selected' : '' }}>
+                            {{ $unidadM->nombre }}
                         </option>
                         @endforeach
                     </select>
@@ -112,7 +112,7 @@
                 </div>
 
                 <div class="submit-container">
-                    <a href="{{ route('admin.dashboard') }}" class="submit-btnn">Volver</a>
+                    <a href="{{ route('producto.index') }}" class="submit-btnn">Volver</a>
                 </div>
             </form>
         </div>

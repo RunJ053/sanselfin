@@ -34,17 +34,16 @@ class FacturaDetalleController extends Controller
         }
 
         $usuarioId = Auth::id();
-        $pedido = Pedido::with('detalles.producto')->findOrFail($pedidoId);
+        $pedido = Pedido::with('detalles.producto.unidadMedida')->findOrFail($pedidoId);
 
-        // Buscar la factura vinculada. Si planeas añadir pedido_id (recomendado), cámbialo aquí:
-$factura = FacturaCabecera::where('pedido_id', $pedido->id)
-    ->with('detalles.producto', 'formaPago', 'usuario')
-    ->firstOrFail();
+        $factura = FacturaCabecera::where('pedido_id', $pedido->id)
+            ->with('detalles.producto.unidadMedida', 'formaPago', 'usuario')
+            ->firstOrFail();
 
         $totales = $this->computeFacturaTotals($factura);
 
         $notificaciones = Notificacion::where('usuario_id', $usuarioId)->orderBy('created_at', 'desc')->get();
-        $carritoCount = CarritoCompra::where('usuario', $usuarioId)->count('cantidad'); 
+        $carritoCount = CarritoCompra::where('usuario', $usuarioId)->count('cantidad');
 
         return view('facturacion.show', array_merge([
             'factura' => $factura,
@@ -62,8 +61,8 @@ $factura = FacturaCabecera::where('pedido_id', $pedido->id)
         $pedido = Pedido::with('detalles.producto')->findOrFail($pedidoId);
 
         $factura = FacturaCabecera::where('pedido_id', $pedido->id)
-    ->with('detalles.producto', 'formaPago', 'usuario')
-    ->firstOrFail();
+            ->with('detalles.producto', 'formaPago', 'usuario')
+            ->firstOrFail();
 
         $totales = $this->computeFacturaTotals($factura);
 

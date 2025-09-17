@@ -7,26 +7,17 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Database\QueryException;
 use App\Mail\PasswordResetRequestMail;
 use App\Mail\UserVerificationMail;
-
 use App\Models\DatoUsuario;
 use App\Models\TipoCliente;
 use App\Models\UserVerificationCode;
 use App\Models\Producto;
-use App\Models\UserVerificationCode;
-use App\Models\Producto;
-
-
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Log;
-
 use App\Http\Requests\RegisterUserRequest;
 use App\Http\Requests\RegisterEmpleadoRequest;
-
 use Carbon\Carbon;
 
 class AuthController extends Controller
@@ -40,51 +31,33 @@ class AuthController extends Controller
 
         $user = DatoUsuario::where('email', $credentials['email'])->first();
 
-        // Verifica si el usuario existe y si la contraseña es correcta
         if (!$user || !Hash::check($credentials['password'], $user->password ?? '')) {
             throw ValidationException::withMessages([
                 'email' => __('auth.failed'),
             ]);
         }
 
-        if ($user->role == TipoCliente::ROLE_ADMINISTRADOR) {
-            if (!$user->is_verified) {
-                Auth::logout();
-                return redirect('/incio_sesion')->withErrors([
-                    'email' => 'Tu cuenta de administrador aún no ha sido verificada. Por favor, revisa tu correo electrónico.',
-                ]);
-            }
-
-            Auth::login($user);
-            $request->session()->regenerate();
-            session(['usuario_id' => $user->id, 'nombre_usuario' => $user->nombre, 'nombre_img' => $user->user_img]);
-            return redirect()->route('admin.dashboard');
-        } elseif ($user->role == TipoCliente::ROLE_EMPLEADO) {
-            if (!$user->is_verified) {
-                Auth::logout();
-                return redirect('/incio_sesion')->withErrors([
-                    'email' => 'Tu cuenta de empleado aún no ha sido verificada. Por favor, revisa tu correo electrónico.',
-                ]);
-            }
-            Auth::login($user);
-            $request->session()->regenerate();
-            session(['usuario_id' => $user->id, 'nombre_usuario' => $user->nombre, 'nombre_img' => $user->user_img]);
-            return redirect()->route('admin.dashboard');
-        } else {
-            if (!$user->is_verified) {
-                Auth::logout();
-                return redirect('/incio_sesion')->withErrors([
-                    'email' => 'Tu cuenta aún no ha sido verificada. Por favor, revisa tu correo electrónico.',
-                ]);
-            }
-            Auth::login($user);
-            $request->session()->regenerate();
-            session(['usuario_id' => $user->id, 'nombre_usuario' => $user->nombre, 'nombre_img' => $user->user_img]);
-            $productos = Producto::latest()->take(22)->get();
-            return view('index2', compact('productos'));
-            $productos = Producto::latest()->take(22)->get();
-            return view('index2', compact('productos'));
+        if (!$user->is_verified) {
+            Auth::logout();
+            return redirect('/incio_sesion')->withErrors([
+                'email' => 'Tu cuenta aún no ha sido verificada. Por favor, revisa tu correo electrónico.',
+            ]);
         }
+
+        Auth::login($user);
+        $request->session()->regenerate();
+        session([
+            'usuario_id' => $user->id,
+            'nombre_usuario' => $user->nombre,
+            'nombre_img' => $user->user_img
+        ]);
+
+        if (in_array($user->role, [TipoCliente::ROLE_ADMINISTRADOR, TipoCliente::ROLE_EMPLEADO])) {
+            return redirect()->route('admin.dashboard');
+        }
+
+        $productos = Producto::latest()->take(22)->get();
+        return view('index2', compact('productos'));
     }
 
     protected function registerUser(Request $request)
@@ -99,23 +72,13 @@ class AuthController extends Controller
                 'required',
                 'string',
                 'min:8',
-                'confirmed',       // requiere el campo password_confirmation
-                'regex:/[A-Z]/',   // al menos una mayúscula
-                'regex:/[a-z]/',   // al menos una minúscula
-                'regex:/[0-9]/',   // al menos un número
-                'regex:/[@$!%*#?&.]/' // al menos un carácter especial
+                'confirmed',
+                'regex:/[A-Z]/',
+                'regex:/[a-z]/',
+                'regex:/[0-9]/',
+                'regex:/[@$!%*#?&.]/'
             ],
         ], [
-            'nombre.required' => 'El nombre es obligatorio.',
-            'apellido.required' => 'El apellido es obligatorio.',
-            'direccion.required' => 'La dirección es obligatoria.',
-            'email.required' => 'El correo electrónico es obligatorio.',
-            'email.email' => 'El correo electrónico no es válido.',
-            'email.unique' => 'El correo electrónico ya está registrado.',
-            'fecha_nac.required' => 'La fecha de nacimiento es obligatoria.',
-            'password.required' => 'La contraseña es obligatoria.',
-            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
-            'password.confirmed' => 'Las contraseñas no coinciden.',
             'password.regex' => 'La contraseña debe incluir al menos:
             <ul style="text-align:left; margin:0; padding-left:18px;">
                 <li>Una mayúscula</li>
@@ -126,10 +89,6 @@ class AuthController extends Controller
         ]);
 
         try {
-            if (DatoUsuario::where('email', $request->email)->exists()) {
-                return back()->withErrors(['email' => 'El correo electrónico ya está registrado.']);
-            }
-
             $datoUsuario = DatoUsuario::create([
                 'nombre'     => $request->nombre,
                 'apellidos'  => $request->apellido,
@@ -138,33 +97,20 @@ class AuthController extends Controller
                 'edad'       => $request->fecha_nac,
                 'password'   => Hash::make($request->password),
                 'role'       => 1,
-                'is_verified' => false,
+                'is_verified'=> false,
                 'localidad'  => 15,
                 'tipo_docu'  => 1,
                 'tipo_de_genero' => 4,
-                'documento'  => null,
-                'telefono'   => null,
-                'nom_imgs'   => null,
-                'user_img'   => null,
             ]);
-
-            if (!$datoUsuario) {
-                return back()->withInput()->withErrors(['database_error' => 'No se pudo crear el usuario.']);
-            }
 
             $token = Str::random(60);
             $expiresAt = Carbon::now()->addMinutes(10);
 
-            $verificationCodeEntry = UserVerificationCode::create([
+            UserVerificationCode::create([
                 'user_id'    => $datoUsuario->id,
                 'token'      => $token,
                 'expires_at' => $expiresAt,
             ]);
-
-            if (!$verificationCodeEntry) {
-                $datoUsuario->delete();
-                return back()->withInput()->withErrors(['database_error' => 'No se pudo guardar el token de verificación.']);
-            }
 
             Mail::to($datoUsuario->email)->send(new UserVerificationMail($token, $datoUsuario->nombre));
 
@@ -181,72 +127,48 @@ class AuthController extends Controller
         }
     }
 
-    /**
-     * Muestra el formulario para solicitar el restablecimiento de contraseña (paso 1).
-     */
     public function showForgotPasswordForm()
     {
         return view('auth.forgot-password');
     }
 
-    /**
-     * Envía el token de restablecimiento de contraseña al correo del usuario (paso 1).
-     */
     public function sendResetToken(Request $request)
     {
         $request->validate(['email' => ['required', 'email', 'exists:datos_usuario,email']]);
 
         $user = DatoUsuario::where('email', $request->email)->first();
 
-        if (!$user) {
-            // Esto no debería ejecutarse gracias a la validación 'exists', pero es una capa extra.
-            return back()->withErrors(['email' => 'No se encontró un usuario con ese correo electrónico.']);
-        }
-
-        // Generar un token único
-        $token = Str::random(35); // Token más largo para mayor seguridad
-        $expiresAt = Carbon::now()->addMinutes(60); // El token expira en 60 minutos
+        $token = Str::random(35);
+        $expiresAt = Carbon::now()->addMinutes(60);
 
         try {
-            // Eliminar cualquier token anterior para este email
             DB::table('password_resets')->where('email', $user->email)->delete();
 
-            // Guardar el nuevo token en la tabla password_resets
             DB::table('password_resets')->insert([
                 'email' => $user->email,
-                'token' => Hash::make($token), // Hashear el token para guardarlo, se compara sin hashear en el mail
+                'token' => Hash::make($token),
                 'created_at' => Carbon::now()
             ]);
 
-            // Enviar el correo electrónico con el token
             Mail::to($user->email)->send(new PasswordResetRequestMail($token, $user->nombre));
 
             return redirect()->route('password.reset.form')->with([
-                'status' => 'Se ha enviado un código de restablecimiento a tu correo electrónico. Por favor, revísalo para continuar.',
-                'email' => $user->email // Pasamos el email para el siguiente formulario
+                'status' => 'Se ha enviado un código de restablecimiento a tu correo electrónico.',
+                'email' => $user->email
             ]);
         } catch (QueryException $e) {
-            return back()->withInput()->withErrors(['database_error' => 'Hubo un error al intentar enviar el token. Por favor, inténtalo de nuevo más tarde.']);
+            return back()->withInput()->withErrors(['database_error' => 'Hubo un error al intentar enviar el token.']);
         } catch (\Exception $e) {
             return back()->withInput()->withErrors(['general_error' => 'Hubo un error inesperado al enviar el correo de restablecimiento.']);
         }
     }
 
-    /**
-     * Muestra el formulario para restablecer la contraseña (paso 2).
-     */
     public function showResetPasswordForm(Request $request)
     {
-        // El email se flashea desde sendResetToken, o se usa old() si hay errores
         $email = session('email') ?? old('email');
-
-        // Validar si viene con un token en la URL, pero no es estrictamente necesario si se maneja por sesión/entrada de usuario
-        return view('auth.reset-password', compact('email')); // Crearemos esta vista
+        return view('auth.reset-password', compact('email'));
     }
 
-    /**
-     * Restablece la contraseña del usuario (paso 2).
-     */
     public function resetPassword(Request $request)
     {
         $request->validate([
@@ -256,45 +178,33 @@ class AuthController extends Controller
         ]);
 
         $user = DatoUsuario::where('email', $request->email)->first();
-
-        if (!$user) {
-            return back()->withErrors(['email' => 'El correo electrónico no es válido.'])->withInput($request->except('password', 'password_confirmation', 'old_password'));
-        }
-
-        // Verificar el token
         $passwordReset = DB::table('password_resets')->where('email', $request->email)->first();
 
         if (!$passwordReset || !Hash::check($request->token, $passwordReset->token)) {
-            return back()->withErrors(['token' => 'El código de verificación es inválido o ya ha sido utilizado.'])->withInput($request->except('password', 'password_confirmation', 'old_password'));
+            return back()->withErrors(['token' => 'El código de verificación es inválido o ya ha sido utilizado.'])
+                ->withInput($request->except('password', 'password_confirmation', 'old_password'));
         }
 
-        // Verificar si el token ha expirado (usando created_at y el tiempo de expiración)
         $expiresAt = Carbon::parse($passwordReset->created_at)->addMinutes(60);
         if (Carbon::now()->greaterThan($expiresAt)) {
-            DB::table('password_resets')->where('email', $request->email)->delete(); // Eliminar token expirado
-            return back()->withErrors(['token' => 'El código de verificación ha expirado. Por favor, solicita uno nuevo.'])->withInput($request->except('password', 'password_confirmation', 'old_password'));
+            DB::table('password_resets')->where('email', $request->email)->delete();
+            return back()->withErrors(['token' => 'El código de verificación ha expirado.'])
+                ->withInput($request->except('password', 'password_confirmation', 'old_password'));
         }
 
-        // 3. Si todo es válido, actualizar la contraseña
         try {
             $user->password = Hash::make($request->password);
             $user->save();
-
-            // Eliminar el token de la tabla password_resets
             DB::table('password_resets')->where('email', $request->email)->delete();
 
-            return redirect()->route('login')->with('success', '¡Tu contraseña ha sido restablecida exitosamente! Inicia sesión con tu nueva contraseña.');
+            return redirect()->route('login')->with('success', '¡Tu contraseña ha sido restablecida exitosamente!');
         } catch (QueryException $e) {
-            return back()->withInput()->withErrors(['database_error' => 'Hubo un error al intentar restablecer tu contraseña. Por favor, inténtalo de nuevo más tarde.']);
+            return back()->withInput()->withErrors(['database_error' => 'Hubo un error al intentar restablecer tu contraseña.']);
         } catch (\Exception $e) {
             return back()->withInput()->withErrors(['general_error' => 'Hubo un error inesperado al restablecer tu contraseña.']);
         }
     }
 
-
-    /**
-     * Cierra la sesión del usuario.
-     */
     public function logout(Request $request)
     {
         Auth::logout();

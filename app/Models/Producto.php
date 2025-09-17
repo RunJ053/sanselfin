@@ -22,6 +22,7 @@ class Producto extends Model
         'estado_id',
         'nombre_producto',
         'stock',
+        'descripccion',
         'unidad_medida_id',
         'precio_unitario',
     ];

@@ -6,8 +6,6 @@
 <br><br>
 <div class="container py-4">
     <h2 class="mb-4 text-center">📢 Centro de Notificaciones</h2>
-
-
     {{-- Tarjeta: Pedidos recientes --}}
         <div class="card mb-4 shadow-sm">
             <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">

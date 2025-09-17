@@ -17,8 +17,10 @@
 {{-- Si hay productos, entonces itera sobre ellos --}}
 @foreach ($productos as $product)
 <div class="product" onclick="showProductModal({{ $product['id'] }})">
-    @if ($product['descuento']) {{-- Asegúrate de que la clave 'descuento' existe y es booleana --}}
-    <div class="discount-badge">¡Oferta!</div>
+    @if ($product['descuento'])
+    <div class="discount-badge">
+        ¡Oferta {{ $product['descuento_porcentaje'] }}%!
+    </div>
     @endif
     <img src="{{ $product['imagen'] }}" alt="{{ $product['nombre'] }}" style="display: block; margin: 0 auto 1rem; width: 100%; max-width: 300px; height: 200px; object-fit: cover; border-radius: 10px;">
 
@@ -46,8 +48,10 @@
                     @endif
             </div>
         </div>
-        {{-- Aquí añades el '$' de nuevo si lo quitaste en el backend --}}
-        <div class="product-price">${{ $product['valor'] }}</div>
+        <div class="product-price">
+            ${{ $product['valor'] }}
+            <span class="text-sm text-gray-600"> / {{ $product['unidad_medida'] }}</span>
+        </div>
     </div>
 </div>
 @endforeach

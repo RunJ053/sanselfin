@@ -338,7 +338,7 @@
                 <img src="${product.imagen}" alt="${product.nombre}" style="display: block; margin: 0 auto 1rem; width: 100%; max-width: 300px; height: 200px; object-fit: cover; border-radius: 10px;">
                 <p style="color: #666; margin-bottom: 0.5rem;">${product.descripcion || "Sin descripción."}</p>
                 <div style="color: #ffc107; margin-bottom: 0.5rem;">${"⭐".repeat(product.rating || 0)}</div>
-                <h4 style="color: #4CAF50; font-size: 1.2rem; margin-bottom: 1rem;">$${parseFloat(product.valor.replace("$", "").replace(".", "")).toFixed(0)}</h4>
+                <h4 style="color: #4CAF50; font-size: 1.2rem; margin-bottom: 1rem;">$${parseFloat(product.valor.replace("$", "").replace(".", "")).toFixed(0)} por ${product.unidad_medida || "Sin unidad de medida"}</h4>
                 <div style="margin-bottom: 1rem;">
                     <label for="quantity" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">
                         Cantidad disponible: ${product.stock ? product.stock : "No se ha encontrado la cantidad precisa"}

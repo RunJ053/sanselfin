@@ -6,16 +6,14 @@ use App\Models\CarritoCompra;
 use App\Models\Producto;
 use App\Models\Notificacion;
 use Illuminate\Http\Request;
-use App\Models\Notificacion;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class CarritoCompraController extends Controller
 {
-
     public function index()
     {
         if (!Auth::check()) {
-            return redirect()->route('login')->with('error', 'Debes iniciar sesión para ver tu carrito.');
             return redirect()->route('login')->with('error', 'Debes iniciar sesión para ver tu carrito.');
         }
 
@@ -34,9 +32,12 @@ class CarritoCompraController extends Controller
 
         // Recorrer items del carrito y sumar lo que ya está calculado en la BD
         foreach ($itemsCarrito as $item) {
-            $subtotal += $item->subtotal;                 // subtotal ya viene con precio_unitario * cantidad
-            $descuento += $item->descuento;               // lo calculaste en add/update
-            $totalFinal += $item->total_item;             // subtotal - descuento
+            $subtotal += $item->subtotal;
+            $descuento += $item->descuento;
+            $totalFinal += $item->total_item;
+
+            // Calcular el precio con impuesto para este item
+            $producto = $item->producto;
         }
 
         // Notificaciones
@@ -45,7 +46,6 @@ class CarritoCompraController extends Controller
             ->get();
 
         $carritoCount = CarritoCompra::where('usuario', $userId)->count('cantidad');
-        // Total con descuento ya aplicado
         $totalConDescuento = $totalFinal;
 
         return view('productos.carrito_de_comprar', compact(
@@ -59,12 +59,6 @@ class CarritoCompraController extends Controller
         ));
     }
 
-
-    /**
-     * Añade un producto al carrito de compras.
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function add(Request $request)
     {
         $request->validate([
@@ -77,9 +71,7 @@ class CarritoCompraController extends Controller
         }
 
         $userId     = Auth::id();
-        $userId     = Auth::id();
         $productoId = $request->input('producto_id');
-        $cantidad   = $request->input('cantidad');
         $cantidad   = $request->input('cantidad');
 
         try {
@@ -89,10 +81,7 @@ class CarritoCompraController extends Controller
             }
 
             // Ítem existente en carrito
-            // Ítem existente en carrito
             $itemExistente = CarritoCompra::where('usuario', $userId)
-                ->where('producto_id', $productoId)
-                ->first();
                 ->where('producto_id', $productoId)
                 ->first();
 
@@ -107,13 +96,13 @@ class CarritoCompraController extends Controller
                 ], 400);
             }
 
-            // ---- Cálculos según tu orden ----
+            // ---- Cálculos ----
             $precioUnitario = $producto->precio_unitario;
 
             // 1) Subtotal base (sin impuesto)
             $subtotalBase = $precioUnitario * $cantidadFinal;
 
-            // 2) Descuento (% viene de promociones; soporta 'porcentaje_descuento' o 'descuento')
+            // 2) Descuento
             $porcPromo = 0;
             if ($producto->promociones) {
                 $porcPromo = $producto->promociones->porcentaje_descuento
@@ -122,18 +111,17 @@ class CarritoCompraController extends Controller
             }
             $descuentoAplicado = round($subtotalBase * ($porcPromo / 100), 2);
 
-            // 3) Total item = subtotal - descuento
+            // 3) Total item
             $totalItem = round($subtotalBase - $descuentoAplicado, 2);
 
             if ($itemExistente) {
                 $itemExistente->cantidad            = $cantidadFinal;
-                $itemExistente->precio_unitario     = $precioUnitario;         // base sin impuesto
+                $itemExistente->precio_unitario     = $precioUnitario;
                 $itemExistente->subtotal            = round($precioUnitario * $cantidadFinal, 2);
-                $itemExistente->descuento           = $descuentoAplicado;      // descuento sobre (base+impuesto)
-                $itemExistente->total_item          = $totalItem;              // (base+impuesto) - descuento
+                $itemExistente->descuento           = $descuentoAplicado;
+                $itemExistente->total_item          = $totalItem;
                 $itemExistente->save();
             } else {
-                // para nuevo ítem, cantidadFinal == cantidad
                 CarritoCompra::create([
                     'usuario'            => $userId,
                     'producto_id'        => $productoId,
@@ -149,22 +137,20 @@ class CarritoCompraController extends Controller
 
             return response()->json([
                 'message'    => 'Producto añadido al carrito exitosamente.',
-                'message'    => 'Producto añadido al carrito exitosamente.',
                 'cart_count' => $cartCount,
-                'status'     => 'success',
                 'status'     => 'success',
             ]);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Error al añadir el producto al carrito.'], 500);
-            return response()->json(['message' => 'Error al añadir el producto al carrito.'], 500);
+            \Log::error("Error al añadir producto al carrito: " . $e->getMessage(), [
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json([
+                'message' => 'Error al añadir el producto al carrito.',
+                'error'   => $e->getMessage()
+            ], 500);
         }
     }
 
-
-    /**
-     * Obtiene el conteo total de ítems en el carrito del usuario autenticado.
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function getCartCount()
     {
         if (!Auth::check()) {
@@ -175,7 +161,6 @@ class CarritoCompraController extends Controller
         return response()->json(['cart_count' => $cartCount]);
     }
 
-
     public function update(Request $request, $itemId)
     {
         $request->validate([
@@ -183,23 +168,11 @@ class CarritoCompraController extends Controller
         ], [
             'cantidad.min' => 'La cantidad debe ser al menos 1.'
         ]);
-    {
-        $request->validate([
-            'cantidad' => 'required|integer|min:1'
-        ], [
-            'cantidad.min' => 'La cantidad debe ser al menos 1.'
-        ]);
 
         $item = CarritoCompra::where('id', $itemId)
             ->where('usuario', Auth::id())
             ->first();
-        $item = CarritoCompra::where('id', $itemId)
-            ->where('usuario', Auth::id())
-            ->first();
 
-        if (!$item) {
-            return response()->json(['message' => 'Producto en el carrito no encontrado.'], 404);
-        }
         if (!$item) {
             return response()->json(['message' => 'Producto en el carrito no encontrado.'], 404);
         }
@@ -219,10 +192,8 @@ class CarritoCompraController extends Controller
         // ---- Cálculos ----
         $precioUnitario = $producto->precio_unitario;
 
-        // 1) Subtotal base (sin impuesto)
         $subtotalBase = $precioUnitario * $cantidadSolicitada;
 
-        // 2) Descuento (sobre subtotal+impuesto)
         $porcPromo = 0;
         if ($producto->promociones) {
             $porcPromo = $producto->promociones->porcentaje_descuento
@@ -231,10 +202,8 @@ class CarritoCompraController extends Controller
         }
         $descuentoAplicado = round($subtotalBase * ($porcPromo / 100), 2);
 
-        // 3) Total item
         $totalItem = round($subtotalBase - $descuentoAplicado, 2);
 
-        // Guardar
         $item->cantidad            = $cantidadSolicitada;
         $item->precio_unitario     = $precioUnitario;
         $item->subtotal            = round($subtotalBase, 2);
@@ -271,8 +240,6 @@ class CarritoCompraController extends Controller
             return response()->json([
                 'message' => 'Producto eliminado del carrito 🗑️',
                 'cart_count' => $cartCount
-                'message' => 'Producto eliminado del carrito 🗑️',
-                'cart_count' => $cartCount
             ]);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Error al eliminar el producto del carrito.'], 500);
@@ -288,7 +255,6 @@ class CarritoCompraController extends Controller
         $usuarioId = Auth::id();
 
         try {
-            // Eliminar todos los productos del carrito del usuario
             CarritoCompra::where('usuario', $usuarioId)->delete();
 
             return redirect()->back()->with('success', '🛒 Carrito vaciado correctamente');

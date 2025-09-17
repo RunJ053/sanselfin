@@ -253,7 +253,7 @@
                 @foreach ($factura->detalles as $detalle)
                 <tr>
                     <td>{{ strtoupper($detalle->producto->nombre_producto ?? 'Producto eliminado') }}</td>
-                    <td class="text-center">{{ $detalle->cantidad }}</td>
+                    <td class="border p-2">{{ $detalle->cantidad }}  ({{ $detalle->producto->unidadMedida->	abreviatura ?? 'N/A' }})</td>
                     <td class="text-right">${{ number_format($detalle->precio_unitario, 0, ',', '.') }}</td>
                 </tr>
                 @endforeach
