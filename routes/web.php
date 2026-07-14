@@ -205,7 +205,7 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/usuarios/{id}', [AdminController::class, 'destroy'])->name('usuario.destroy');
         
         //pedidos y notificaciones
-        Route::get('/notificaciones', [NotiController::class, 'index'])->name('admin.noti_admin');
+        Route::get('/notificaciones', [NotiController::class, 'index'])->name('noti_admin.index');
         Route::get('/pedidos', [PedidoController::class, 'index'])->name('pedidos.index');
         Route::get('/pedidos/{id}', [PedidoController::class, 'show'])->name('pedidos.show');
 
@@ -220,4 +220,4 @@ Route::middleware(['auth'])->group(function () {
         Route::GET('/dashboard/tareas/hecha/{id}', [TareaController::class, 'marcarHecha'])->name('tarea.hecha');
         Route::GET('/dashboard/tareas/eliminar/{id}', [TareaController::class, 'eliminar'])->name('tarea.eliminar');
     });
-});
+  });
